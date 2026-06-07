@@ -1,0 +1,7 @@
+{
+  "test_timestamp": "2026-05-29 04:25:26",
+  "model_path": "/mnt/tank/scratch/ikarpushkina/sigma/ASPEN/models/schnet_with_moments_in_loss_my_vkr.pt",
+  "test_dataset": "/mnt/tank/scratch/ikarpushkina/sigma/ASPEN/data/train_test_val_df/chaos_atomic_test_with_coordinates.parquet",
+  "metrics": {
+    "original": {
+      "weighted_r2": 
