@@ -1,2 +1,4 @@
 *.parquet
 *.pt
+__pycache__/
+*.pyc
