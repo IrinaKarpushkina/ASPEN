@@ -1,4 +1,3 @@
-```markdown
 # ASPEN: Atomic Sigma Profile Prediction via 3D Graph Neural Networks
 
 **ASPEN** (Atomic Sigma Profiles Embedding for Neural Networks) – это инструмент для предсказания атомных σ-профилей на основе трехмерной геометрии молекулы. Проект реализует 3D-инвариантные графовые нейронные сети (SchNet, GAT, Graph Transformer и др.) с физически-информированными функциями потерь для точной декомпозиции поверхностного распределения заряда по атомам.
