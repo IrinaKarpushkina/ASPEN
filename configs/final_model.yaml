@@ -1,0 +1,13 @@
+defaults: base.yaml
+
+model:
+  name: final
+  hidden: 213
+  num_layers: 5
+  n_rbf: 32
+  dropout: 0.05
+  n_params_target: 695667
+
+# Level-1 (controlled comparison vs baselines): loss: mse
+# Level-2 (ablation): rerun with --loss combined
+loss: mse

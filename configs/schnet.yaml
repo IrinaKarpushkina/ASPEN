@@ -1,0 +1,10 @@
+defaults: base.yaml
+
+model:
+  name: schnet
+  hidden_channels: 150
+  num_filters: 150
+  num_interactions: 6
+  num_gaussians: 50
+  dropout: 0.05
+  n_params_target: 695667

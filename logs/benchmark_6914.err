@@ -1,0 +1,108 @@
+2026-06-18 08:00:10,168 - INFO - Device: cuda
+2026-06-18 08:00:10,169 - INFO - Loading cached dataset: /mnt/tank/scratch/ikarpushkina/sigma/ASPEN/data/train_test_val_df/cache/chaos_atomic_train_with_coordinates.parquet.2a0efbb7f4.pt
+2026-06-18 08:00:27,498 - INFO - chaos_atomic_train_with_coordinates.parquet: 36981 molecules, 1077949 atoms, extended=True, RDKit mol valid: 36981/36981 (100.0%)
+2026-06-18 08:00:27,499 - INFO - Loading cached dataset: /mnt/tank/scratch/ikarpushkina/sigma/ASPEN/data/train_test_val_df/cache/chaos_atomic_val_with_coordinates.parquet.2a0efbb7f4.pt
+2026-06-18 08:00:31,801 - INFO - chaos_atomic_val_with_coordinates.parquet: 7941 molecules, 235573 atoms, extended=True, RDKit mol valid: 7941/7941 (100.0%)
+2026-06-18 08:00:31,802 - INFO - Loading cached dataset: /mnt/tank/scratch/ikarpushkina/sigma/ASPEN/data/train_test_val_df/cache/chaos_atomic_test_with_coordinates.parquet.2a0efbb7f4.pt
+2026-06-18 08:00:36,146 - INFO - chaos_atomic_test_with_coordinates.parquet: 7800 molecules, 221748 atoms, extended=True, RDKit mol valid: 7800/7800 (100.0%)
+2026-06-18 08:00:36,888 - INFO - dmpnn: 699,522 params (target 695,667, diff 0.6%)
+Traceback (most recent call last):
+  File "/mnt/tank/scratch/ikarpushkina/miniconda3/envs/sigma/lib/python3.10/runpy.py", line 196, in _run_module_as_main
+    return _run_code(code, main_globals, None,
+  File "/mnt/tank/scratch/ikarpushkina/miniconda3/envs/sigma/lib/python3.10/runpy.py", line 86, in _run_code
+    exec(code, run_globals)
+  File "/mnt/tank/scratch/ikarpushkina/sigma/ASPEN_benchmark/ASPEN/src/train.py", line 239, in <module>
+    main()
+  File "/mnt/tank/scratch/ikarpushkina/sigma/ASPEN_benchmark/ASPEN/src/train.py", line 164, in main
+    preds = model(data)
+  File "/mnt/tank/scratch/ikarpushkina/miniconda3/envs/sigma/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1736, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+  File "/mnt/tank/scratch/ikarpushkina/miniconda3/envs/sigma/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1747, in _call_impl
+    return forward_call(*args, **kwargs)
+  File "/mnt/tank/scratch/ikarpushkina/sigma/ASPEN_benchmark/ASPEN/src/models/dmpnn.py", line 201, in forward
+    h_bond = self.conv(h_bond, h_init, data.edge_index, rev_idx, N)
+  File "/mnt/tank/scratch/ikarpushkina/miniconda3/envs/sigma/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1736, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+  File "/mnt/tank/scratch/ikarpushkina/miniconda3/envs/sigma/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1747, in _call_impl
+    return forward_call(*args, **kwargs)
+  File "/mnt/tank/scratch/ikarpushkina/sigma/ASPEN_benchmark/ASPEN/src/models/dmpnn.py", line 103, in forward
+    agg_full = self.propagate(
+  File "/tmp/src.models.dmpnn_DMPNNConv_propagate_ws43iypy.py", line 144, in propagate
+    kwargs = self.collect(
+  File "/tmp/src.models.dmpnn_DMPNNConv_propagate_ws43iypy.py", line 89, in collect
+    self._set_size(size, j, x)
+  File "/mnt/tank/scratch/ikarpushkina/miniconda3/envs/sigma/lib/python3.10/site-packages/torch_geometric/nn/conv/message_passing.py", line 259, in _set_size
+    raise ValueError(
+ValueError: Encountered tensor with size 17918 in dimension -2, but expected size 671.
+2026-06-18 08:00:48,744 - INFO - Device: cuda
+2026-06-18 08:00:48,744 - INFO - Loading cached dataset: /mnt/tank/scratch/ikarpushkina/sigma/ASPEN/data/train_test_val_df/cache/chaos_atomic_train_with_coordinates.parquet.2a0efbb7f4.pt
+2026-06-18 08:01:06,195 - INFO - chaos_atomic_train_with_coordinates.parquet: 36981 molecules, 1077949 atoms, extended=True, RDKit mol valid: 36981/36981 (100.0%)
+2026-06-18 08:01:06,195 - INFO - Loading cached dataset: /mnt/tank/scratch/ikarpushkina/sigma/ASPEN/data/train_test_val_df/cache/chaos_atomic_val_with_coordinates.parquet.2a0efbb7f4.pt
+2026-06-18 08:01:10,582 - INFO - chaos_atomic_val_with_coordinates.parquet: 7941 molecules, 235573 atoms, extended=True, RDKit mol valid: 7941/7941 (100.0%)
+2026-06-18 08:01:10,583 - INFO - Loading cached dataset: /mnt/tank/scratch/ikarpushkina/sigma/ASPEN/data/train_test_val_df/cache/chaos_atomic_test_with_coordinates.parquet.2a0efbb7f4.pt
+2026-06-18 08:01:15,013 - INFO - chaos_atomic_test_with_coordinates.parquet: 7800 molecules, 221748 atoms, extended=True, RDKit mol valid: 7800/7800 (100.0%)
+2026-06-18 08:01:15,772 - INFO - dmpnn: 699,522 params (target 695,667, diff 0.6%)
+Traceback (most recent call last):
+  File "/mnt/tank/scratch/ikarpushkina/miniconda3/envs/sigma/lib/python3.10/runpy.py", line 196, in _run_module_as_main
+    return _run_code(code, main_globals, None,
+  File "/mnt/tank/scratch/ikarpushkina/miniconda3/envs/sigma/lib/python3.10/runpy.py", line 86, in _run_code
+    exec(code, run_globals)
+  File "/mnt/tank/scratch/ikarpushkina/sigma/ASPEN_benchmark/ASPEN/src/train.py", line 239, in <module>
+    main()
+  File "/mnt/tank/scratch/ikarpushkina/sigma/ASPEN_benchmark/ASPEN/src/train.py", line 164, in main
+    preds = model(data)
+  File "/mnt/tank/scratch/ikarpushkina/miniconda3/envs/sigma/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1736, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+  File "/mnt/tank/scratch/ikarpushkina/miniconda3/envs/sigma/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1747, in _call_impl
+    return forward_call(*args, **kwargs)
+  File "/mnt/tank/scratch/ikarpushkina/sigma/ASPEN_benchmark/ASPEN/src/models/dmpnn.py", line 201, in forward
+    h_bond = self.conv(h_bond, h_init, data.edge_index, rev_idx, N)
+  File "/mnt/tank/scratch/ikarpushkina/miniconda3/envs/sigma/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1736, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+  File "/mnt/tank/scratch/ikarpushkina/miniconda3/envs/sigma/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1747, in _call_impl
+    return forward_call(*args, **kwargs)
+  File "/mnt/tank/scratch/ikarpushkina/sigma/ASPEN_benchmark/ASPEN/src/models/dmpnn.py", line 103, in forward
+    agg_full = self.propagate(
+  File "/tmp/src.models.dmpnn_DMPNNConv_propagate_m90y802a.py", line 144, in propagate
+    kwargs = self.collect(
+  File "/tmp/src.models.dmpnn_DMPNNConv_propagate_m90y802a.py", line 89, in collect
+    self._set_size(size, j, x)
+  File "/mnt/tank/scratch/ikarpushkina/miniconda3/envs/sigma/lib/python3.10/site-packages/torch_geometric/nn/conv/message_passing.py", line 259, in _set_size
+    raise ValueError(
+ValueError: Encountered tensor with size 21684 in dimension -2, but expected size 765.
+2026-06-18 08:01:28,010 - INFO - Device: cuda
+2026-06-18 08:01:28,011 - INFO - Loading cached dataset: /mnt/tank/scratch/ikarpushkina/sigma/ASPEN/data/train_test_val_df/cache/chaos_atomic_train_with_coordinates.parquet.2a0efbb7f4.pt
+2026-06-18 08:01:45,459 - INFO - chaos_atomic_train_with_coordinates.parquet: 36981 molecules, 1077949 atoms, extended=True, RDKit mol valid: 36981/36981 (100.0%)
+2026-06-18 08:01:45,460 - INFO - Loading cached dataset: /mnt/tank/scratch/ikarpushkina/sigma/ASPEN/data/train_test_val_df/cache/chaos_atomic_val_with_coordinates.parquet.2a0efbb7f4.pt
+2026-06-18 08:01:49,784 - INFO - chaos_atomic_val_with_coordinates.parquet: 7941 molecules, 235573 atoms, extended=True, RDKit mol valid: 7941/7941 (100.0%)
+2026-06-18 08:01:49,785 - INFO - Loading cached dataset: /mnt/tank/scratch/ikarpushkina/sigma/ASPEN/data/train_test_val_df/cache/chaos_atomic_test_with_coordinates.parquet.2a0efbb7f4.pt
+2026-06-18 08:01:54,225 - INFO - chaos_atomic_test_with_coordinates.parquet: 7800 molecules, 221748 atoms, extended=True, RDKit mol valid: 7800/7800 (100.0%)
+2026-06-18 08:01:54,960 - INFO - dmpnn: 699,522 params (target 695,667, diff 0.6%)
+Traceback (most recent call last):
+  File "/mnt/tank/scratch/ikarpushkina/miniconda3/envs/sigma/lib/python3.10/runpy.py", line 196, in _run_module_as_main
+    return _run_code(code, main_globals, None,
+  File "/mnt/tank/scratch/ikarpushkina/miniconda3/envs/sigma/lib/python3.10/runpy.py", line 86, in _run_code
+    exec(code, run_globals)
+  File "/mnt/tank/scratch/ikarpushkina/sigma/ASPEN_benchmark/ASPEN/src/train.py", line 239, in <module>
+    main()
+  File "/mnt/tank/scratch/ikarpushkina/sigma/ASPEN_benchmark/ASPEN/src/train.py", line 164, in main
+    preds = model(data)
+  File "/mnt/tank/scratch/ikarpushkina/miniconda3/envs/sigma/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1736, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+  File "/mnt/tank/scratch/ikarpushkina/miniconda3/envs/sigma/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1747, in _call_impl
+    return forward_call(*args, **kwargs)
+  File "/mnt/tank/scratch/ikarpushkina/sigma/ASPEN_benchmark/ASPEN/src/models/dmpnn.py", line 201, in forward
+    h_bond = self.conv(h_bond, h_init, data.edge_index, rev_idx, N)
+  File "/mnt/tank/scratch/ikarpushkina/miniconda3/envs/sigma/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1736, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+  File "/mnt/tank/scratch/ikarpushkina/miniconda3/envs/sigma/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1747, in _call_impl
+    return forward_call(*args, **kwargs)
+  File "/mnt/tank/scratch/ikarpushkina/sigma/ASPEN_benchmark/ASPEN/src/models/dmpnn.py", line 103, in forward
+    agg_full = self.propagate(
+  File "/tmp/src.models.dmpnn_DMPNNConv_propagate_qcg8mw0_.py", line 144, in propagate
+    kwargs = self.collect(
+  File "/tmp/src.models.dmpnn_DMPNNConv_propagate_qcg8mw0_.py", line 89, in collect
+    self._set_size(size, j, x)
+  File "/mnt/tank/scratch/ikarpushkina/miniconda3/envs/sigma/lib/python3.10/site-packages/torch_geometric/nn/conv/message_passing.py", line 259, in _set_size
+    raise ValueError(
+ValueError: Encountered tensor with size 20276 in dimension -2, but expected size 736.

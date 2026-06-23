@@ -1,0 +1,8 @@
+defaults: base.yaml
+
+model:
+  name: gcn
+  hidden: 255
+  num_layers: 4
+  dropout: 0.05
+  n_params_target: 695667

@@ -1,0 +1,10 @@
+model,width_param,width_value,n_params,target,diff_pct
+attentive_fp,hidden,123,691830,695667,-0.55
+dmpnn,hidden,243,698307,695667,0.38
+final,hidden,213,806825,695667,15.98
+gat,hidden,256,701683,695667,0.86
+gatv2,hidden,216,690981,695667,-0.67
+gcn,hidden,255,694032,695667,-0.24
+gine,hidden,211,693494,695667,-0.31
+gps,hidden,124,693831,695667,-0.26
+schnet,hidden_channels,150,693202,695667,-0.35

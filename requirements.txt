@@ -1,0 +1,18 @@
+# Версии не закреплены жёстко — на сервере уже установлен рабочий стек
+# (torch + CUDA + torch_geometric, использовавшийся в исходных baseline-скриптах).
+# Эти строки — минимальный список того, что использует новый код.
+
+torch>=2.0
+torch_geometric>=2.4
+rdkit>=2023.9
+pandas
+numpy
+scipy
+pyarrow
+pyyaml
+tqdm
+
+# NOTE: torch_scatter / torch_cluster / pyg-lib НЕ требуются — radius_graph
+# реализован в src/data/features.py на чистом PyTorch (radius_graph_pure),
+# чтобы избежать проблем сборки compiled-расширений под конкретную
+# версию CUDA/torch.

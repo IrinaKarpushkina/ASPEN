@@ -1,0 +1,10 @@
+# configs/attentive_fp.yaml
+defaults: base.yaml
+
+model:
+  name: attentive_fp
+  hidden: 123
+  num_layers: 4
+  num_timesteps: 2
+  dropout: 0.05
+  n_params_target: 695667

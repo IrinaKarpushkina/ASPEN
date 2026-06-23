@@ -1,0 +1,10 @@
+defaults: base.yaml
+
+model:
+  name: gatv2
+  hidden: 216          # reduced vs GAT/GCN to absorb GATv2's extra W_r matrix
+  num_layers: 4
+  heads: 8
+  share_weights: false # canonical GATv2: two separate weight matrices
+  dropout: 0.05
+  n_params_target: 695667

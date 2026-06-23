@@ -1,0 +1,9 @@
+# configs/dmpnn.yaml
+defaults: base.yaml
+
+model:
+  name: dmpnn
+  hidden: 243
+  num_steps: 4
+  dropout: 0.05
+  n_params_target: 695667

@@ -1,0 +1,478 @@
+2026-06-17 22:59:48,601 - INFO - Device: cuda
+2026-06-17 22:59:48,638 - INFO - Loading cached dataset: /mnt/tank/scratch/ikarpushkina/sigma/ASPEN/data/train_test_val_df/cache/chaos_atomic_train_with_coordinates.parquet.2a0efbb7f4.pt
+2026-06-17 23:01:11,580 - INFO - chaos_atomic_train_with_coordinates.parquet: 36981 molecules, 1077949 atoms, extended=True, RDKit mol valid: 36981/36981 (100.0%)
+2026-06-17 23:01:11,649 - INFO - Loading cached dataset: /mnt/tank/scratch/ikarpushkina/sigma/ASPEN/data/train_test_val_df/cache/chaos_atomic_val_with_coordinates.parquet.2a0efbb7f4.pt
+2026-06-17 23:01:17,092 - INFO - chaos_atomic_val_with_coordinates.parquet: 7941 molecules, 235573 atoms, extended=True, RDKit mol valid: 7941/7941 (100.0%)
+2026-06-17 23:01:17,093 - INFO - Loading cached dataset: /mnt/tank/scratch/ikarpushkina/sigma/ASPEN/data/train_test_val_df/cache/chaos_atomic_test_with_coordinates.parquet.2a0efbb7f4.pt
+2026-06-17 23:01:22,341 - INFO - chaos_atomic_test_with_coordinates.parquet: 7800 molecules, 221748 atoms, extended=True, RDKit mol valid: 7800/7800 (100.0%)
+2026-06-17 23:01:23,083 - INFO - gps: 693,831 params (target 695,667, diff 0.3%)
+2026-06-17 23:03:05,642 - INFO - [gps_seed0_mse] Epoch   1/200 | Train=0.08100 | Val=0.05182 | wMAE=0.179048 | PolarMAE=0.030870 | EMD=0.001854 | MolEMD=0.000683 | R2=0.7643 | LR=2.98e-04 | 102.6s
+2026-06-17 23:03:05,749 - INFO -   -> new best (weighted_mae=0.179048), saved results/checkpoints/gps_seed0_mse.pt
+2026-06-17 23:04:46,697 - INFO - [gps_seed0_mse] Epoch   2/200 | Train=0.04506 | Val=0.04691 | wMAE=0.169944 | PolarMAE=0.025644 | EMD=0.001493 | MolEMD=0.000594 | R2=0.7851 | LR=2.93e-04 | 100.9s
+2026-06-17 23:04:46,772 - INFO -   -> new best (weighted_mae=0.169944), saved results/checkpoints/gps_seed0_mse.pt
+2026-06-17 23:06:31,990 - INFO - [gps_seed0_mse] Epoch   3/200 | Train=0.03869 | Val=0.04012 | wMAE=0.158780 | PolarMAE=0.022842 | EMD=0.001336 | MolEMD=0.000476 | R2=0.8166 | LR=2.84e-04 | 105.2s
+2026-06-17 23:06:32,068 - INFO -   -> new best (weighted_mae=0.158780), saved results/checkpoints/gps_seed0_mse.pt
+2026-06-17 23:08:14,928 - INFO - [gps_seed0_mse] Epoch   4/200 | Train=0.03532 | Val=0.03739 | wMAE=0.151082 | PolarMAE=0.022144 | EMD=0.001261 | MolEMD=0.000460 | R2=0.8298 | LR=2.71e-04 | 102.9s
+2026-06-17 23:08:15,016 - INFO -   -> new best (weighted_mae=0.151082), saved results/checkpoints/gps_seed0_mse.pt
+2026-06-17 23:09:53,487 - INFO - [gps_seed0_mse] Epoch   5/200 | Train=0.03309 | Val=0.03600 | wMAE=0.149499 | PolarMAE=0.021519 | EMD=0.001212 | MolEMD=0.000454 | R2=0.8331 | LR=2.56e-04 | 98.5s
+2026-06-17 23:09:53,564 - INFO -   -> new best (weighted_mae=0.149499), saved results/checkpoints/gps_seed0_mse.pt
+2026-06-17 23:11:37,806 - INFO - [gps_seed0_mse] Epoch   6/200 | Train=0.03145 | Val=0.03351 | wMAE=0.143111 | PolarMAE=0.020264 | EMD=0.001132 | MolEMD=0.000389 | R2=0.8459 | LR=2.38e-04 | 104.2s
+2026-06-17 23:11:37,881 - INFO -   -> new best (weighted_mae=0.143111), saved results/checkpoints/gps_seed0_mse.pt
+2026-06-17 23:13:21,955 - INFO - [gps_seed0_mse] Epoch   7/200 | Train=0.03020 | Val=0.03450 | wMAE=0.146816 | PolarMAE=0.019424 | EMD=0.001065 | MolEMD=0.000395 | R2=0.8400 | LR=2.18e-04 | 104.1s
+2026-06-17 23:15:03,217 - INFO - [gps_seed0_mse] Epoch   8/200 | Train=0.02918 | Val=0.03227 | wMAE=0.140819 | PolarMAE=0.019508 | EMD=0.001052 | MolEMD=0.000382 | R2=0.8492 | LR=1.97e-04 | 101.3s
+2026-06-17 23:15:03,314 - INFO -   -> new best (weighted_mae=0.140819), saved results/checkpoints/gps_seed0_mse.pt
+2026-06-17 23:16:51,312 - INFO - [gps_seed0_mse] Epoch   9/200 | Train=0.02829 | Val=0.03126 | wMAE=0.136980 | PolarMAE=0.019420 | EMD=0.001025 | MolEMD=0.000365 | R2=0.8554 | LR=1.74e-04 | 108.0s
+2026-06-17 23:16:51,387 - INFO -   -> new best (weighted_mae=0.136980), saved results/checkpoints/gps_seed0_mse.pt
+2026-06-17 23:18:39,747 - INFO - [gps_seed0_mse] Epoch  10/200 | Train=0.02755 | Val=0.03037 | wMAE=0.136922 | PolarMAE=0.018872 | EMD=0.001002 | MolEMD=0.000347 | R2=0.8590 | LR=1.50e-04 | 108.4s
+2026-06-17 23:18:39,832 - INFO -   -> new best (weighted_mae=0.136922), saved results/checkpoints/gps_seed0_mse.pt
+2026-06-17 23:20:23,044 - INFO - [gps_seed0_mse] Epoch  11/200 | Train=0.02685 | Val=0.02992 | wMAE=0.136468 | PolarMAE=0.018507 | EMD=0.000983 | MolEMD=0.000349 | R2=0.8608 | LR=1.27e-04 | 103.2s
+2026-06-17 23:20:23,117 - INFO -   -> new best (weighted_mae=0.136468), saved results/checkpoints/gps_seed0_mse.pt
+2026-06-17 23:22:05,839 - INFO - [gps_seed0_mse] Epoch  12/200 | Train=0.02633 | Val=0.02979 | wMAE=0.134485 | PolarMAE=0.018815 | EMD=0.000983 | MolEMD=0.000349 | R2=0.8619 | LR=1.04e-04 | 102.7s
+2026-06-17 23:22:05,924 - INFO -   -> new best (weighted_mae=0.134485), saved results/checkpoints/gps_seed0_mse.pt
+2026-06-17 23:23:44,048 - INFO - [gps_seed0_mse] Epoch  13/200 | Train=0.02581 | Val=0.02912 | wMAE=0.134702 | PolarMAE=0.018341 | EMD=0.000956 | MolEMD=0.000348 | R2=0.8637 | LR=8.26e-05 | 98.1s
+2026-06-17 23:25:30,373 - INFO - [gps_seed0_mse] Epoch  14/200 | Train=0.02540 | Val=0.02857 | wMAE=0.132430 | PolarMAE=0.018208 | EMD=0.000940 | MolEMD=0.000329 | R2=0.8674 | LR=6.26e-05 | 106.3s
+2026-06-17 23:25:30,450 - INFO -   -> new best (weighted_mae=0.132430), saved results/checkpoints/gps_seed0_mse.pt
+2026-06-17 23:27:13,245 - INFO - [gps_seed0_mse] Epoch  15/200 | Train=0.02506 | Val=0.02824 | wMAE=0.131796 | PolarMAE=0.018049 | EMD=0.000934 | MolEMD=0.000325 | R2=0.8688 | LR=4.48e-05 | 102.8s
+2026-06-17 23:27:13,324 - INFO -   -> new best (weighted_mae=0.131796), saved results/checkpoints/gps_seed0_mse.pt
+2026-06-17 23:28:56,465 - INFO - [gps_seed0_mse] Epoch  16/200 | Train=0.02479 | Val=0.02776 | wMAE=0.130624 | PolarMAE=0.018127 | EMD=0.000925 | MolEMD=0.000317 | R2=0.8713 | LR=2.96e-05 | 103.1s
+2026-06-17 23:28:56,538 - INFO -   -> new best (weighted_mae=0.130624), saved results/checkpoints/gps_seed0_mse.pt
+2026-06-17 23:30:38,357 - INFO - [gps_seed0_mse] Epoch  17/200 | Train=0.02459 | Val=0.02770 | wMAE=0.130596 | PolarMAE=0.018123 | EMD=0.000926 | MolEMD=0.000320 | R2=0.8717 | LR=1.73e-05 | 101.8s
+2026-06-17 23:30:38,453 - INFO -   -> new best (weighted_mae=0.130596), saved results/checkpoints/gps_seed0_mse.pt
+2026-06-17 23:32:21,311 - INFO - [gps_seed0_mse] Epoch  18/200 | Train=0.02440 | Val=0.02754 | wMAE=0.129955 | PolarMAE=0.017858 | EMD=0.000911 | MolEMD=0.000315 | R2=0.8723 | LR=8.32e-06 | 102.9s
+2026-06-17 23:32:21,388 - INFO -   -> new best (weighted_mae=0.129955), saved results/checkpoints/gps_seed0_mse.pt
+2026-06-17 23:34:04,852 - INFO - [gps_seed0_mse] Epoch  19/200 | Train=0.02428 | Val=0.02741 | wMAE=0.129731 | PolarMAE=0.017777 | EMD=0.000909 | MolEMD=0.000315 | R2=0.8729 | LR=2.84e-06 | 103.5s
+2026-06-17 23:34:04,929 - INFO -   -> new best (weighted_mae=0.129731), saved results/checkpoints/gps_seed0_mse.pt
+2026-06-17 23:35:48,700 - INFO - [gps_seed0_mse] Epoch  20/200 | Train=0.02422 | Val=0.02739 | wMAE=0.129811 | PolarMAE=0.017822 | EMD=0.000911 | MolEMD=0.000314 | R2=0.8730 | LR=3.00e-04 | 103.8s
+2026-06-17 23:37:32,053 - INFO - [gps_seed0_mse] Epoch  21/200 | Train=0.02704 | Val=0.03009 | wMAE=0.137790 | PolarMAE=0.017960 | EMD=0.000965 | MolEMD=0.000354 | R2=0.8576 | LR=3.00e-04 | 103.4s
+2026-06-17 23:39:10,569 - INFO - [gps_seed0_mse] Epoch  22/200 | Train=0.02586 | Val=0.02874 | wMAE=0.133418 | PolarMAE=0.018041 | EMD=0.000939 | MolEMD=0.000332 | R2=0.8655 | LR=2.98e-04 | 98.5s
+2026-06-17 23:41:00,133 - INFO - [gps_seed0_mse] Epoch  23/200 | Train=0.02541 | Val=0.02854 | wMAE=0.132153 | PolarMAE=0.018218 | EMD=0.000931 | MolEMD=0.000330 | R2=0.8677 | LR=2.96e-04 | 109.6s
+2026-06-17 23:42:41,735 - INFO - [gps_seed0_mse] Epoch  24/200 | Train=0.02497 | Val=0.02841 | wMAE=0.131974 | PolarMAE=0.018628 | EMD=0.000935 | MolEMD=0.000347 | R2=0.8672 | LR=2.93e-04 | 101.6s
+2026-06-17 23:44:24,308 - INFO - [gps_seed0_mse] Epoch  25/200 | Train=0.02457 | Val=0.02872 | wMAE=0.132813 | PolarMAE=0.017443 | EMD=0.000916 | MolEMD=0.000351 | R2=0.8670 | LR=2.89e-04 | 102.6s
+2026-06-17 23:46:10,225 - INFO - [gps_seed0_mse] Epoch  26/200 | Train=0.02422 | Val=0.02763 | wMAE=0.129144 | PolarMAE=0.017621 | EMD=0.000894 | MolEMD=0.000322 | R2=0.8715 | LR=2.84e-04 | 105.9s
+2026-06-17 23:46:10,304 - INFO -   -> new best (weighted_mae=0.129144), saved results/checkpoints/gps_seed0_mse.pt
+2026-06-17 23:47:55,374 - INFO - [gps_seed0_mse] Epoch  27/200 | Train=0.02392 | Val=0.02681 | wMAE=0.128084 | PolarMAE=0.017672 | EMD=0.000890 | MolEMD=0.000319 | R2=0.8744 | LR=2.78e-04 | 105.1s
+2026-06-17 23:47:55,451 - INFO -   -> new best (weighted_mae=0.128084), saved results/checkpoints/gps_seed0_mse.pt
+2026-06-17 23:49:38,986 - INFO - [gps_seed0_mse] Epoch  28/200 | Train=0.02367 | Val=0.02673 | wMAE=0.127927 | PolarMAE=0.018239 | EMD=0.000894 | MolEMD=0.000324 | R2=0.8750 | LR=2.71e-04 | 103.5s
+2026-06-17 23:49:39,062 - INFO -   -> new best (weighted_mae=0.127927), saved results/checkpoints/gps_seed0_mse.pt
+2026-06-17 23:51:27,037 - INFO - [gps_seed0_mse] Epoch  29/200 | Train=0.02334 | Val=0.02634 | wMAE=0.127313 | PolarMAE=0.017964 | EMD=0.000877 | MolEMD=0.000333 | R2=0.8771 | LR=2.64e-04 | 108.0s
+2026-06-17 23:51:27,115 - INFO -   -> new best (weighted_mae=0.127313), saved results/checkpoints/gps_seed0_mse.pt
+2026-06-17 23:53:13,669 - INFO - [gps_seed0_mse] Epoch  30/200 | Train=0.02307 | Val=0.02652 | wMAE=0.128619 | PolarMAE=0.017302 | EMD=0.000866 | MolEMD=0.000314 | R2=0.8744 | LR=2.56e-04 | 106.6s
+2026-06-17 23:55:00,135 - INFO - [gps_seed0_mse] Epoch  31/200 | Train=0.02282 | Val=0.02622 | wMAE=0.126763 | PolarMAE=0.017340 | EMD=0.000867 | MolEMD=0.000319 | R2=0.8774 | LR=2.48e-04 | 106.5s
+2026-06-17 23:55:00,216 - INFO -   -> new best (weighted_mae=0.126763), saved results/checkpoints/gps_seed0_mse.pt
+2026-06-17 23:56:40,939 - INFO - [gps_seed0_mse] Epoch  32/200 | Train=0.02262 | Val=0.02567 | wMAE=0.126412 | PolarMAE=0.017330 | EMD=0.000868 | MolEMD=0.000319 | R2=0.8800 | LR=2.38e-04 | 100.7s
+2026-06-17 23:56:41,014 - INFO -   -> new best (weighted_mae=0.126412), saved results/checkpoints/gps_seed0_mse.pt
+2026-06-17 23:58:21,447 - INFO - [gps_seed0_mse] Epoch  33/200 | Train=0.02243 | Val=0.02535 | wMAE=0.125860 | PolarMAE=0.017041 | EMD=0.000843 | MolEMD=0.000301 | R2=0.8812 | LR=2.29e-04 | 100.4s
+2026-06-17 23:58:21,524 - INFO -   -> new best (weighted_mae=0.125860), saved results/checkpoints/gps_seed0_mse.pt
+2026-06-17 23:59:58,952 - INFO - [gps_seed0_mse] Epoch  34/200 | Train=0.02215 | Val=0.02525 | wMAE=0.124283 | PolarMAE=0.016653 | EMD=0.000825 | MolEMD=0.000309 | R2=0.8818 | LR=2.18e-04 | 97.4s
+2026-06-17 23:59:59,029 - INFO -   -> new best (weighted_mae=0.124283), saved results/checkpoints/gps_seed0_mse.pt
+2026-06-18 00:01:44,557 - INFO - [gps_seed0_mse] Epoch  35/200 | Train=0.02201 | Val=0.02525 | wMAE=0.125380 | PolarMAE=0.017102 | EMD=0.000849 | MolEMD=0.000319 | R2=0.8821 | LR=2.08e-04 | 105.5s
+2026-06-18 00:03:22,117 - INFO - [gps_seed0_mse] Epoch  36/200 | Train=0.02180 | Val=0.02508 | wMAE=0.124408 | PolarMAE=0.016647 | EMD=0.000821 | MolEMD=0.000298 | R2=0.8827 | LR=1.97e-04 | 97.6s
+2026-06-18 00:05:07,319 - INFO - [gps_seed0_mse] Epoch  37/200 | Train=0.02160 | Val=0.02489 | wMAE=0.124612 | PolarMAE=0.016858 | EMD=0.000837 | MolEMD=0.000308 | R2=0.8832 | LR=1.85e-04 | 105.2s
+2026-06-18 00:06:50,320 - INFO - [gps_seed0_mse] Epoch  38/200 | Train=0.02143 | Val=0.02509 | wMAE=0.124599 | PolarMAE=0.016599 | EMD=0.000818 | MolEMD=0.000299 | R2=0.8816 | LR=1.74e-04 | 103.0s
+2026-06-18 00:08:35,592 - INFO - [gps_seed0_mse] Epoch  39/200 | Train=0.02125 | Val=0.02470 | wMAE=0.123772 | PolarMAE=0.016766 | EMD=0.000819 | MolEMD=0.000296 | R2=0.8849 | LR=1.62e-04 | 105.3s
+2026-06-18 00:08:35,670 - INFO -   -> new best (weighted_mae=0.123772), saved results/checkpoints/gps_seed0_mse.pt
+2026-06-18 00:10:15,879 - INFO - [gps_seed0_mse] Epoch  40/200 | Train=0.02108 | Val=0.02450 | wMAE=0.122827 | PolarMAE=0.016803 | EMD=0.000812 | MolEMD=0.000301 | R2=0.8858 | LR=1.50e-04 | 100.2s
+2026-06-18 00:10:15,958 - INFO -   -> new best (weighted_mae=0.122827), saved results/checkpoints/gps_seed0_mse.pt
+2026-06-18 00:11:53,202 - INFO - [gps_seed0_mse] Epoch  41/200 | Train=0.02093 | Val=0.02438 | wMAE=0.122367 | PolarMAE=0.016671 | EMD=0.000800 | MolEMD=0.000291 | R2=0.8856 | LR=1.39e-04 | 97.2s
+2026-06-18 00:11:53,283 - INFO -   -> new best (weighted_mae=0.122367), saved results/checkpoints/gps_seed0_mse.pt
+2026-06-18 00:13:32,669 - INFO - [gps_seed0_mse] Epoch  42/200 | Train=0.02082 | Val=0.02466 | wMAE=0.122970 | PolarMAE=0.016632 | EMD=0.000804 | MolEMD=0.000294 | R2=0.8845 | LR=1.27e-04 | 99.4s
+2026-06-18 00:15:17,823 - INFO - [gps_seed0_mse] Epoch  43/200 | Train=0.02065 | Val=0.02449 | wMAE=0.122530 | PolarMAE=0.016593 | EMD=0.000799 | MolEMD=0.000289 | R2=0.8858 | LR=1.16e-04 | 105.2s
+2026-06-18 00:16:59,198 - INFO - [gps_seed0_mse] Epoch  44/200 | Train=0.02054 | Val=0.02392 | wMAE=0.122303 | PolarMAE=0.016632 | EMD=0.000799 | MolEMD=0.000302 | R2=0.8877 | LR=1.04e-04 | 101.4s
+2026-06-18 00:16:59,282 - INFO -   -> new best (weighted_mae=0.122303), saved results/checkpoints/gps_seed0_mse.pt
+2026-06-18 00:18:41,453 - INFO - [gps_seed0_mse] Epoch  45/200 | Train=0.02041 | Val=0.02401 | wMAE=0.122043 | PolarMAE=0.016811 | EMD=0.000796 | MolEMD=0.000292 | R2=0.8870 | LR=9.33e-05 | 102.2s
+2026-06-18 00:18:41,528 - INFO -   -> new best (weighted_mae=0.122043), saved results/checkpoints/gps_seed0_mse.pt
+2026-06-18 00:20:21,873 - INFO - [gps_seed0_mse] Epoch  46/200 | Train=0.02030 | Val=0.02366 | wMAE=0.121276 | PolarMAE=0.016224 | EMD=0.000783 | MolEMD=0.000283 | R2=0.8892 | LR=8.26e-05 | 100.3s
+2026-06-18 00:20:21,958 - INFO -   -> new best (weighted_mae=0.121276), saved results/checkpoints/gps_seed0_mse.pt
+2026-06-18 00:22:05,188 - INFO - [gps_seed0_mse] Epoch  47/200 | Train=0.02018 | Val=0.02384 | wMAE=0.121470 | PolarMAE=0.016488 | EMD=0.000786 | MolEMD=0.000284 | R2=0.8879 | LR=7.24e-05 | 103.2s
+2026-06-18 00:23:44,433 - INFO - [gps_seed0_mse] Epoch  48/200 | Train=0.02010 | Val=0.02354 | wMAE=0.121470 | PolarMAE=0.016338 | EMD=0.000788 | MolEMD=0.000286 | R2=0.8892 | LR=6.26e-05 | 99.2s
+2026-06-18 00:25:26,658 - INFO - [gps_seed0_mse] Epoch  49/200 | Train=0.02002 | Val=0.02347 | wMAE=0.120822 | PolarMAE=0.016570 | EMD=0.000788 | MolEMD=0.000283 | R2=0.8898 | LR=5.34e-05 | 102.2s
+2026-06-18 00:25:26,747 - INFO -   -> new best (weighted_mae=0.120822), saved results/checkpoints/gps_seed0_mse.pt
+2026-06-18 00:27:12,106 - INFO - [gps_seed0_mse] Epoch  50/200 | Train=0.01993 | Val=0.02354 | wMAE=0.120574 | PolarMAE=0.016266 | EMD=0.000782 | MolEMD=0.000286 | R2=0.8897 | LR=4.48e-05 | 105.4s
+2026-06-18 00:27:12,182 - INFO -   -> new best (weighted_mae=0.120574), saved results/checkpoints/gps_seed0_mse.pt
+2026-06-18 00:28:57,156 - INFO - [gps_seed0_mse] Epoch  51/200 | Train=0.01985 | Val=0.02338 | wMAE=0.120311 | PolarMAE=0.016161 | EMD=0.000776 | MolEMD=0.000279 | R2=0.8906 | LR=3.68e-05 | 105.0s
+2026-06-18 00:28:57,275 - INFO -   -> new best (weighted_mae=0.120311), saved results/checkpoints/gps_seed0_mse.pt
+2026-06-18 00:30:41,383 - INFO - [gps_seed0_mse] Epoch  52/200 | Train=0.01979 | Val=0.02333 | wMAE=0.120424 | PolarMAE=0.016310 | EMD=0.000776 | MolEMD=0.000278 | R2=0.8903 | LR=2.96e-05 | 104.1s
+2026-06-18 00:32:24,406 - INFO - [gps_seed0_mse] Epoch  53/200 | Train=0.01972 | Val=0.02334 | wMAE=0.120458 | PolarMAE=0.016316 | EMD=0.000776 | MolEMD=0.000282 | R2=0.8904 | LR=2.30e-05 | 103.0s
+2026-06-18 00:34:05,714 - INFO - [gps_seed0_mse] Epoch  54/200 | Train=0.01968 | Val=0.02325 | wMAE=0.120073 | PolarMAE=0.016252 | EMD=0.000772 | MolEMD=0.000277 | R2=0.8911 | LR=1.73e-05 | 101.3s
+2026-06-18 00:34:05,788 - INFO -   -> new best (weighted_mae=0.120073), saved results/checkpoints/gps_seed0_mse.pt
+2026-06-18 00:35:51,741 - INFO - [gps_seed0_mse] Epoch  55/200 | Train=0.01963 | Val=0.02318 | wMAE=0.119705 | PolarMAE=0.016211 | EMD=0.000772 | MolEMD=0.000277 | R2=0.8914 | LR=1.24e-05 | 106.0s
+2026-06-18 00:35:51,815 - INFO -   -> new best (weighted_mae=0.119705), saved results/checkpoints/gps_seed0_mse.pt
+2026-06-18 00:37:36,989 - INFO - [gps_seed0_mse] Epoch  56/200 | Train=0.01960 | Val=0.02315 | wMAE=0.119663 | PolarMAE=0.016221 | EMD=0.000770 | MolEMD=0.000277 | R2=0.8917 | LR=8.32e-06 | 105.2s
+2026-06-18 00:37:37,066 - INFO -   -> new best (weighted_mae=0.119663), saved results/checkpoints/gps_seed0_mse.pt
+2026-06-18 00:39:19,722 - INFO - [gps_seed0_mse] Epoch  57/200 | Train=0.01954 | Val=0.02316 | wMAE=0.119806 | PolarMAE=0.016291 | EMD=0.000773 | MolEMD=0.000279 | R2=0.8915 | LR=5.13e-06 | 102.7s
+2026-06-18 00:41:04,113 - INFO - [gps_seed0_mse] Epoch  58/200 | Train=0.01954 | Val=0.02315 | wMAE=0.119828 | PolarMAE=0.016193 | EMD=0.000770 | MolEMD=0.000277 | R2=0.8915 | LR=2.84e-06 | 104.4s
+2026-06-18 00:42:49,368 - INFO - [gps_seed0_mse] Epoch  59/200 | Train=0.01952 | Val=0.02312 | wMAE=0.119693 | PolarMAE=0.016221 | EMD=0.000769 | MolEMD=0.000276 | R2=0.8917 | LR=1.46e-06 | 105.3s
+2026-06-18 00:44:29,621 - INFO - [gps_seed0_mse] Epoch  60/200 | Train=0.01950 | Val=0.02310 | wMAE=0.119633 | PolarMAE=0.016234 | EMD=0.000770 | MolEMD=0.000276 | R2=0.8919 | LR=3.00e-04 | 100.3s
+2026-06-18 00:44:29,700 - INFO -   -> new best (weighted_mae=0.119633), saved results/checkpoints/gps_seed0_mse.pt
+2026-06-18 00:46:12,214 - INFO - [gps_seed0_mse] Epoch  61/200 | Train=0.02182 | Val=0.02503 | wMAE=0.124182 | PolarMAE=0.016425 | EMD=0.000801 | MolEMD=0.000311 | R2=0.8825 | LR=3.00e-04 | 102.5s
+2026-06-18 00:47:55,052 - INFO - [gps_seed0_mse] Epoch  62/200 | Train=0.02119 | Val=0.02510 | wMAE=0.123522 | PolarMAE=0.016943 | EMD=0.000805 | MolEMD=0.000299 | R2=0.8815 | LR=3.00e-04 | 102.8s
+2026-06-18 00:49:38,050 - INFO - [gps_seed0_mse] Epoch  63/200 | Train=0.02110 | Val=0.02437 | wMAE=0.123407 | PolarMAE=0.016354 | EMD=0.000798 | MolEMD=0.000294 | R2=0.8850 | LR=2.99e-04 | 103.0s
+2026-06-18 00:51:22,411 - INFO - [gps_seed0_mse] Epoch  64/200 | Train=0.02097 | Val=0.02451 | wMAE=0.122311 | PolarMAE=0.017164 | EMD=0.000824 | MolEMD=0.000311 | R2=0.8855 | LR=2.98e-04 | 104.4s
+2026-06-18 00:53:03,976 - INFO - [gps_seed0_mse] Epoch  65/200 | Train=0.02082 | Val=0.02494 | wMAE=0.124467 | PolarMAE=0.017278 | EMD=0.000819 | MolEMD=0.000300 | R2=0.8829 | LR=2.97e-04 | 101.6s
+2026-06-18 00:54:49,321 - INFO - [gps_seed0_mse] Epoch  66/200 | Train=0.02078 | Val=0.02425 | wMAE=0.122046 | PolarMAE=0.016494 | EMD=0.000791 | MolEMD=0.000295 | R2=0.8872 | LR=2.96e-04 | 105.3s
+2026-06-18 00:56:26,092 - INFO - [gps_seed0_mse] Epoch  67/200 | Train=0.02060 | Val=0.02398 | wMAE=0.121410 | PolarMAE=0.016652 | EMD=0.000793 | MolEMD=0.000288 | R2=0.8876 | LR=2.94e-04 | 96.8s
+2026-06-18 00:58:14,675 - INFO - [gps_seed0_mse] Epoch  68/200 | Train=0.02055 | Val=0.02466 | wMAE=0.122339 | PolarMAE=0.016644 | EMD=0.000795 | MolEMD=0.000292 | R2=0.8857 | LR=2.93e-04 | 108.6s
+2026-06-18 00:59:55,071 - INFO - [gps_seed0_mse] Epoch  69/200 | Train=0.02050 | Val=0.02412 | wMAE=0.122064 | PolarMAE=0.016434 | EMD=0.000798 | MolEMD=0.000298 | R2=0.8872 | LR=2.91e-04 | 100.4s
+2026-06-18 01:01:33,599 - INFO - [gps_seed0_mse] Epoch  70/200 | Train=0.02039 | Val=0.02407 | wMAE=0.121647 | PolarMAE=0.016532 | EMD=0.000794 | MolEMD=0.000285 | R2=0.8875 | LR=2.89e-04 | 98.5s
+2026-06-18 01:03:13,727 - INFO - [gps_seed0_mse] Epoch  71/200 | Train=0.02034 | Val=0.02390 | wMAE=0.121423 | PolarMAE=0.016620 | EMD=0.000785 | MolEMD=0.000286 | R2=0.8882 | LR=2.86e-04 | 100.1s
+2026-06-18 01:04:53,838 - INFO - [gps_seed0_mse] Epoch  72/200 | Train=0.02019 | Val=0.02371 | wMAE=0.121222 | PolarMAE=0.016353 | EMD=0.000783 | MolEMD=0.000280 | R2=0.8883 | LR=2.84e-04 | 100.1s
+2026-06-18 01:06:35,936 - INFO - [gps_seed0_mse] Epoch  73/200 | Train=0.02010 | Val=0.02369 | wMAE=0.120365 | PolarMAE=0.016795 | EMD=0.000793 | MolEMD=0.000293 | R2=0.8895 | LR=2.81e-04 | 102.1s
+2026-06-18 01:08:18,299 - INFO - [gps_seed0_mse] Epoch  74/200 | Train=0.02006 | Val=0.02360 | wMAE=0.120989 | PolarMAE=0.016415 | EMD=0.000778 | MolEMD=0.000281 | R2=0.8896 | LR=2.78e-04 | 102.4s
+2026-06-18 01:09:59,851 - INFO - [gps_seed0_mse] Epoch  75/200 | Train=0.01998 | Val=0.02378 | wMAE=0.121391 | PolarMAE=0.016617 | EMD=0.000782 | MolEMD=0.000277 | R2=0.8893 | LR=2.75e-04 | 101.5s
+2026-06-18 01:11:42,000 - INFO - [gps_seed0_mse] Epoch  76/200 | Train=0.01988 | Val=0.02339 | wMAE=0.120189 | PolarMAE=0.016452 | EMD=0.000777 | MolEMD=0.000278 | R2=0.8907 | LR=2.71e-04 | 102.1s
+2026-06-18 01:13:24,008 - INFO - [gps_seed0_mse] Epoch  77/200 | Train=0.01980 | Val=0.02352 | wMAE=0.120667 | PolarMAE=0.016247 | EMD=0.000767 | MolEMD=0.000287 | R2=0.8892 | LR=2.68e-04 | 102.0s
+2026-06-18 01:15:06,941 - INFO - [gps_seed0_mse] Epoch  78/200 | Train=0.01973 | Val=0.02356 | wMAE=0.120849 | PolarMAE=0.016512 | EMD=0.000780 | MolEMD=0.000294 | R2=0.8898 | LR=2.64e-04 | 102.9s
+2026-06-18 01:16:48,533 - INFO - [gps_seed0_mse] Epoch  79/200 | Train=0.01969 | Val=0.02331 | wMAE=0.120790 | PolarMAE=0.016497 | EMD=0.000768 | MolEMD=0.000279 | R2=0.8901 | LR=2.60e-04 | 101.6s
+2026-06-18 01:18:31,846 - INFO - [gps_seed0_mse] Epoch  80/200 | Train=0.01960 | Val=0.02323 | wMAE=0.119750 | PolarMAE=0.016591 | EMD=0.000775 | MolEMD=0.000291 | R2=0.8915 | LR=2.56e-04 | 103.3s
+2026-06-18 01:18:31,846 - INFO - Early stopping at epoch 80.
+2026-06-18 01:18:31,846 - INFO - Loading best checkpoint for test evaluation...
+2026-06-18 01:19:11,036 - INFO - [gps_seed0_mse] TEST METRICS: {'loss': 0.021312870027927252, 'weighted_r2': 0.8977422118186951, 'weighted_mae': 0.11889544129371643, 'polar_mae': 0.017890565097332, 'cosine_similarity': 0.9311499944225771, 'emd_raw': 0.0008156658209139342, 'emd_normalized': 0.0008156658209139367, 'molecular_mae': 0.5130524032945052, 'molecular_emd': 0.0002612207678146431, 'molecular_cosine': 0.9934762746515946, 'molecular_polar_mae': 0.23700880891189743}
+2026-06-18 01:19:11,061 - INFO - Saved results to results/metrics/gps_seed0_mse.json
+2026-06-18 01:19:53,406 - INFO - Device: cuda
+2026-06-18 01:19:53,449 - INFO - Loading cached dataset: /mnt/tank/scratch/ikarpushkina/sigma/ASPEN/data/train_test_val_df/cache/chaos_atomic_train_with_coordinates.parquet.2a0efbb7f4.pt
+2026-06-18 01:20:11,904 - INFO - chaos_atomic_train_with_coordinates.parquet: 36981 molecules, 1077949 atoms, extended=True, RDKit mol valid: 36981/36981 (100.0%)
+2026-06-18 01:20:11,905 - INFO - Loading cached dataset: /mnt/tank/scratch/ikarpushkina/sigma/ASPEN/data/train_test_val_df/cache/chaos_atomic_val_with_coordinates.parquet.2a0efbb7f4.pt
+2026-06-18 01:20:16,341 - INFO - chaos_atomic_val_with_coordinates.parquet: 7941 molecules, 235573 atoms, extended=True, RDKit mol valid: 7941/7941 (100.0%)
+2026-06-18 01:20:16,342 - INFO - Loading cached dataset: /mnt/tank/scratch/ikarpushkina/sigma/ASPEN/data/train_test_val_df/cache/chaos_atomic_test_with_coordinates.parquet.2a0efbb7f4.pt
+2026-06-18 01:20:20,691 - INFO - chaos_atomic_test_with_coordinates.parquet: 7800 molecules, 221748 atoms, extended=True, RDKit mol valid: 7800/7800 (100.0%)
+2026-06-18 01:20:21,439 - INFO - gps: 693,831 params (target 695,667, diff 0.3%)
+2026-06-18 01:22:04,644 - INFO - [gps_seed1_mse] Epoch   1/200 | Train=0.08228 | Val=0.05310 | wMAE=0.184237 | PolarMAE=0.029034 | EMD=0.001758 | MolEMD=0.000636 | R2=0.7578 | LR=2.98e-04 | 103.2s
+2026-06-18 01:22:04,736 - INFO -   -> new best (weighted_mae=0.184237), saved results/checkpoints/gps_seed1_mse.pt
+2026-06-18 01:23:52,314 - INFO - [gps_seed1_mse] Epoch   2/200 | Train=0.04492 | Val=0.04329 | wMAE=0.161510 | PolarMAE=0.025022 | EMD=0.001450 | MolEMD=0.000598 | R2=0.8035 | LR=2.93e-04 | 107.6s
+2026-06-18 01:23:52,391 - INFO -   -> new best (weighted_mae=0.161510), saved results/checkpoints/gps_seed1_mse.pt
+2026-06-18 01:25:41,866 - INFO - [gps_seed1_mse] Epoch   3/200 | Train=0.03818 | Val=0.04096 | wMAE=0.158254 | PolarMAE=0.022863 | EMD=0.001283 | MolEMD=0.000465 | R2=0.8107 | LR=2.84e-04 | 109.5s
+2026-06-18 01:25:41,939 - INFO -   -> new best (weighted_mae=0.158254), saved results/checkpoints/gps_seed1_mse.pt
+2026-06-18 01:27:19,481 - INFO - [gps_seed1_mse] Epoch   4/200 | Train=0.03486 | Val=0.03704 | wMAE=0.151902 | PolarMAE=0.021310 | EMD=0.001199 | MolEMD=0.000432 | R2=0.8303 | LR=2.71e-04 | 97.5s
+2026-06-18 01:27:19,556 - INFO -   -> new best (weighted_mae=0.151902), saved results/checkpoints/gps_seed1_mse.pt
+2026-06-18 01:29:03,753 - INFO - [gps_seed1_mse] Epoch   5/200 | Train=0.03276 | Val=0.03460 | wMAE=0.144709 | PolarMAE=0.021137 | EMD=0.001149 | MolEMD=0.000407 | R2=0.8406 | LR=2.56e-04 | 104.2s
+2026-06-18 01:29:03,831 - INFO -   -> new best (weighted_mae=0.144709), saved results/checkpoints/gps_seed1_mse.pt
+2026-06-18 01:30:47,110 - INFO - [gps_seed1_mse] Epoch   6/200 | Train=0.03111 | Val=0.03389 | wMAE=0.142595 | PolarMAE=0.020630 | EMD=0.001101 | MolEMD=0.000414 | R2=0.8441 | LR=2.38e-04 | 103.3s
+2026-06-18 01:30:47,191 - INFO -   -> new best (weighted_mae=0.142595), saved results/checkpoints/gps_seed1_mse.pt
+2026-06-18 01:32:25,817 - INFO - [gps_seed1_mse] Epoch   7/200 | Train=0.02980 | Val=0.03336 | wMAE=0.142961 | PolarMAE=0.020470 | EMD=0.001065 | MolEMD=0.000476 | R2=0.8446 | LR=2.18e-04 | 98.6s
+2026-06-18 01:34:09,564 - INFO - [gps_seed1_mse] Epoch   8/200 | Train=0.02890 | Val=0.03256 | wMAE=0.141071 | PolarMAE=0.019984 | EMD=0.001061 | MolEMD=0.000385 | R2=0.8474 | LR=1.97e-04 | 103.7s
+2026-06-18 01:34:09,645 - INFO -   -> new best (weighted_mae=0.141071), saved results/checkpoints/gps_seed1_mse.pt
+2026-06-18 01:35:53,676 - INFO - [gps_seed1_mse] Epoch   9/200 | Train=0.02801 | Val=0.03138 | wMAE=0.139926 | PolarMAE=0.019144 | EMD=0.001026 | MolEMD=0.000388 | R2=0.8546 | LR=1.74e-04 | 104.0s
+2026-06-18 01:35:53,753 - INFO -   -> new best (weighted_mae=0.139926), saved results/checkpoints/gps_seed1_mse.pt
+2026-06-18 01:37:37,135 - INFO - [gps_seed1_mse] Epoch  10/200 | Train=0.02727 | Val=0.03021 | wMAE=0.135931 | PolarMAE=0.019031 | EMD=0.000982 | MolEMD=0.000346 | R2=0.8601 | LR=1.50e-04 | 103.4s
+2026-06-18 01:37:37,212 - INFO -   -> new best (weighted_mae=0.135931), saved results/checkpoints/gps_seed1_mse.pt
+2026-06-18 01:39:18,413 - INFO - [gps_seed1_mse] Epoch  11/200 | Train=0.02663 | Val=0.02964 | wMAE=0.134876 | PolarMAE=0.018835 | EMD=0.000973 | MolEMD=0.000348 | R2=0.8617 | LR=1.27e-04 | 101.2s
+2026-06-18 01:39:18,491 - INFO -   -> new best (weighted_mae=0.134876), saved results/checkpoints/gps_seed1_mse.pt
+2026-06-18 01:41:11,618 - INFO - [gps_seed1_mse] Epoch  12/200 | Train=0.02612 | Val=0.02904 | wMAE=0.133171 | PolarMAE=0.018277 | EMD=0.000953 | MolEMD=0.000332 | R2=0.8648 | LR=1.04e-04 | 113.1s
+2026-06-18 01:41:11,692 - INFO -   -> new best (weighted_mae=0.133171), saved results/checkpoints/gps_seed1_mse.pt
+2026-06-18 01:42:53,496 - INFO - [gps_seed1_mse] Epoch  13/200 | Train=0.02567 | Val=0.02907 | wMAE=0.133136 | PolarMAE=0.018384 | EMD=0.000947 | MolEMD=0.000340 | R2=0.8646 | LR=8.26e-05 | 101.8s
+2026-06-18 01:42:53,573 - INFO -   -> new best (weighted_mae=0.133136), saved results/checkpoints/gps_seed1_mse.pt
+2026-06-18 01:44:36,051 - INFO - [gps_seed1_mse] Epoch  14/200 | Train=0.02530 | Val=0.02849 | wMAE=0.132220 | PolarMAE=0.018316 | EMD=0.000933 | MolEMD=0.000337 | R2=0.8673 | LR=6.26e-05 | 102.5s
+2026-06-18 01:44:36,129 - INFO -   -> new best (weighted_mae=0.132220), saved results/checkpoints/gps_seed1_mse.pt
+2026-06-18 01:46:12,092 - INFO - [gps_seed1_mse] Epoch  15/200 | Train=0.02494 | Val=0.02798 | wMAE=0.131120 | PolarMAE=0.017879 | EMD=0.000916 | MolEMD=0.000321 | R2=0.8700 | LR=4.48e-05 | 96.0s
+2026-06-18 01:46:12,169 - INFO -   -> new best (weighted_mae=0.131120), saved results/checkpoints/gps_seed1_mse.pt
+2026-06-18 01:47:48,393 - INFO - [gps_seed1_mse] Epoch  16/200 | Train=0.02468 | Val=0.02802 | wMAE=0.131249 | PolarMAE=0.017781 | EMD=0.000917 | MolEMD=0.000318 | R2=0.8696 | LR=2.96e-05 | 96.2s
+2026-06-18 01:49:28,011 - INFO - [gps_seed1_mse] Epoch  17/200 | Train=0.02448 | Val=0.02764 | wMAE=0.130549 | PolarMAE=0.017777 | EMD=0.000908 | MolEMD=0.000320 | R2=0.8712 | LR=1.73e-05 | 99.6s
+2026-06-18 01:49:28,089 - INFO -   -> new best (weighted_mae=0.130549), saved results/checkpoints/gps_seed1_mse.pt
+2026-06-18 01:51:05,187 - INFO - [gps_seed1_mse] Epoch  18/200 | Train=0.02431 | Val=0.02756 | wMAE=0.129877 | PolarMAE=0.017875 | EMD=0.000907 | MolEMD=0.000317 | R2=0.8720 | LR=8.32e-06 | 97.1s
+2026-06-18 01:51:05,266 - INFO -   -> new best (weighted_mae=0.129877), saved results/checkpoints/gps_seed1_mse.pt
+2026-06-18 01:52:42,021 - INFO - [gps_seed1_mse] Epoch  19/200 | Train=0.02419 | Val=0.02750 | wMAE=0.130014 | PolarMAE=0.017789 | EMD=0.000906 | MolEMD=0.000315 | R2=0.8720 | LR=2.84e-06 | 96.8s
+2026-06-18 01:54:28,066 - INFO - [gps_seed1_mse] Epoch  20/200 | Train=0.02413 | Val=0.02742 | wMAE=0.129724 | PolarMAE=0.017770 | EMD=0.000903 | MolEMD=0.000315 | R2=0.8724 | LR=3.00e-04 | 106.0s
+2026-06-18 01:54:28,137 - INFO -   -> new best (weighted_mae=0.129724), saved results/checkpoints/gps_seed1_mse.pt
+2026-06-18 01:56:11,945 - INFO - [gps_seed1_mse] Epoch  21/200 | Train=0.02690 | Val=0.02985 | wMAE=0.134349 | PolarMAE=0.018602 | EMD=0.000951 | MolEMD=0.000332 | R2=0.8625 | LR=3.00e-04 | 103.8s
+2026-06-18 01:57:57,193 - INFO - [gps_seed1_mse] Epoch  22/200 | Train=0.02593 | Val=0.02930 | wMAE=0.134024 | PolarMAE=0.018195 | EMD=0.000946 | MolEMD=0.000362 | R2=0.8620 | LR=2.98e-04 | 105.2s
+2026-06-18 01:59:40,400 - INFO - [gps_seed1_mse] Epoch  23/200 | Train=0.02538 | Val=0.02916 | wMAE=0.134024 | PolarMAE=0.018344 | EMD=0.000941 | MolEMD=0.000376 | R2=0.8647 | LR=2.96e-04 | 103.2s
+2026-06-18 02:01:24,140 - INFO - [gps_seed1_mse] Epoch  24/200 | Train=0.02499 | Val=0.02859 | wMAE=0.131580 | PolarMAE=0.018495 | EMD=0.000917 | MolEMD=0.000338 | R2=0.8684 | LR=2.93e-04 | 103.7s
+2026-06-18 02:03:03,015 - INFO - [gps_seed1_mse] Epoch  25/200 | Train=0.02457 | Val=0.02754 | wMAE=0.129678 | PolarMAE=0.018256 | EMD=0.000919 | MolEMD=0.000332 | R2=0.8711 | LR=2.89e-04 | 98.9s
+2026-06-18 02:03:03,073 - INFO -   -> new best (weighted_mae=0.129678), saved results/checkpoints/gps_seed1_mse.pt
+2026-06-18 02:04:49,851 - INFO - [gps_seed1_mse] Epoch  26/200 | Train=0.02424 | Val=0.02727 | wMAE=0.128913 | PolarMAE=0.017893 | EMD=0.000889 | MolEMD=0.000322 | R2=0.8726 | LR=2.84e-04 | 106.8s
+2026-06-18 02:04:49,909 - INFO -   -> new best (weighted_mae=0.128913), saved results/checkpoints/gps_seed1_mse.pt
+2026-06-18 02:06:29,524 - INFO - [gps_seed1_mse] Epoch  27/200 | Train=0.02392 | Val=0.02710 | wMAE=0.129130 | PolarMAE=0.017388 | EMD=0.000866 | MolEMD=0.000316 | R2=0.8730 | LR=2.78e-04 | 99.6s
+2026-06-18 02:08:12,154 - INFO - [gps_seed1_mse] Epoch  28/200 | Train=0.02367 | Val=0.02686 | wMAE=0.128444 | PolarMAE=0.017446 | EMD=0.000875 | MolEMD=0.000312 | R2=0.8746 | LR=2.71e-04 | 102.6s
+2026-06-18 02:08:12,212 - INFO -   -> new best (weighted_mae=0.128444), saved results/checkpoints/gps_seed1_mse.pt
+2026-06-18 02:09:58,095 - INFO - [gps_seed1_mse] Epoch  29/200 | Train=0.02343 | Val=0.02651 | wMAE=0.126916 | PolarMAE=0.017847 | EMD=0.000882 | MolEMD=0.000337 | R2=0.8761 | LR=2.64e-04 | 105.9s
+2026-06-18 02:09:58,158 - INFO -   -> new best (weighted_mae=0.126916), saved results/checkpoints/gps_seed1_mse.pt
+2026-06-18 02:11:37,367 - INFO - [gps_seed1_mse] Epoch  30/200 | Train=0.02314 | Val=0.02595 | wMAE=0.127495 | PolarMAE=0.017608 | EMD=0.000871 | MolEMD=0.000325 | R2=0.8780 | LR=2.56e-04 | 99.2s
+2026-06-18 02:13:23,715 - INFO - [gps_seed1_mse] Epoch  31/200 | Train=0.02286 | Val=0.02656 | wMAE=0.128491 | PolarMAE=0.016942 | EMD=0.000849 | MolEMD=0.000315 | R2=0.8740 | LR=2.48e-04 | 106.3s
+2026-06-18 02:15:06,309 - INFO - [gps_seed1_mse] Epoch  32/200 | Train=0.02271 | Val=0.02572 | wMAE=0.125993 | PolarMAE=0.017656 | EMD=0.000858 | MolEMD=0.000304 | R2=0.8793 | LR=2.38e-04 | 102.6s
+2026-06-18 02:15:06,369 - INFO -   -> new best (weighted_mae=0.125993), saved results/checkpoints/gps_seed1_mse.pt
+2026-06-18 02:16:49,732 - INFO - [gps_seed1_mse] Epoch  33/200 | Train=0.02242 | Val=0.02595 | wMAE=0.126236 | PolarMAE=0.017273 | EMD=0.000845 | MolEMD=0.000305 | R2=0.8784 | LR=2.29e-04 | 103.4s
+2026-06-18 02:18:32,323 - INFO - [gps_seed1_mse] Epoch  34/200 | Train=0.02222 | Val=0.02621 | wMAE=0.126524 | PolarMAE=0.017298 | EMD=0.000846 | MolEMD=0.000315 | R2=0.8763 | LR=2.18e-04 | 102.6s
+2026-06-18 02:20:20,165 - INFO - [gps_seed1_mse] Epoch  35/200 | Train=0.02204 | Val=0.02525 | wMAE=0.124599 | PolarMAE=0.017128 | EMD=0.000827 | MolEMD=0.000298 | R2=0.8813 | LR=2.08e-04 | 107.8s
+2026-06-18 02:20:20,227 - INFO -   -> new best (weighted_mae=0.124599), saved results/checkpoints/gps_seed1_mse.pt
+2026-06-18 02:22:03,234 - INFO - [gps_seed1_mse] Epoch  36/200 | Train=0.02185 | Val=0.02503 | wMAE=0.124525 | PolarMAE=0.016840 | EMD=0.000823 | MolEMD=0.000301 | R2=0.8823 | LR=1.97e-04 | 103.0s
+2026-06-18 02:22:03,294 - INFO -   -> new best (weighted_mae=0.124525), saved results/checkpoints/gps_seed1_mse.pt
+2026-06-18 02:23:44,285 - INFO - [gps_seed1_mse] Epoch  37/200 | Train=0.02163 | Val=0.02492 | wMAE=0.124408 | PolarMAE=0.016704 | EMD=0.000824 | MolEMD=0.000294 | R2=0.8829 | LR=1.85e-04 | 101.0s
+2026-06-18 02:23:44,345 - INFO -   -> new best (weighted_mae=0.124408), saved results/checkpoints/gps_seed1_mse.pt
+2026-06-18 02:25:24,867 - INFO - [gps_seed1_mse] Epoch  38/200 | Train=0.02146 | Val=0.02508 | wMAE=0.124757 | PolarMAE=0.016946 | EMD=0.000825 | MolEMD=0.000300 | R2=0.8816 | LR=1.74e-04 | 100.5s
+2026-06-18 02:27:07,606 - INFO - [gps_seed1_mse] Epoch  39/200 | Train=0.02129 | Val=0.02441 | wMAE=0.122566 | PolarMAE=0.016797 | EMD=0.000811 | MolEMD=0.000293 | R2=0.8855 | LR=1.62e-04 | 102.7s
+2026-06-18 02:27:07,666 - INFO -   -> new best (weighted_mae=0.122566), saved results/checkpoints/gps_seed1_mse.pt
+2026-06-18 02:28:45,625 - INFO - [gps_seed1_mse] Epoch  40/200 | Train=0.02117 | Val=0.02451 | wMAE=0.122561 | PolarMAE=0.016605 | EMD=0.000801 | MolEMD=0.000291 | R2=0.8848 | LR=1.50e-04 | 98.0s
+2026-06-18 02:28:45,682 - INFO -   -> new best (weighted_mae=0.122561), saved results/checkpoints/gps_seed1_mse.pt
+2026-06-18 02:30:28,681 - INFO - [gps_seed1_mse] Epoch  41/200 | Train=0.02098 | Val=0.02452 | wMAE=0.123261 | PolarMAE=0.016670 | EMD=0.000806 | MolEMD=0.000294 | R2=0.8850 | LR=1.39e-04 | 103.0s
+2026-06-18 02:32:11,517 - INFO - [gps_seed1_mse] Epoch  42/200 | Train=0.02085 | Val=0.02398 | wMAE=0.122119 | PolarMAE=0.016712 | EMD=0.000801 | MolEMD=0.000284 | R2=0.8870 | LR=1.27e-04 | 102.8s
+2026-06-18 02:32:11,572 - INFO -   -> new best (weighted_mae=0.122119), saved results/checkpoints/gps_seed1_mse.pt
+2026-06-18 02:33:54,016 - INFO - [gps_seed1_mse] Epoch  43/200 | Train=0.02072 | Val=0.02398 | wMAE=0.122740 | PolarMAE=0.016526 | EMD=0.000798 | MolEMD=0.000304 | R2=0.8867 | LR=1.16e-04 | 102.4s
+2026-06-18 02:35:37,927 - INFO - [gps_seed1_mse] Epoch  44/200 | Train=0.02059 | Val=0.02375 | wMAE=0.122165 | PolarMAE=0.016254 | EMD=0.000790 | MolEMD=0.000288 | R2=0.8877 | LR=1.04e-04 | 103.9s
+2026-06-18 02:37:22,284 - INFO - [gps_seed1_mse] Epoch  45/200 | Train=0.02048 | Val=0.02376 | wMAE=0.121945 | PolarMAE=0.016585 | EMD=0.000795 | MolEMD=0.000282 | R2=0.8880 | LR=9.33e-05 | 104.4s
+2026-06-18 02:37:22,345 - INFO -   -> new best (weighted_mae=0.121945), saved results/checkpoints/gps_seed1_mse.pt
+2026-06-18 02:39:10,280 - INFO - [gps_seed1_mse] Epoch  46/200 | Train=0.02036 | Val=0.02367 | wMAE=0.121641 | PolarMAE=0.016327 | EMD=0.000787 | MolEMD=0.000278 | R2=0.8884 | LR=8.26e-05 | 107.9s
+2026-06-18 02:39:10,357 - INFO -   -> new best (weighted_mae=0.121641), saved results/checkpoints/gps_seed1_mse.pt
+2026-06-18 02:40:46,791 - INFO - [gps_seed1_mse] Epoch  47/200 | Train=0.02026 | Val=0.02360 | wMAE=0.120978 | PolarMAE=0.016333 | EMD=0.000783 | MolEMD=0.000292 | R2=0.8891 | LR=7.24e-05 | 96.4s
+2026-06-18 02:40:46,850 - INFO -   -> new best (weighted_mae=0.120978), saved results/checkpoints/gps_seed1_mse.pt
+2026-06-18 02:42:33,387 - INFO - [gps_seed1_mse] Epoch  48/200 | Train=0.02016 | Val=0.02351 | wMAE=0.120627 | PolarMAE=0.016354 | EMD=0.000784 | MolEMD=0.000292 | R2=0.8894 | LR=6.26e-05 | 106.5s
+2026-06-18 02:42:33,444 - INFO -   -> new best (weighted_mae=0.120627), saved results/checkpoints/gps_seed1_mse.pt
+2026-06-18 02:44:16,696 - INFO - [gps_seed1_mse] Epoch  49/200 | Train=0.02008 | Val=0.02340 | wMAE=0.120409 | PolarMAE=0.016538 | EMD=0.000783 | MolEMD=0.000281 | R2=0.8902 | LR=5.34e-05 | 103.3s
+2026-06-18 02:44:16,755 - INFO -   -> new best (weighted_mae=0.120409), saved results/checkpoints/gps_seed1_mse.pt
+2026-06-18 02:45:59,686 - INFO - [gps_seed1_mse] Epoch  50/200 | Train=0.01999 | Val=0.02332 | wMAE=0.120528 | PolarMAE=0.016529 | EMD=0.000784 | MolEMD=0.000280 | R2=0.8904 | LR=4.48e-05 | 102.9s
+2026-06-18 02:47:41,882 - INFO - [gps_seed1_mse] Epoch  51/200 | Train=0.01990 | Val=0.02323 | wMAE=0.119941 | PolarMAE=0.016416 | EMD=0.000779 | MolEMD=0.000277 | R2=0.8910 | LR=3.68e-05 | 102.2s
+2026-06-18 02:47:41,948 - INFO -   -> new best (weighted_mae=0.119941), saved results/checkpoints/gps_seed1_mse.pt
+2026-06-18 02:49:24,191 - INFO - [gps_seed1_mse] Epoch  52/200 | Train=0.01985 | Val=0.02328 | wMAE=0.120409 | PolarMAE=0.016335 | EMD=0.000778 | MolEMD=0.000278 | R2=0.8904 | LR=2.96e-05 | 102.2s
+2026-06-18 02:51:03,712 - INFO - [gps_seed1_mse] Epoch  53/200 | Train=0.01977 | Val=0.02310 | wMAE=0.119861 | PolarMAE=0.016484 | EMD=0.000777 | MolEMD=0.000279 | R2=0.8915 | LR=2.30e-05 | 99.5s
+2026-06-18 02:51:03,771 - INFO -   -> new best (weighted_mae=0.119861), saved results/checkpoints/gps_seed1_mse.pt
+2026-06-18 02:52:49,144 - INFO - [gps_seed1_mse] Epoch  54/200 | Train=0.01972 | Val=0.02308 | wMAE=0.119581 | PolarMAE=0.016285 | EMD=0.000771 | MolEMD=0.000274 | R2=0.8917 | LR=1.73e-05 | 105.4s
+2026-06-18 02:52:49,202 - INFO -   -> new best (weighted_mae=0.119581), saved results/checkpoints/gps_seed1_mse.pt
+2026-06-18 02:54:30,387 - INFO - [gps_seed1_mse] Epoch  55/200 | Train=0.01970 | Val=0.02310 | wMAE=0.119749 | PolarMAE=0.016247 | EMD=0.000770 | MolEMD=0.000274 | R2=0.8915 | LR=1.24e-05 | 101.2s
+2026-06-18 02:56:11,229 - INFO - [gps_seed1_mse] Epoch  56/200 | Train=0.01966 | Val=0.02307 | wMAE=0.119773 | PolarMAE=0.016295 | EMD=0.000772 | MolEMD=0.000275 | R2=0.8915 | LR=8.32e-06 | 100.8s
+2026-06-18 02:57:53,047 - INFO - [gps_seed1_mse] Epoch  57/200 | Train=0.01962 | Val=0.02298 | wMAE=0.119625 | PolarMAE=0.016317 | EMD=0.000773 | MolEMD=0.000274 | R2=0.8921 | LR=5.13e-06 | 101.8s
+2026-06-18 02:59:36,116 - INFO - [gps_seed1_mse] Epoch  58/200 | Train=0.01958 | Val=0.02301 | wMAE=0.119709 | PolarMAE=0.016283 | EMD=0.000771 | MolEMD=0.000273 | R2=0.8918 | LR=2.84e-06 | 103.1s
+2026-06-18 03:01:15,995 - INFO - [gps_seed1_mse] Epoch  59/200 | Train=0.01958 | Val=0.02300 | wMAE=0.119559 | PolarMAE=0.016254 | EMD=0.000769 | MolEMD=0.000273 | R2=0.8920 | LR=1.46e-06 | 99.9s
+2026-06-18 03:01:16,054 - INFO -   -> new best (weighted_mae=0.119559), saved results/checkpoints/gps_seed1_mse.pt
+2026-06-18 03:02:57,156 - INFO - [gps_seed1_mse] Epoch  60/200 | Train=0.01956 | Val=0.02299 | wMAE=0.119515 | PolarMAE=0.016294 | EMD=0.000770 | MolEMD=0.000273 | R2=0.8921 | LR=3.00e-04 | 101.1s
+2026-06-18 03:02:57,218 - INFO -   -> new best (weighted_mae=0.119515), saved results/checkpoints/gps_seed1_mse.pt
+2026-06-18 03:04:42,375 - INFO - [gps_seed1_mse] Epoch  61/200 | Train=0.02196 | Val=0.02478 | wMAE=0.122530 | PolarMAE=0.016932 | EMD=0.000803 | MolEMD=0.000298 | R2=0.8846 | LR=3.00e-04 | 105.2s
+2026-06-18 03:06:30,401 - INFO - [gps_seed1_mse] Epoch  62/200 | Train=0.02130 | Val=0.02443 | wMAE=0.123121 | PolarMAE=0.016591 | EMD=0.000801 | MolEMD=0.000287 | R2=0.8853 | LR=3.00e-04 | 108.0s
+2026-06-18 03:08:21,562 - INFO - [gps_seed1_mse] Epoch  63/200 | Train=0.02108 | Val=0.02506 | wMAE=0.122546 | PolarMAE=0.016873 | EMD=0.000800 | MolEMD=0.000306 | R2=0.8830 | LR=2.99e-04 | 111.2s
+2026-06-18 03:10:11,608 - INFO - [gps_seed1_mse] Epoch  64/200 | Train=0.02100 | Val=0.02476 | wMAE=0.123934 | PolarMAE=0.016754 | EMD=0.000812 | MolEMD=0.000298 | R2=0.8838 | LR=2.98e-04 | 110.0s
+2026-06-18 03:12:04,228 - INFO - [gps_seed1_mse] Epoch  65/200 | Train=0.02093 | Val=0.02454 | wMAE=0.123836 | PolarMAE=0.016289 | EMD=0.000807 | MolEMD=0.000323 | R2=0.8838 | LR=2.97e-04 | 112.6s
+2026-06-18 03:13:44,015 - INFO - [gps_seed1_mse] Epoch  66/200 | Train=0.02078 | Val=0.02405 | wMAE=0.121784 | PolarMAE=0.016373 | EMD=0.000790 | MolEMD=0.000285 | R2=0.8867 | LR=2.96e-04 | 99.8s
+2026-06-18 03:15:26,220 - INFO - [gps_seed1_mse] Epoch  67/200 | Train=0.02076 | Val=0.02489 | wMAE=0.122673 | PolarMAE=0.016414 | EMD=0.000787 | MolEMD=0.000299 | R2=0.8821 | LR=2.94e-04 | 102.2s
+2026-06-18 03:17:08,547 - INFO - [gps_seed1_mse] Epoch  68/200 | Train=0.02067 | Val=0.02399 | wMAE=0.121804 | PolarMAE=0.016883 | EMD=0.000807 | MolEMD=0.000300 | R2=0.8867 | LR=2.93e-04 | 102.3s
+2026-06-18 03:18:47,916 - INFO - [gps_seed1_mse] Epoch  69/200 | Train=0.02054 | Val=0.02431 | wMAE=0.123395 | PolarMAE=0.016663 | EMD=0.000806 | MolEMD=0.000339 | R2=0.8858 | LR=2.91e-04 | 99.4s
+2026-06-18 03:20:30,263 - INFO - [gps_seed1_mse] Epoch  70/200 | Train=0.02051 | Val=0.02397 | wMAE=0.121664 | PolarMAE=0.016479 | EMD=0.000789 | MolEMD=0.000296 | R2=0.8879 | LR=2.89e-04 | 102.3s
+2026-06-18 03:22:13,595 - INFO - [gps_seed1_mse] Epoch  71/200 | Train=0.02035 | Val=0.02434 | wMAE=0.121674 | PolarMAE=0.016748 | EMD=0.000797 | MolEMD=0.000305 | R2=0.8857 | LR=2.86e-04 | 103.3s
+2026-06-18 03:23:57,100 - INFO - [gps_seed1_mse] Epoch  72/200 | Train=0.02028 | Val=0.02373 | wMAE=0.121293 | PolarMAE=0.016453 | EMD=0.000778 | MolEMD=0.000286 | R2=0.8885 | LR=2.84e-04 | 103.5s
+2026-06-18 03:25:44,004 - INFO - [gps_seed1_mse] Epoch  73/200 | Train=0.02019 | Val=0.02380 | wMAE=0.122499 | PolarMAE=0.016592 | EMD=0.000799 | MolEMD=0.000303 | R2=0.8872 | LR=2.81e-04 | 106.9s
+2026-06-18 03:27:28,132 - INFO - [gps_seed1_mse] Epoch  74/200 | Train=0.02014 | Val=0.02351 | wMAE=0.121084 | PolarMAE=0.016647 | EMD=0.000778 | MolEMD=0.000291 | R2=0.8892 | LR=2.78e-04 | 104.1s
+2026-06-18 03:29:10,189 - INFO - [gps_seed1_mse] Epoch  75/200 | Train=0.02008 | Val=0.02329 | wMAE=0.120204 | PolarMAE=0.016512 | EMD=0.000777 | MolEMD=0.000276 | R2=0.8909 | LR=2.75e-04 | 102.1s
+2026-06-18 03:30:48,699 - INFO - [gps_seed1_mse] Epoch  76/200 | Train=0.01998 | Val=0.02383 | wMAE=0.120910 | PolarMAE=0.016300 | EMD=0.000778 | MolEMD=0.000283 | R2=0.8885 | LR=2.71e-04 | 98.5s
+2026-06-18 03:32:34,192 - INFO - [gps_seed1_mse] Epoch  77/200 | Train=0.01987 | Val=0.02350 | wMAE=0.120053 | PolarMAE=0.016498 | EMD=0.000771 | MolEMD=0.000290 | R2=0.8901 | LR=2.68e-04 | 105.5s
+2026-06-18 03:34:18,323 - INFO - [gps_seed1_mse] Epoch  78/200 | Train=0.01987 | Val=0.02346 | wMAE=0.120129 | PolarMAE=0.016559 | EMD=0.000770 | MolEMD=0.000287 | R2=0.8897 | LR=2.64e-04 | 104.1s
+2026-06-18 03:35:59,281 - INFO - [gps_seed1_mse] Epoch  79/200 | Train=0.01979 | Val=0.02332 | wMAE=0.119786 | PolarMAE=0.016175 | EMD=0.000769 | MolEMD=0.000283 | R2=0.8909 | LR=2.60e-04 | 101.0s
+2026-06-18 03:37:46,055 - INFO - [gps_seed1_mse] Epoch  80/200 | Train=0.01967 | Val=0.02368 | wMAE=0.121482 | PolarMAE=0.016110 | EMD=0.000781 | MolEMD=0.000282 | R2=0.8884 | LR=2.56e-04 | 106.8s
+2026-06-18 03:37:46,055 - INFO - Early stopping at epoch 80.
+2026-06-18 03:37:46,055 - INFO - Loading best checkpoint for test evaluation...
+2026-06-18 03:38:24,950 - INFO - [gps_seed1_mse] TEST METRICS: {'loss': 0.021478264088240953, 'weighted_r2': 0.8970164060592651, 'weighted_mae': 0.11894828826189041, 'polar_mae': 0.017965614795684814, 'cosine_similarity': 0.9310102626998934, 'emd_raw': 0.000817163708320303, 'emd_normalized': 0.0008171637083203056, 'molecular_mae': 0.5131835459535703, 'molecular_emd': 0.00026079534871036194, 'molecular_cosine': 0.9934305528990733, 'molecular_polar_mae': 0.23747977663333025}
+2026-06-18 03:38:24,955 - INFO - Saved results to results/metrics/gps_seed1_mse.json
+2026-06-18 03:38:52,868 - INFO - Device: cuda
+2026-06-18 03:38:52,870 - INFO - Loading cached dataset: /mnt/tank/scratch/ikarpushkina/sigma/ASPEN/data/train_test_val_df/cache/chaos_atomic_train_with_coordinates.parquet.2a0efbb7f4.pt
+2026-06-18 03:39:40,724 - INFO - chaos_atomic_train_with_coordinates.parquet: 36981 molecules, 1077949 atoms, extended=True, RDKit mol valid: 36981/36981 (100.0%)
+2026-06-18 03:39:40,726 - INFO - Loading cached dataset: /mnt/tank/scratch/ikarpushkina/sigma/ASPEN/data/train_test_val_df/cache/chaos_atomic_val_with_coordinates.parquet.2a0efbb7f4.pt
+2026-06-18 03:39:45,860 - INFO - chaos_atomic_val_with_coordinates.parquet: 7941 molecules, 235573 atoms, extended=True, RDKit mol valid: 7941/7941 (100.0%)
+2026-06-18 03:39:45,861 - INFO - Loading cached dataset: /mnt/tank/scratch/ikarpushkina/sigma/ASPEN/data/train_test_val_df/cache/chaos_atomic_test_with_coordinates.parquet.2a0efbb7f4.pt
+2026-06-18 03:39:50,925 - INFO - chaos_atomic_test_with_coordinates.parquet: 7800 molecules, 221748 atoms, extended=True, RDKit mol valid: 7800/7800 (100.0%)
+2026-06-18 03:39:51,655 - INFO - gps: 693,831 params (target 695,667, diff 0.3%)
+2026-06-18 03:41:41,868 - INFO - [gps_seed2_mse] Epoch   1/200 | Train=0.08163 | Val=0.05194 | wMAE=0.182168 | PolarMAE=0.031275 | EMD=0.001810 | MolEMD=0.000693 | R2=0.7661 | LR=2.98e-04 | 110.2s
+2026-06-18 03:41:41,949 - INFO -   -> new best (weighted_mae=0.182168), saved results/checkpoints/gps_seed2_mse.pt
+2026-06-18 03:43:24,953 - INFO - [gps_seed2_mse] Epoch   2/200 | Train=0.04508 | Val=0.04530 | wMAE=0.165377 | PolarMAE=0.025924 | EMD=0.001532 | MolEMD=0.000590 | R2=0.7933 | LR=2.93e-04 | 103.0s
+2026-06-18 03:43:25,009 - INFO -   -> new best (weighted_mae=0.165377), saved results/checkpoints/gps_seed2_mse.pt
+2026-06-18 03:45:10,611 - INFO - [gps_seed2_mse] Epoch   3/200 | Train=0.03862 | Val=0.04031 | wMAE=0.155161 | PolarMAE=0.023564 | EMD=0.001336 | MolEMD=0.000513 | R2=0.8161 | LR=2.84e-04 | 105.6s
+2026-06-18 03:45:10,669 - INFO -   -> new best (weighted_mae=0.155161), saved results/checkpoints/gps_seed2_mse.pt
+2026-06-18 03:46:54,104 - INFO - [gps_seed2_mse] Epoch   4/200 | Train=0.03528 | Val=0.03727 | wMAE=0.151092 | PolarMAE=0.021861 | EMD=0.001248 | MolEMD=0.000461 | R2=0.8273 | LR=2.71e-04 | 103.4s
+2026-06-18 03:46:54,161 - INFO -   -> new best (weighted_mae=0.151092), saved results/checkpoints/gps_seed2_mse.pt
+2026-06-18 03:48:37,302 - INFO - [gps_seed2_mse] Epoch   5/200 | Train=0.03309 | Val=0.03542 | wMAE=0.146839 | PolarMAE=0.021315 | EMD=0.001188 | MolEMD=0.000443 | R2=0.8366 | LR=2.56e-04 | 103.1s
+2026-06-18 03:48:37,360 - INFO -   -> new best (weighted_mae=0.146839), saved results/checkpoints/gps_seed2_mse.pt
+2026-06-18 03:50:19,994 - INFO - [gps_seed2_mse] Epoch   6/200 | Train=0.03156 | Val=0.03402 | wMAE=0.143788 | PolarMAE=0.020455 | EMD=0.001128 | MolEMD=0.000406 | R2=0.8431 | LR=2.38e-04 | 102.6s
+2026-06-18 03:50:20,054 - INFO -   -> new best (weighted_mae=0.143788), saved results/checkpoints/gps_seed2_mse.pt
+2026-06-18 03:52:02,384 - INFO - [gps_seed2_mse] Epoch   7/200 | Train=0.03033 | Val=0.03429 | wMAE=0.145597 | PolarMAE=0.019916 | EMD=0.001091 | MolEMD=0.000433 | R2=0.8377 | LR=2.18e-04 | 102.3s
+2026-06-18 03:53:47,915 - INFO - [gps_seed2_mse] Epoch   8/200 | Train=0.02919 | Val=0.03168 | wMAE=0.140246 | PolarMAE=0.020121 | EMD=0.001080 | MolEMD=0.000375 | R2=0.8541 | LR=1.97e-04 | 105.5s
+2026-06-18 03:53:47,979 - INFO -   -> new best (weighted_mae=0.140246), saved results/checkpoints/gps_seed2_mse.pt
+2026-06-18 03:55:30,806 - INFO - [gps_seed2_mse] Epoch   9/200 | Train=0.02835 | Val=0.03154 | wMAE=0.139878 | PolarMAE=0.018870 | EMD=0.001019 | MolEMD=0.000369 | R2=0.8525 | LR=1.74e-04 | 102.8s
+2026-06-18 03:55:30,863 - INFO -   -> new best (weighted_mae=0.139878), saved results/checkpoints/gps_seed2_mse.pt
+2026-06-18 03:57:08,999 - INFO - [gps_seed2_mse] Epoch  10/200 | Train=0.02758 | Val=0.03055 | wMAE=0.136778 | PolarMAE=0.018601 | EMD=0.001001 | MolEMD=0.000361 | R2=0.8574 | LR=1.50e-04 | 98.1s
+2026-06-18 03:57:09,055 - INFO -   -> new best (weighted_mae=0.136778), saved results/checkpoints/gps_seed2_mse.pt
+2026-06-18 03:58:52,886 - INFO - [gps_seed2_mse] Epoch  11/200 | Train=0.02693 | Val=0.03044 | wMAE=0.136227 | PolarMAE=0.018520 | EMD=0.000978 | MolEMD=0.000355 | R2=0.8579 | LR=1.27e-04 | 103.8s
+2026-06-18 03:58:52,946 - INFO -   -> new best (weighted_mae=0.136227), saved results/checkpoints/gps_seed2_mse.pt
+2026-06-18 04:00:39,307 - INFO - [gps_seed2_mse] Epoch  12/200 | Train=0.02638 | Val=0.02967 | wMAE=0.135197 | PolarMAE=0.018294 | EMD=0.000962 | MolEMD=0.000346 | R2=0.8622 | LR=1.04e-04 | 106.4s
+2026-06-18 04:00:39,368 - INFO -   -> new best (weighted_mae=0.135197), saved results/checkpoints/gps_seed2_mse.pt
+2026-06-18 04:02:23,101 - INFO - [gps_seed2_mse] Epoch  13/200 | Train=0.02592 | Val=0.02881 | wMAE=0.133162 | PolarMAE=0.018267 | EMD=0.000954 | MolEMD=0.000329 | R2=0.8663 | LR=8.26e-05 | 103.7s
+2026-06-18 04:02:23,160 - INFO -   -> new best (weighted_mae=0.133162), saved results/checkpoints/gps_seed2_mse.pt
+2026-06-18 04:04:04,501 - INFO - [gps_seed2_mse] Epoch  14/200 | Train=0.02551 | Val=0.02914 | wMAE=0.134525 | PolarMAE=0.018080 | EMD=0.000947 | MolEMD=0.000344 | R2=0.8627 | LR=6.26e-05 | 101.3s
+2026-06-18 04:05:48,179 - INFO - [gps_seed2_mse] Epoch  15/200 | Train=0.02514 | Val=0.02845 | wMAE=0.132657 | PolarMAE=0.018223 | EMD=0.000939 | MolEMD=0.000331 | R2=0.8670 | LR=4.48e-05 | 103.7s
+2026-06-18 04:05:48,235 - INFO -   -> new best (weighted_mae=0.132657), saved results/checkpoints/gps_seed2_mse.pt
+2026-06-18 04:07:32,573 - INFO - [gps_seed2_mse] Epoch  16/200 | Train=0.02488 | Val=0.02797 | wMAE=0.131356 | PolarMAE=0.018013 | EMD=0.000927 | MolEMD=0.000323 | R2=0.8699 | LR=2.96e-05 | 104.3s
+2026-06-18 04:07:32,632 - INFO -   -> new best (weighted_mae=0.131356), saved results/checkpoints/gps_seed2_mse.pt
+2026-06-18 04:09:10,904 - INFO - [gps_seed2_mse] Epoch  17/200 | Train=0.02465 | Val=0.02790 | wMAE=0.131393 | PolarMAE=0.017880 | EMD=0.000920 | MolEMD=0.000318 | R2=0.8698 | LR=1.73e-05 | 98.3s
+2026-06-18 04:10:48,993 - INFO - [gps_seed2_mse] Epoch  18/200 | Train=0.02448 | Val=0.02763 | wMAE=0.130516 | PolarMAE=0.017856 | EMD=0.000915 | MolEMD=0.000317 | R2=0.8716 | LR=8.32e-06 | 98.1s
+2026-06-18 04:10:49,055 - INFO -   -> new best (weighted_mae=0.130516), saved results/checkpoints/gps_seed2_mse.pt
+2026-06-18 04:12:32,621 - INFO - [gps_seed2_mse] Epoch  19/200 | Train=0.02436 | Val=0.02763 | wMAE=0.130903 | PolarMAE=0.017808 | EMD=0.000917 | MolEMD=0.000321 | R2=0.8714 | LR=2.84e-06 | 103.6s
+2026-06-18 04:14:15,873 - INFO - [gps_seed2_mse] Epoch  20/200 | Train=0.02427 | Val=0.02750 | wMAE=0.130257 | PolarMAE=0.017784 | EMD=0.000914 | MolEMD=0.000316 | R2=0.8722 | LR=3.00e-04 | 103.2s
+2026-06-18 04:14:15,934 - INFO -   -> new best (weighted_mae=0.130257), saved results/checkpoints/gps_seed2_mse.pt
+2026-06-18 04:15:56,647 - INFO - [gps_seed2_mse] Epoch  21/200 | Train=0.02717 | Val=0.02957 | wMAE=0.137085 | PolarMAE=0.018406 | EMD=0.000979 | MolEMD=0.000381 | R2=0.8612 | LR=3.00e-04 | 100.7s
+2026-06-18 04:17:40,371 - INFO - [gps_seed2_mse] Epoch  22/200 | Train=0.02609 | Val=0.02885 | wMAE=0.132487 | PolarMAE=0.017935 | EMD=0.000928 | MolEMD=0.000338 | R2=0.8656 | LR=2.98e-04 | 103.7s
+2026-06-18 04:19:26,283 - INFO - [gps_seed2_mse] Epoch  23/200 | Train=0.02553 | Val=0.02891 | wMAE=0.133450 | PolarMAE=0.017663 | EMD=0.000933 | MolEMD=0.000342 | R2=0.8649 | LR=2.96e-04 | 105.9s
+2026-06-18 04:21:09,129 - INFO - [gps_seed2_mse] Epoch  24/200 | Train=0.02506 | Val=0.02795 | wMAE=0.131024 | PolarMAE=0.018594 | EMD=0.000931 | MolEMD=0.000332 | R2=0.8702 | LR=2.93e-04 | 102.8s
+2026-06-18 04:22:55,632 - INFO - [gps_seed2_mse] Epoch  25/200 | Train=0.02478 | Val=0.02828 | wMAE=0.131443 | PolarMAE=0.017622 | EMD=0.000908 | MolEMD=0.000321 | R2=0.8684 | LR=2.89e-04 | 106.5s
+2026-06-18 04:24:40,306 - INFO - [gps_seed2_mse] Epoch  26/200 | Train=0.02436 | Val=0.02730 | wMAE=0.130502 | PolarMAE=0.017880 | EMD=0.000907 | MolEMD=0.000323 | R2=0.8714 | LR=2.84e-04 | 104.7s
+2026-06-18 04:26:26,390 - INFO - [gps_seed2_mse] Epoch  27/200 | Train=0.02410 | Val=0.02696 | wMAE=0.130404 | PolarMAE=0.017018 | EMD=0.000884 | MolEMD=0.000341 | R2=0.8733 | LR=2.78e-04 | 106.1s
+2026-06-18 04:28:06,370 - INFO - [gps_seed2_mse] Epoch  28/200 | Train=0.02383 | Val=0.02722 | wMAE=0.130159 | PolarMAE=0.017227 | EMD=0.000883 | MolEMD=0.000317 | R2=0.8713 | LR=2.71e-04 | 100.0s
+2026-06-18 04:28:06,431 - INFO -   -> new best (weighted_mae=0.130159), saved results/checkpoints/gps_seed2_mse.pt
+2026-06-18 04:29:49,375 - INFO - [gps_seed2_mse] Epoch  29/200 | Train=0.02354 | Val=0.02663 | wMAE=0.128006 | PolarMAE=0.017560 | EMD=0.000878 | MolEMD=0.000321 | R2=0.8756 | LR=2.64e-04 | 102.9s
+2026-06-18 04:29:49,431 - INFO -   -> new best (weighted_mae=0.128006), saved results/checkpoints/gps_seed2_mse.pt
+2026-06-18 04:31:29,571 - INFO - [gps_seed2_mse] Epoch  30/200 | Train=0.02326 | Val=0.02699 | wMAE=0.128605 | PolarMAE=0.017233 | EMD=0.000867 | MolEMD=0.000335 | R2=0.8721 | LR=2.56e-04 | 100.1s
+2026-06-18 04:33:23,074 - INFO - [gps_seed2_mse] Epoch  31/200 | Train=0.02305 | Val=0.02634 | wMAE=0.128236 | PolarMAE=0.017438 | EMD=0.000880 | MolEMD=0.000320 | R2=0.8763 | LR=2.48e-04 | 113.5s
+2026-06-18 04:35:14,938 - INFO - [gps_seed2_mse] Epoch  32/200 | Train=0.02280 | Val=0.02615 | wMAE=0.125485 | PolarMAE=0.017576 | EMD=0.000854 | MolEMD=0.000313 | R2=0.8778 | LR=2.38e-04 | 111.9s
+2026-06-18 04:35:15,002 - INFO -   -> new best (weighted_mae=0.125485), saved results/checkpoints/gps_seed2_mse.pt
+2026-06-18 04:37:11,251 - INFO - [gps_seed2_mse] Epoch  33/200 | Train=0.02252 | Val=0.02694 | wMAE=0.128686 | PolarMAE=0.017588 | EMD=0.000874 | MolEMD=0.000355 | R2=0.8740 | LR=2.29e-04 | 116.2s
+2026-06-18 04:39:03,350 - INFO - [gps_seed2_mse] Epoch  34/200 | Train=0.02235 | Val=0.02551 | wMAE=0.125810 | PolarMAE=0.016871 | EMD=0.000842 | MolEMD=0.000298 | R2=0.8807 | LR=2.18e-04 | 112.1s
+2026-06-18 04:40:43,889 - INFO - [gps_seed2_mse] Epoch  35/200 | Train=0.02220 | Val=0.02572 | wMAE=0.126253 | PolarMAE=0.016798 | EMD=0.000840 | MolEMD=0.000304 | R2=0.8796 | LR=2.08e-04 | 100.5s
+2026-06-18 04:42:27,472 - INFO - [gps_seed2_mse] Epoch  36/200 | Train=0.02195 | Val=0.02534 | wMAE=0.125395 | PolarMAE=0.017014 | EMD=0.000840 | MolEMD=0.000299 | R2=0.8809 | LR=1.97e-04 | 103.6s
+2026-06-18 04:42:27,552 - INFO -   -> new best (weighted_mae=0.125395), saved results/checkpoints/gps_seed2_mse.pt
+2026-06-18 04:44:12,739 - INFO - [gps_seed2_mse] Epoch  37/200 | Train=0.02180 | Val=0.02528 | wMAE=0.124087 | PolarMAE=0.017022 | EMD=0.000834 | MolEMD=0.000305 | R2=0.8818 | LR=1.85e-04 | 105.2s
+2026-06-18 04:44:12,820 - INFO -   -> new best (weighted_mae=0.124087), saved results/checkpoints/gps_seed2_mse.pt
+2026-06-18 04:45:57,928 - INFO - [gps_seed2_mse] Epoch  38/200 | Train=0.02162 | Val=0.02522 | wMAE=0.124750 | PolarMAE=0.016932 | EMD=0.000824 | MolEMD=0.000289 | R2=0.8815 | LR=1.74e-04 | 105.1s
+2026-06-18 04:47:42,252 - INFO - [gps_seed2_mse] Epoch  39/200 | Train=0.02145 | Val=0.02466 | wMAE=0.123513 | PolarMAE=0.016977 | EMD=0.000816 | MolEMD=0.000291 | R2=0.8840 | LR=1.62e-04 | 104.3s
+2026-06-18 04:47:42,330 - INFO -   -> new best (weighted_mae=0.123513), saved results/checkpoints/gps_seed2_mse.pt
+2026-06-18 04:49:25,527 - INFO - [gps_seed2_mse] Epoch  40/200 | Train=0.02128 | Val=0.02478 | wMAE=0.123444 | PolarMAE=0.016771 | EMD=0.000807 | MolEMD=0.000287 | R2=0.8840 | LR=1.50e-04 | 103.2s
+2026-06-18 04:49:25,611 - INFO -   -> new best (weighted_mae=0.123444), saved results/checkpoints/gps_seed2_mse.pt
+2026-06-18 04:51:06,923 - INFO - [gps_seed2_mse] Epoch  41/200 | Train=0.02112 | Val=0.02471 | wMAE=0.123343 | PolarMAE=0.016282 | EMD=0.000805 | MolEMD=0.000293 | R2=0.8842 | LR=1.39e-04 | 101.3s
+2026-06-18 04:51:07,000 - INFO -   -> new best (weighted_mae=0.123343), saved results/checkpoints/gps_seed2_mse.pt
+2026-06-18 04:52:49,669 - INFO - [gps_seed2_mse] Epoch  42/200 | Train=0.02097 | Val=0.02483 | wMAE=0.125107 | PolarMAE=0.016336 | EMD=0.000815 | MolEMD=0.000314 | R2=0.8823 | LR=1.27e-04 | 102.7s
+2026-06-18 04:54:33,642 - INFO - [gps_seed2_mse] Epoch  43/200 | Train=0.02085 | Val=0.02435 | wMAE=0.122733 | PolarMAE=0.016406 | EMD=0.000801 | MolEMD=0.000281 | R2=0.8856 | LR=1.16e-04 | 104.0s
+2026-06-18 04:54:33,742 - INFO -   -> new best (weighted_mae=0.122733), saved results/checkpoints/gps_seed2_mse.pt
+2026-06-18 04:56:17,737 - INFO - [gps_seed2_mse] Epoch  44/200 | Train=0.02071 | Val=0.02437 | wMAE=0.122492 | PolarMAE=0.016435 | EMD=0.000800 | MolEMD=0.000281 | R2=0.8860 | LR=1.04e-04 | 104.0s
+2026-06-18 04:56:17,816 - INFO -   -> new best (weighted_mae=0.122492), saved results/checkpoints/gps_seed2_mse.pt
+2026-06-18 04:57:59,729 - INFO - [gps_seed2_mse] Epoch  45/200 | Train=0.02057 | Val=0.02411 | wMAE=0.122011 | PolarMAE=0.016584 | EMD=0.000798 | MolEMD=0.000282 | R2=0.8873 | LR=9.33e-05 | 101.9s
+2026-06-18 04:57:59,806 - INFO -   -> new best (weighted_mae=0.122011), saved results/checkpoints/gps_seed2_mse.pt
+2026-06-18 04:59:43,152 - INFO - [gps_seed2_mse] Epoch  46/200 | Train=0.02046 | Val=0.02398 | wMAE=0.122327 | PolarMAE=0.016577 | EMD=0.000798 | MolEMD=0.000288 | R2=0.8871 | LR=8.26e-05 | 103.3s
+2026-06-18 05:01:30,121 - INFO - [gps_seed2_mse] Epoch  47/200 | Train=0.02035 | Val=0.02399 | wMAE=0.121345 | PolarMAE=0.016437 | EMD=0.000788 | MolEMD=0.000281 | R2=0.8880 | LR=7.24e-05 | 107.0s
+2026-06-18 05:01:30,199 - INFO -   -> new best (weighted_mae=0.121345), saved results/checkpoints/gps_seed2_mse.pt
+2026-06-18 05:03:14,967 - INFO - [gps_seed2_mse] Epoch  48/200 | Train=0.02028 | Val=0.02382 | wMAE=0.120950 | PolarMAE=0.016485 | EMD=0.000787 | MolEMD=0.000282 | R2=0.8885 | LR=6.26e-05 | 104.8s
+2026-06-18 05:03:15,041 - INFO -   -> new best (weighted_mae=0.120950), saved results/checkpoints/gps_seed2_mse.pt
+2026-06-18 05:04:59,804 - INFO - [gps_seed2_mse] Epoch  49/200 | Train=0.02017 | Val=0.02376 | wMAE=0.121432 | PolarMAE=0.016324 | EMD=0.000784 | MolEMD=0.000280 | R2=0.8886 | LR=5.34e-05 | 104.8s
+2026-06-18 05:06:40,081 - INFO - [gps_seed2_mse] Epoch  50/200 | Train=0.02009 | Val=0.02379 | wMAE=0.121197 | PolarMAE=0.016360 | EMD=0.000782 | MolEMD=0.000279 | R2=0.8884 | LR=4.48e-05 | 100.3s
+2026-06-18 05:08:20,202 - INFO - [gps_seed2_mse] Epoch  51/200 | Train=0.02002 | Val=0.02368 | wMAE=0.120951 | PolarMAE=0.016316 | EMD=0.000782 | MolEMD=0.000285 | R2=0.8890 | LR=3.68e-05 | 100.1s
+2026-06-18 05:10:03,134 - INFO - [gps_seed2_mse] Epoch  52/200 | Train=0.01992 | Val=0.02365 | wMAE=0.121084 | PolarMAE=0.016367 | EMD=0.000785 | MolEMD=0.000282 | R2=0.8891 | LR=2.96e-05 | 102.9s
+2026-06-18 05:11:46,749 - INFO - [gps_seed2_mse] Epoch  53/200 | Train=0.01988 | Val=0.02351 | wMAE=0.120604 | PolarMAE=0.016293 | EMD=0.000778 | MolEMD=0.000277 | R2=0.8899 | LR=2.30e-05 | 103.6s
+2026-06-18 05:11:46,826 - INFO -   -> new best (weighted_mae=0.120604), saved results/checkpoints/gps_seed2_mse.pt
+2026-06-18 05:13:30,067 - INFO - [gps_seed2_mse] Epoch  54/200 | Train=0.01982 | Val=0.02353 | wMAE=0.120399 | PolarMAE=0.016232 | EMD=0.000775 | MolEMD=0.000275 | R2=0.8900 | LR=1.73e-05 | 103.2s
+2026-06-18 05:13:30,149 - INFO -   -> new best (weighted_mae=0.120399), saved results/checkpoints/gps_seed2_mse.pt
+2026-06-18 05:15:07,752 - INFO - [gps_seed2_mse] Epoch  55/200 | Train=0.01978 | Val=0.02351 | wMAE=0.120552 | PolarMAE=0.016142 | EMD=0.000774 | MolEMD=0.000276 | R2=0.8900 | LR=1.24e-05 | 97.6s
+2026-06-18 05:16:51,784 - INFO - [gps_seed2_mse] Epoch  56/200 | Train=0.01974 | Val=0.02353 | wMAE=0.120323 | PolarMAE=0.016264 | EMD=0.000776 | MolEMD=0.000277 | R2=0.8899 | LR=8.32e-06 | 104.0s
+2026-06-18 05:16:51,865 - INFO -   -> new best (weighted_mae=0.120323), saved results/checkpoints/gps_seed2_mse.pt
+2026-06-18 05:18:31,975 - INFO - [gps_seed2_mse] Epoch  57/200 | Train=0.01970 | Val=0.02349 | wMAE=0.120301 | PolarMAE=0.016226 | EMD=0.000773 | MolEMD=0.000276 | R2=0.8900 | LR=5.13e-06 | 100.1s
+2026-06-18 05:18:32,059 - INFO -   -> new best (weighted_mae=0.120301), saved results/checkpoints/gps_seed2_mse.pt
+2026-06-18 05:20:12,316 - INFO - [gps_seed2_mse] Epoch  58/200 | Train=0.01969 | Val=0.02346 | wMAE=0.120397 | PolarMAE=0.016226 | EMD=0.000773 | MolEMD=0.000275 | R2=0.8900 | LR=2.84e-06 | 100.3s
+2026-06-18 05:21:53,406 - INFO - [gps_seed2_mse] Epoch  59/200 | Train=0.01967 | Val=0.02343 | wMAE=0.120191 | PolarMAE=0.016250 | EMD=0.000774 | MolEMD=0.000275 | R2=0.8903 | LR=1.46e-06 | 101.1s
+2026-06-18 05:21:53,487 - INFO -   -> new best (weighted_mae=0.120191), saved results/checkpoints/gps_seed2_mse.pt
+2026-06-18 05:23:34,238 - INFO - [gps_seed2_mse] Epoch  60/200 | Train=0.01965 | Val=0.02344 | wMAE=0.120284 | PolarMAE=0.016200 | EMD=0.000773 | MolEMD=0.000275 | R2=0.8902 | LR=3.00e-04 | 100.8s
+2026-06-18 05:25:11,984 - INFO - [gps_seed2_mse] Epoch  61/200 | Train=0.02197 | Val=0.02569 | wMAE=0.125541 | PolarMAE=0.017451 | EMD=0.000834 | MolEMD=0.000317 | R2=0.8799 | LR=3.00e-04 | 97.7s
+2026-06-18 05:26:56,116 - INFO - [gps_seed2_mse] Epoch  62/200 | Train=0.02145 | Val=0.02499 | wMAE=0.123931 | PolarMAE=0.016573 | EMD=0.000803 | MolEMD=0.000287 | R2=0.8822 | LR=3.00e-04 | 104.1s
+2026-06-18 05:28:40,818 - INFO - [gps_seed2_mse] Epoch  63/200 | Train=0.02122 | Val=0.02474 | wMAE=0.122794 | PolarMAE=0.016614 | EMD=0.000795 | MolEMD=0.000299 | R2=0.8839 | LR=2.99e-04 | 104.7s
+2026-06-18 05:30:26,602 - INFO - [gps_seed2_mse] Epoch  64/200 | Train=0.02114 | Val=0.02498 | wMAE=0.124099 | PolarMAE=0.016333 | EMD=0.000808 | MolEMD=0.000306 | R2=0.8835 | LR=2.98e-04 | 105.8s
+2026-06-18 05:32:10,947 - INFO - [gps_seed2_mse] Epoch  65/200 | Train=0.02103 | Val=0.02481 | wMAE=0.123415 | PolarMAE=0.016689 | EMD=0.000800 | MolEMD=0.000301 | R2=0.8830 | LR=2.97e-04 | 104.3s
+2026-06-18 05:33:55,528 - INFO - [gps_seed2_mse] Epoch  66/200 | Train=0.02085 | Val=0.02420 | wMAE=0.122731 | PolarMAE=0.016513 | EMD=0.000800 | MolEMD=0.000291 | R2=0.8858 | LR=2.96e-04 | 104.6s
+2026-06-18 05:35:36,142 - INFO - [gps_seed2_mse] Epoch  67/200 | Train=0.02080 | Val=0.02468 | wMAE=0.123133 | PolarMAE=0.016434 | EMD=0.000796 | MolEMD=0.000295 | R2=0.8844 | LR=2.94e-04 | 100.6s
+2026-06-18 05:37:22,665 - INFO - [gps_seed2_mse] Epoch  68/200 | Train=0.02067 | Val=0.02418 | wMAE=0.122497 | PolarMAE=0.016638 | EMD=0.000792 | MolEMD=0.000294 | R2=0.8862 | LR=2.93e-04 | 106.5s
+2026-06-18 05:39:06,370 - INFO - [gps_seed2_mse] Epoch  69/200 | Train=0.02059 | Val=0.02413 | wMAE=0.122332 | PolarMAE=0.016474 | EMD=0.000788 | MolEMD=0.000289 | R2=0.8864 | LR=2.91e-04 | 103.7s
+2026-06-18 05:40:49,631 - INFO - [gps_seed2_mse] Epoch  70/200 | Train=0.02052 | Val=0.02439 | wMAE=0.123055 | PolarMAE=0.016156 | EMD=0.000793 | MolEMD=0.000308 | R2=0.8852 | LR=2.89e-04 | 103.3s
+2026-06-18 05:42:35,798 - INFO - [gps_seed2_mse] Epoch  71/200 | Train=0.02045 | Val=0.02382 | wMAE=0.121795 | PolarMAE=0.016236 | EMD=0.000779 | MolEMD=0.000283 | R2=0.8883 | LR=2.86e-04 | 106.2s
+2026-06-18 05:44:22,145 - INFO - [gps_seed2_mse] Epoch  72/200 | Train=0.02036 | Val=0.02417 | wMAE=0.121402 | PolarMAE=0.016633 | EMD=0.000791 | MolEMD=0.000291 | R2=0.8868 | LR=2.84e-04 | 106.3s
+2026-06-18 05:46:05,424 - INFO - [gps_seed2_mse] Epoch  73/200 | Train=0.02033 | Val=0.02425 | wMAE=0.123407 | PolarMAE=0.016443 | EMD=0.000796 | MolEMD=0.000307 | R2=0.8847 | LR=2.81e-04 | 103.3s
+2026-06-18 05:47:49,719 - INFO - [gps_seed2_mse] Epoch  74/200 | Train=0.02024 | Val=0.02425 | wMAE=0.122805 | PolarMAE=0.016597 | EMD=0.000781 | MolEMD=0.000287 | R2=0.8852 | LR=2.78e-04 | 104.3s
+2026-06-18 05:49:34,446 - INFO - [gps_seed2_mse] Epoch  75/200 | Train=0.02013 | Val=0.02448 | wMAE=0.122903 | PolarMAE=0.016197 | EMD=0.000790 | MolEMD=0.000292 | R2=0.8850 | LR=2.75e-04 | 104.7s
+2026-06-18 05:51:18,706 - INFO - [gps_seed2_mse] Epoch  76/200 | Train=0.02007 | Val=0.02377 | wMAE=0.121116 | PolarMAE=0.016770 | EMD=0.000784 | MolEMD=0.000287 | R2=0.8889 | LR=2.71e-04 | 104.3s
+2026-06-18 05:53:01,866 - INFO - [gps_seed2_mse] Epoch  77/200 | Train=0.01989 | Val=0.02351 | wMAE=0.120068 | PolarMAE=0.016480 | EMD=0.000781 | MolEMD=0.000304 | R2=0.8898 | LR=2.68e-04 | 103.2s
+2026-06-18 05:53:01,954 - INFO -   -> new best (weighted_mae=0.120068), saved results/checkpoints/gps_seed2_mse.pt
+2026-06-18 05:54:50,116 - INFO - [gps_seed2_mse] Epoch  78/200 | Train=0.01992 | Val=0.02381 | wMAE=0.120649 | PolarMAE=0.016236 | EMD=0.000770 | MolEMD=0.000283 | R2=0.8878 | LR=2.64e-04 | 108.2s
+2026-06-18 05:56:29,781 - INFO - [gps_seed2_mse] Epoch  79/200 | Train=0.01981 | Val=0.02382 | wMAE=0.121621 | PolarMAE=0.016409 | EMD=0.000785 | MolEMD=0.000290 | R2=0.8886 | LR=2.60e-04 | 99.7s
+2026-06-18 05:58:13,475 - INFO - [gps_seed2_mse] Epoch  80/200 | Train=0.01973 | Val=0.02311 | wMAE=0.119798 | PolarMAE=0.016638 | EMD=0.000783 | MolEMD=0.000277 | R2=0.8919 | LR=2.56e-04 | 103.7s
+2026-06-18 05:58:13,553 - INFO -   -> new best (weighted_mae=0.119798), saved results/checkpoints/gps_seed2_mse.pt
+2026-06-18 05:59:56,442 - INFO - [gps_seed2_mse] Epoch  81/200 | Train=0.01966 | Val=0.02336 | wMAE=0.121118 | PolarMAE=0.016322 | EMD=0.000778 | MolEMD=0.000293 | R2=0.8892 | LR=2.52e-04 | 102.9s
+2026-06-18 06:01:42,764 - INFO - [gps_seed2_mse] Epoch  82/200 | Train=0.01960 | Val=0.02417 | wMAE=0.122901 | PolarMAE=0.016256 | EMD=0.000777 | MolEMD=0.000314 | R2=0.8848 | LR=2.48e-04 | 106.3s
+2026-06-18 06:03:26,514 - INFO - [gps_seed2_mse] Epoch  83/200 | Train=0.01954 | Val=0.02297 | wMAE=0.119731 | PolarMAE=0.016427 | EMD=0.000768 | MolEMD=0.000272 | R2=0.8915 | LR=2.43e-04 | 103.7s
+2026-06-18 06:03:26,594 - INFO -   -> new best (weighted_mae=0.119731), saved results/checkpoints/gps_seed2_mse.pt
+2026-06-18 06:05:11,378 - INFO - [gps_seed2_mse] Epoch  84/200 | Train=0.01942 | Val=0.02356 | wMAE=0.120461 | PolarMAE=0.015970 | EMD=0.000756 | MolEMD=0.000279 | R2=0.8888 | LR=2.38e-04 | 104.8s
+2026-06-18 06:06:56,451 - INFO - [gps_seed2_mse] Epoch  85/200 | Train=0.01938 | Val=0.02340 | wMAE=0.119928 | PolarMAE=0.016591 | EMD=0.000770 | MolEMD=0.000283 | R2=0.8898 | LR=2.34e-04 | 105.1s
+2026-06-18 06:08:43,824 - INFO - [gps_seed2_mse] Epoch  86/200 | Train=0.01930 | Val=0.02277 | wMAE=0.118259 | PolarMAE=0.016161 | EMD=0.000756 | MolEMD=0.000271 | R2=0.8932 | LR=2.29e-04 | 107.4s
+2026-06-18 06:08:43,904 - INFO -   -> new best (weighted_mae=0.118259), saved results/checkpoints/gps_seed2_mse.pt
+2026-06-18 06:10:28,207 - INFO - [gps_seed2_mse] Epoch  87/200 | Train=0.01925 | Val=0.02350 | wMAE=0.119388 | PolarMAE=0.016461 | EMD=0.000761 | MolEMD=0.000290 | R2=0.8904 | LR=2.24e-04 | 104.3s
+2026-06-18 06:12:09,695 - INFO - [gps_seed2_mse] Epoch  88/200 | Train=0.01918 | Val=0.02318 | wMAE=0.119610 | PolarMAE=0.016110 | EMD=0.000755 | MolEMD=0.000276 | R2=0.8914 | LR=2.18e-04 | 101.5s
+2026-06-18 06:13:55,249 - INFO - [gps_seed2_mse] Epoch  89/200 | Train=0.01910 | Val=0.02309 | wMAE=0.119575 | PolarMAE=0.016218 | EMD=0.000756 | MolEMD=0.000273 | R2=0.8913 | LR=2.13e-04 | 105.6s
+2026-06-18 06:15:39,093 - INFO - [gps_seed2_mse] Epoch  90/200 | Train=0.01906 | Val=0.02268 | wMAE=0.118261 | PolarMAE=0.016046 | EMD=0.000753 | MolEMD=0.000270 | R2=0.8935 | LR=2.08e-04 | 103.8s
+2026-06-18 06:17:24,029 - INFO - [gps_seed2_mse] Epoch  91/200 | Train=0.01899 | Val=0.02272 | wMAE=0.118936 | PolarMAE=0.016195 | EMD=0.000758 | MolEMD=0.000279 | R2=0.8936 | LR=2.02e-04 | 104.9s
+2026-06-18 06:19:07,136 - INFO - [gps_seed2_mse] Epoch  92/200 | Train=0.01898 | Val=0.02262 | wMAE=0.117298 | PolarMAE=0.016031 | EMD=0.000746 | MolEMD=0.000270 | R2=0.8941 | LR=1.97e-04 | 103.1s
+2026-06-18 06:19:07,216 - INFO -   -> new best (weighted_mae=0.117298), saved results/checkpoints/gps_seed2_mse.pt
+2026-06-18 06:20:50,414 - INFO - [gps_seed2_mse] Epoch  93/200 | Train=0.01888 | Val=0.02301 | wMAE=0.119164 | PolarMAE=0.015888 | EMD=0.000750 | MolEMD=0.000270 | R2=0.8919 | LR=1.91e-04 | 103.2s
+2026-06-18 06:22:33,984 - INFO - [gps_seed2_mse] Epoch  94/200 | Train=0.01882 | Val=0.02274 | wMAE=0.118798 | PolarMAE=0.015924 | EMD=0.000741 | MolEMD=0.000268 | R2=0.8932 | LR=1.85e-04 | 103.6s
+2026-06-18 06:24:19,124 - INFO - [gps_seed2_mse] Epoch  95/200 | Train=0.01877 | Val=0.02243 | wMAE=0.117701 | PolarMAE=0.016027 | EMD=0.000744 | MolEMD=0.000272 | R2=0.8951 | LR=1.80e-04 | 105.1s
+2026-06-18 06:25:59,609 - INFO - [gps_seed2_mse] Epoch  96/200 | Train=0.01871 | Val=0.02276 | wMAE=0.118290 | PolarMAE=0.015692 | EMD=0.000738 | MolEMD=0.000273 | R2=0.8928 | LR=1.74e-04 | 100.5s
+2026-06-18 06:27:37,590 - INFO - [gps_seed2_mse] Epoch  97/200 | Train=0.01868 | Val=0.02242 | wMAE=0.117732 | PolarMAE=0.016210 | EMD=0.000744 | MolEMD=0.000266 | R2=0.8947 | LR=1.68e-04 | 98.0s
+2026-06-18 06:29:21,601 - INFO - [gps_seed2_mse] Epoch  98/200 | Train=0.01861 | Val=0.02238 | wMAE=0.117654 | PolarMAE=0.016154 | EMD=0.000743 | MolEMD=0.000268 | R2=0.8949 | LR=1.62e-04 | 104.0s
+2026-06-18 06:31:07,724 - INFO - [gps_seed2_mse] Epoch  99/200 | Train=0.01854 | Val=0.02248 | wMAE=0.117466 | PolarMAE=0.015960 | EMD=0.000739 | MolEMD=0.000264 | R2=0.8948 | LR=1.56e-04 | 106.1s
+2026-06-18 06:32:53,005 - INFO - [gps_seed2_mse] Epoch 100/200 | Train=0.01849 | Val=0.02250 | wMAE=0.117450 | PolarMAE=0.016093 | EMD=0.000742 | MolEMD=0.000274 | R2=0.8946 | LR=1.50e-04 | 105.3s
+2026-06-18 06:34:38,078 - INFO - [gps_seed2_mse] Epoch 101/200 | Train=0.01843 | Val=0.02224 | wMAE=0.117264 | PolarMAE=0.016049 | EMD=0.000736 | MolEMD=0.000261 | R2=0.8956 | LR=1.45e-04 | 105.1s
+2026-06-18 06:34:38,168 - INFO -   -> new best (weighted_mae=0.117264), saved results/checkpoints/gps_seed2_mse.pt
+2026-06-18 06:36:21,320 - INFO - [gps_seed2_mse] Epoch 102/200 | Train=0.01840 | Val=0.02268 | wMAE=0.118439 | PolarMAE=0.015914 | EMD=0.000735 | MolEMD=0.000266 | R2=0.8937 | LR=1.39e-04 | 103.2s
+2026-06-18 06:38:06,302 - INFO - [gps_seed2_mse] Epoch 103/200 | Train=0.01836 | Val=0.02236 | wMAE=0.117421 | PolarMAE=0.015905 | EMD=0.000742 | MolEMD=0.000276 | R2=0.8950 | LR=1.33e-04 | 105.0s
+2026-06-18 06:39:51,460 - INFO - [gps_seed2_mse] Epoch 104/200 | Train=0.01828 | Val=0.02216 | wMAE=0.117213 | PolarMAE=0.015878 | EMD=0.000732 | MolEMD=0.000265 | R2=0.8960 | LR=1.27e-04 | 105.2s
+2026-06-18 06:39:51,544 - INFO -   -> new best (weighted_mae=0.117213), saved results/checkpoints/gps_seed2_mse.pt
+2026-06-18 06:41:35,569 - INFO - [gps_seed2_mse] Epoch 105/200 | Train=0.01825 | Val=0.02216 | wMAE=0.117201 | PolarMAE=0.016089 | EMD=0.000735 | MolEMD=0.000264 | R2=0.8960 | LR=1.21e-04 | 104.0s
+2026-06-18 06:41:35,650 - INFO -   -> new best (weighted_mae=0.117201), saved results/checkpoints/gps_seed2_mse.pt
+2026-06-18 06:43:21,131 - INFO - [gps_seed2_mse] Epoch 106/200 | Train=0.01823 | Val=0.02226 | wMAE=0.117190 | PolarMAE=0.015944 | EMD=0.000729 | MolEMD=0.000262 | R2=0.8954 | LR=1.16e-04 | 105.5s
+2026-06-18 06:43:21,210 - INFO -   -> new best (weighted_mae=0.117190), saved results/checkpoints/gps_seed2_mse.pt
+2026-06-18 06:45:05,687 - INFO - [gps_seed2_mse] Epoch 107/200 | Train=0.01816 | Val=0.02196 | wMAE=0.116506 | PolarMAE=0.016115 | EMD=0.000734 | MolEMD=0.000264 | R2=0.8968 | LR=1.10e-04 | 104.5s
+2026-06-18 06:45:05,764 - INFO -   -> new best (weighted_mae=0.116506), saved results/checkpoints/gps_seed2_mse.pt
+2026-06-18 06:46:50,911 - INFO - [gps_seed2_mse] Epoch 108/200 | Train=0.01813 | Val=0.02214 | wMAE=0.116573 | PolarMAE=0.015940 | EMD=0.000730 | MolEMD=0.000265 | R2=0.8965 | LR=1.04e-04 | 105.1s
+2026-06-18 06:48:35,072 - INFO - [gps_seed2_mse] Epoch 109/200 | Train=0.01809 | Val=0.02207 | wMAE=0.116770 | PolarMAE=0.015807 | EMD=0.000727 | MolEMD=0.000260 | R2=0.8965 | LR=9.88e-05 | 104.2s
+2026-06-18 06:50:17,233 - INFO - [gps_seed2_mse] Epoch 110/200 | Train=0.01806 | Val=0.02205 | wMAE=0.116397 | PolarMAE=0.015863 | EMD=0.000725 | MolEMD=0.000261 | R2=0.8968 | LR=9.33e-05 | 102.2s
+2026-06-18 06:50:17,315 - INFO -   -> new best (weighted_mae=0.116397), saved results/checkpoints/gps_seed2_mse.pt
+2026-06-18 06:52:00,924 - INFO - [gps_seed2_mse] Epoch 111/200 | Train=0.01799 | Val=0.02188 | wMAE=0.115952 | PolarMAE=0.015991 | EMD=0.000729 | MolEMD=0.000264 | R2=0.8976 | LR=8.79e-05 | 103.6s
+2026-06-18 06:52:01,001 - INFO -   -> new best (weighted_mae=0.115952), saved results/checkpoints/gps_seed2_mse.pt
+2026-06-18 06:53:46,495 - INFO - [gps_seed2_mse] Epoch 112/200 | Train=0.01796 | Val=0.02195 | wMAE=0.115856 | PolarMAE=0.016137 | EMD=0.000730 | MolEMD=0.000266 | R2=0.8975 | LR=8.26e-05 | 105.5s
+2026-06-18 06:53:46,575 - INFO -   -> new best (weighted_mae=0.115856), saved results/checkpoints/gps_seed2_mse.pt
+2026-06-18 06:55:29,938 - INFO - [gps_seed2_mse] Epoch 113/200 | Train=0.01793 | Val=0.02190 | wMAE=0.116196 | PolarMAE=0.015887 | EMD=0.000724 | MolEMD=0.000258 | R2=0.8975 | LR=7.75e-05 | 103.4s
+2026-06-18 06:57:14,059 - INFO - [gps_seed2_mse] Epoch 114/200 | Train=0.01789 | Val=0.02193 | wMAE=0.116125 | PolarMAE=0.016073 | EMD=0.000726 | MolEMD=0.000261 | R2=0.8972 | LR=7.24e-05 | 104.1s
+2026-06-18 06:58:58,458 - INFO - [gps_seed2_mse] Epoch 115/200 | Train=0.01785 | Val=0.02184 | wMAE=0.115745 | PolarMAE=0.015726 | EMD=0.000717 | MolEMD=0.000255 | R2=0.8978 | LR=6.74e-05 | 104.4s
+2026-06-18 06:58:58,535 - INFO -   -> new best (weighted_mae=0.115745), saved results/checkpoints/gps_seed2_mse.pt
+2026-06-18 07:00:41,218 - INFO - [gps_seed2_mse] Epoch 116/200 | Train=0.01782 | Val=0.02198 | wMAE=0.116025 | PolarMAE=0.015742 | EMD=0.000719 | MolEMD=0.000255 | R2=0.8972 | LR=6.26e-05 | 102.7s
+2026-06-18 07:02:25,167 - INFO - [gps_seed2_mse] Epoch 117/200 | Train=0.01778 | Val=0.02198 | wMAE=0.116244 | PolarMAE=0.015783 | EMD=0.000720 | MolEMD=0.000259 | R2=0.8970 | LR=5.79e-05 | 103.9s
+2026-06-18 07:04:08,935 - INFO - [gps_seed2_mse] Epoch 118/200 | Train=0.01776 | Val=0.02186 | wMAE=0.115526 | PolarMAE=0.015761 | EMD=0.000716 | MolEMD=0.000256 | R2=0.8978 | LR=5.34e-05 | 103.8s
+2026-06-18 07:04:09,014 - INFO -   -> new best (weighted_mae=0.115526), saved results/checkpoints/gps_seed2_mse.pt
+2026-06-18 07:05:55,917 - INFO - [gps_seed2_mse] Epoch 119/200 | Train=0.01774 | Val=0.02191 | wMAE=0.116157 | PolarMAE=0.015757 | EMD=0.000720 | MolEMD=0.000262 | R2=0.8974 | LR=4.90e-05 | 106.9s
+2026-06-18 07:07:40,099 - INFO - [gps_seed2_mse] Epoch 120/200 | Train=0.01771 | Val=0.02183 | wMAE=0.115817 | PolarMAE=0.015820 | EMD=0.000719 | MolEMD=0.000258 | R2=0.8979 | LR=4.48e-05 | 104.2s
+2026-06-18 07:09:25,269 - INFO - [gps_seed2_mse] Epoch 121/200 | Train=0.01767 | Val=0.02182 | wMAE=0.115626 | PolarMAE=0.015647 | EMD=0.000715 | MolEMD=0.000259 | R2=0.8978 | LR=4.07e-05 | 105.2s
+2026-06-18 07:11:06,472 - INFO - [gps_seed2_mse] Epoch 122/200 | Train=0.01766 | Val=0.02175 | wMAE=0.115627 | PolarMAE=0.015724 | EMD=0.000717 | MolEMD=0.000257 | R2=0.8981 | LR=3.68e-05 | 101.2s
+2026-06-18 07:12:48,626 - INFO - [gps_seed2_mse] Epoch 123/200 | Train=0.01764 | Val=0.02166 | wMAE=0.115452 | PolarMAE=0.015734 | EMD=0.000716 | MolEMD=0.000256 | R2=0.8987 | LR=3.31e-05 | 102.2s
+2026-06-18 07:12:48,703 - INFO -   -> new best (weighted_mae=0.115452), saved results/checkpoints/gps_seed2_mse.pt
+2026-06-18 07:14:33,245 - INFO - [gps_seed2_mse] Epoch 124/200 | Train=0.01762 | Val=0.02173 | wMAE=0.115427 | PolarMAE=0.015738 | EMD=0.000714 | MolEMD=0.000257 | R2=0.8982 | LR=2.96e-05 | 104.5s
+2026-06-18 07:14:33,322 - INFO -   -> new best (weighted_mae=0.115427), saved results/checkpoints/gps_seed2_mse.pt
+2026-06-18 07:16:12,566 - INFO - [gps_seed2_mse] Epoch 125/200 | Train=0.01759 | Val=0.02178 | wMAE=0.115421 | PolarMAE=0.015758 | EMD=0.000715 | MolEMD=0.000258 | R2=0.8981 | LR=2.62e-05 | 99.2s
+2026-06-18 07:16:12,643 - INFO -   -> new best (weighted_mae=0.115421), saved results/checkpoints/gps_seed2_mse.pt
+2026-06-18 07:17:57,570 - INFO - [gps_seed2_mse] Epoch 126/200 | Train=0.01758 | Val=0.02171 | wMAE=0.115367 | PolarMAE=0.015795 | EMD=0.000714 | MolEMD=0.000254 | R2=0.8984 | LR=2.30e-05 | 104.9s
+2026-06-18 07:17:57,648 - INFO -   -> new best (weighted_mae=0.115367), saved results/checkpoints/gps_seed2_mse.pt
+2026-06-18 07:19:39,124 - INFO - [gps_seed2_mse] Epoch 127/200 | Train=0.01756 | Val=0.02170 | wMAE=0.115231 | PolarMAE=0.015775 | EMD=0.000714 | MolEMD=0.000256 | R2=0.8986 | LR=2.01e-05 | 101.5s
+2026-06-18 07:19:39,199 - INFO -   -> new best (weighted_mae=0.115231), saved results/checkpoints/gps_seed2_mse.pt
+2026-06-18 07:21:20,390 - INFO - [gps_seed2_mse] Epoch 128/200 | Train=0.01754 | Val=0.02176 | wMAE=0.115549 | PolarMAE=0.015720 | EMD=0.000713 | MolEMD=0.000256 | R2=0.8981 | LR=1.73e-05 | 101.2s
+2026-06-18 07:23:03,277 - INFO - [gps_seed2_mse] Epoch 129/200 | Train=0.01752 | Val=0.02167 | wMAE=0.115217 | PolarMAE=0.015624 | EMD=0.000711 | MolEMD=0.000255 | R2=0.8987 | LR=1.47e-05 | 102.9s
+2026-06-18 07:23:03,354 - INFO -   -> new best (weighted_mae=0.115217), saved results/checkpoints/gps_seed2_mse.pt
+2026-06-18 07:24:42,002 - INFO - [gps_seed2_mse] Epoch 130/200 | Train=0.01751 | Val=0.02165 | wMAE=0.115119 | PolarMAE=0.015754 | EMD=0.000714 | MolEMD=0.000256 | R2=0.8988 | LR=1.24e-05 | 98.6s
+2026-06-18 07:24:42,078 - INFO -   -> new best (weighted_mae=0.115119), saved results/checkpoints/gps_seed2_mse.pt
+2026-06-18 07:26:26,629 - INFO - [gps_seed2_mse] Epoch 131/200 | Train=0.01749 | Val=0.02169 | wMAE=0.115508 | PolarMAE=0.015694 | EMD=0.000713 | MolEMD=0.000258 | R2=0.8984 | LR=1.02e-05 | 104.5s
+2026-06-18 07:28:04,005 - INFO - [gps_seed2_mse] Epoch 132/200 | Train=0.01748 | Val=0.02169 | wMAE=0.115278 | PolarMAE=0.015657 | EMD=0.000711 | MolEMD=0.000255 | R2=0.8986 | LR=8.32e-06 | 97.4s
+2026-06-18 07:29:41,976 - INFO - [gps_seed2_mse] Epoch 133/200 | Train=0.01747 | Val=0.02171 | wMAE=0.115466 | PolarMAE=0.015685 | EMD=0.000712 | MolEMD=0.000257 | R2=0.8983 | LR=6.61e-06 | 98.0s
+2026-06-18 07:31:21,726 - INFO - [gps_seed2_mse] Epoch 134/200 | Train=0.01746 | Val=0.02166 | wMAE=0.115250 | PolarMAE=0.015689 | EMD=0.000711 | MolEMD=0.000256 | R2=0.8987 | LR=5.13e-06 | 99.7s
+2026-06-18 07:33:05,946 - INFO - [gps_seed2_mse] Epoch 135/200 | Train=0.01745 | Val=0.02166 | wMAE=0.115192 | PolarMAE=0.015674 | EMD=0.000710 | MolEMD=0.000254 | R2=0.8986 | LR=3.87e-06 | 104.2s
+2026-06-18 07:34:50,454 - INFO - [gps_seed2_mse] Epoch 136/200 | Train=0.01745 | Val=0.02166 | wMAE=0.115193 | PolarMAE=0.015668 | EMD=0.000710 | MolEMD=0.000255 | R2=0.8987 | LR=2.84e-06 | 104.5s
+2026-06-18 07:36:33,122 - INFO - [gps_seed2_mse] Epoch 137/200 | Train=0.01745 | Val=0.02169 | wMAE=0.115288 | PolarMAE=0.015658 | EMD=0.000710 | MolEMD=0.000255 | R2=0.8984 | LR=2.04e-06 | 102.7s
+2026-06-18 07:38:22,684 - INFO - [gps_seed2_mse] Epoch 138/200 | Train=0.01743 | Val=0.02166 | wMAE=0.115200 | PolarMAE=0.015671 | EMD=0.000710 | MolEMD=0.000255 | R2=0.8987 | LR=1.46e-06 | 109.6s
+2026-06-18 07:40:04,150 - INFO - [gps_seed2_mse] Epoch 139/200 | Train=0.01743 | Val=0.02165 | wMAE=0.115225 | PolarMAE=0.015674 | EMD=0.000710 | MolEMD=0.000255 | R2=0.8987 | LR=1.12e-06 | 101.5s
+2026-06-18 07:41:44,824 - INFO - [gps_seed2_mse] Epoch 140/200 | Train=0.01743 | Val=0.02166 | wMAE=0.115225 | PolarMAE=0.015677 | EMD=0.000710 | MolEMD=0.000255 | R2=0.8987 | LR=3.00e-04 | 100.7s
+2026-06-18 07:43:29,371 - INFO - [gps_seed2_mse] Epoch 141/200 | Train=0.01912 | Val=0.02280 | wMAE=0.117896 | PolarMAE=0.016574 | EMD=0.000752 | MolEMD=0.000285 | R2=0.8931 | LR=3.00e-04 | 104.5s
+2026-06-18 07:45:11,746 - INFO - [gps_seed2_mse] Epoch 142/200 | Train=0.01887 | Val=0.02331 | wMAE=0.119787 | PolarMAE=0.016169 | EMD=0.000747 | MolEMD=0.000278 | R2=0.8895 | LR=3.00e-04 | 102.4s
+2026-06-18 07:46:55,711 - INFO - [gps_seed2_mse] Epoch 143/200 | Train=0.01883 | Val=0.02266 | wMAE=0.118536 | PolarMAE=0.016156 | EMD=0.000747 | MolEMD=0.000271 | R2=0.8937 | LR=3.00e-04 | 104.0s
+2026-06-18 07:48:38,969 - INFO - [gps_seed2_mse] Epoch 144/200 | Train=0.01875 | Val=0.02310 | wMAE=0.119464 | PolarMAE=0.016069 | EMD=0.000748 | MolEMD=0.000282 | R2=0.8907 | LR=3.00e-04 | 103.3s
+2026-06-18 07:50:21,929 - INFO - [gps_seed2_mse] Epoch 145/200 | Train=0.01869 | Val=0.02244 | wMAE=0.116955 | PolarMAE=0.016371 | EMD=0.000743 | MolEMD=0.000272 | R2=0.8951 | LR=2.99e-04 | 103.0s
+2026-06-18 07:52:05,296 - INFO - [gps_seed2_mse] Epoch 146/200 | Train=0.01867 | Val=0.02254 | wMAE=0.117536 | PolarMAE=0.016020 | EMD=0.000731 | MolEMD=0.000267 | R2=0.8943 | LR=2.99e-04 | 103.4s
+2026-06-18 07:53:47,843 - INFO - [gps_seed2_mse] Epoch 147/200 | Train=0.01858 | Val=0.02298 | wMAE=0.119110 | PolarMAE=0.016040 | EMD=0.000748 | MolEMD=0.000276 | R2=0.8917 | LR=2.99e-04 | 102.5s
+2026-06-18 07:55:32,119 - INFO - [gps_seed2_mse] Epoch 148/200 | Train=0.01856 | Val=0.02281 | wMAE=0.117819 | PolarMAE=0.015727 | EMD=0.000734 | MolEMD=0.000278 | R2=0.8937 | LR=2.98e-04 | 104.3s
+2026-06-18 07:57:15,448 - INFO - [gps_seed2_mse] Epoch 149/200 | Train=0.01862 | Val=0.02262 | wMAE=0.117389 | PolarMAE=0.016103 | EMD=0.000747 | MolEMD=0.000272 | R2=0.8945 | LR=2.98e-04 | 103.3s
+2026-06-18 07:58:56,703 - INFO - [gps_seed2_mse] Epoch 150/200 | Train=0.01852 | Val=0.02256 | wMAE=0.117383 | PolarMAE=0.016104 | EMD=0.000739 | MolEMD=0.000264 | R2=0.8945 | LR=2.97e-04 | 101.3s
+2026-06-18 07:58:56,704 - INFO - Early stopping at epoch 150.
+2026-06-18 07:58:56,704 - INFO - Loading best checkpoint for test evaluation...
+2026-06-18 07:59:36,154 - INFO - [gps_seed2_mse] TEST METRICS: {'loss': 0.019871274634049488, 'weighted_r2': 0.9045946002006531, 'weighted_mae': 0.1141810417175293, 'polar_mae': 0.017368769273161888, 'cosine_similarity': 0.9349643887292937, 'emd_raw': 0.0007583210662358552, 'emd_normalized': 0.0007583210662358577, 'molecular_mae': 0.4917656334183919, 'molecular_emd': 0.00024574735391785215, 'molecular_cosine': 0.9939611152311166, 'molecular_polar_mae': 0.22774313291764628}
+2026-06-18 07:59:36,161 - INFO - Saved results to results/metrics/gps_seed2_mse.json

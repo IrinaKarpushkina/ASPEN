@@ -1,0 +1,35 @@
+# base.yaml — общие настройки для ВСЕХ моделей (GCN/GAT/GATv2/GINE/SchNet/final).
+#
+# Любое изменение здесь применяется ко всем архитектурам одновременно —
+# это и есть "controlled comparison" по Dwivedi et al. (JMLR 2022).
+
+data:
+  train_path: /mnt/tank/scratch/ikarpushkina/sigma/ASPEN/data/train_test_val_df/chaos_atomic_train_with_coordinates.parquet
+  val_path:   /mnt/tank/scratch/ikarpushkina/sigma/ASPEN/data/train_test_val_df/chaos_atomic_val_with_coordinates.parquet
+  test_path:  /mnt/tank/scratch/ikarpushkina/sigma/ASPEN/data/train_test_val_df/chaos_atomic_test_with_coordinates.parquet
+  cache_dir:  /mnt/tank/scratch/ikarpushkina/sigma/ASPEN/data/train_test_val_df/cache
+  use_extended: true       # 15-dim node feat / (32+7)-dim edge feat (RDKit-derived)
+  cutoff: 12.0              # Angstrom — radius graph cutoff, identical for ALL models
+  max_num_neighbors: 32     # cap per atom, identical for ALL models
+  n_rbf: 32                 # Gaussian RBF centres for edge features
+
+training:
+  batch_size: 24
+  grad_accum_steps: 2       # effective batch = 48, identical for ALL models
+  num_workers: 4
+  lr: 3.0e-4
+  weight_decay: 1.0e-5
+  max_epochs: 200
+  patience: 20
+  scheduler_T0: 20
+  scheduler_Tmult: 2
+  eta_min: 1.0e-6
+  max_grad_norm: 1.0
+  use_amp: true             # mixed precision — uses GPU resources efficiently
+
+# Default training objective for the controlled-comparison table (Level 1).
+# Override with --loss combined for the ablation (Level 2), final model only.
+loss: mse
+
+# Reference parameter budget — all architectures target this (±5%).
+target_params: 695667

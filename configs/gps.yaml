@@ -1,0 +1,11 @@
+# configs/gps.yaml
+defaults: base.yaml
+
+model:
+  name: gps
+  hidden: 124
+  num_layers: 4
+  heads: 4
+  walk_length: 16
+  dropout: 0.05
+  n_params_target: 695667

@@ -1,0 +1,10 @@
+Models: gcn gat gatv2 gine schnet
+Seeds:  0 1 2
+WARNING: configs/gcn.yaml not found, skipping gcn
+WARNING: configs/gat.yaml not found, skipping gat
+WARNING: configs/gatv2.yaml not found, skipping gatv2
+WARNING: configs/gine.yaml not found, skipping gine
+WARNING: configs/schnet.yaml not found, skipping schnet
+
+Done. Aggregate results with:
+  python -m scripts.aggregate_results --csv results/comparison_table.csv

@@ -1,0 +1,9 @@
+defaults: base.yaml
+
+model:
+  name: gine
+  hidden: 211           # chosen to absorb the extra edge_dim->hidden projection
+  num_layers: 4
+  n_rbf: 32
+  dropout: 0.05
+  n_params_target: 695667
