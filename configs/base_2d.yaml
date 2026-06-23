@@ -1,0 +1,18 @@
+# base_2d.yaml — вариант base.yaml для 2D бенчмарка (без 3D-координат).
+#
+# Единственное отличие от base.yaml: data.mode = 2d_pure.
+# Граф строится из химических связей SMILES/RDKit — никаких радиус-графов,
+# никаких RBF расстояний в edge features. Только топология молекулы.
+#
+# Всё остальное (batch size, lr, архитектурный бюджет) идентично 3D-варианту,
+# что обеспечивает честное сравнение по Dwivedi et al. (JMLR 2022).
+#
+# Node features: 14-dim (15-dim extended без degree из radius-graph)
+# Edge features:  7-dim (bond type 4 + aromatic + conjugated + in_ring)
+
+defaults: base.yaml
+
+data:
+  mode: 2d_pure
+  # n_rbf и cutoff здесь не имеют смысла (2d_pure их игнорирует),
+  # но оставлены из base.yaml для совместимости конфиг-парсера.

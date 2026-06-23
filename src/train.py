@@ -46,11 +46,17 @@ def set_seed(seed: int):
     torch.cuda.manual_seed_all(seed)
 
 
-def build_model(cfg: dict, use_extended: bool):
+def build_model(cfg: dict, use_extended: bool, mode: str = "3d"):
+    import inspect
     model_cfg = dict(cfg["model"])
     name = model_cfg.pop("name")
     model_cfg.pop("n_params_target", None)  # only used by count_params.py
     model_cls = MODEL_REGISTRY[name]
+    # Передаём mode только если модель явно его поддерживает.
+    # SchNet — исключительно 3D, параметра mode не имеет.
+    sig = inspect.signature(model_cls.__init__)
+    if "mode" in sig.parameters:
+        model_cfg["mode"] = mode
     return model_cls(use_extended=use_extended, **model_cfg), name
 
 
@@ -111,7 +117,7 @@ def main():
     bin_weights_t  = torch.tensor(bin_weights_np, dtype=torch.float)
 
     # ── Model / loss / optimizer / scheduler ────────────────────────────────
-    model, model_name = build_model(cfg, use_extended)
+    model, model_name = build_model(cfg, use_extended, mode=dataset_mode)
     model = model.to(device)
 
     n_params = sum(p.numel() for p in model.parameters() if p.requires_grad)

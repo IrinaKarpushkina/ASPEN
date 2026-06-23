@@ -1,0 +1,9 @@
+defaults: ../base_2d.yaml
+
+model:
+  name: gatv2
+  hidden: 216    # кратно heads=8; GATv2 не использует edge_attr → params ≈ 3D
+  num_layers: 4
+  heads: 8
+  dropout: 0.05
+  n_params_target: 695667

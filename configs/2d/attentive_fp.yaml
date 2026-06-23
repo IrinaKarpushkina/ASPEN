@@ -1,0 +1,12 @@
+defaults: ../base_2d.yaml
+
+# AttentiveFP использует edge_attr в GATEConv.
+# В 2D: edge_dim=7 (против 39 в 3D) → немного меньше параметров.
+# hidden=123 даёт params близко к 3D-варианту.
+model:
+  name: attentive_fp
+  hidden: 124
+  num_layers: 4
+  num_timesteps: 2
+  dropout: 0.05
+  n_params_target: 695667

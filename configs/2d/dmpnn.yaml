@@ -1,0 +1,11 @@
+defaults: ../base_2d.yaml
+
+# DMPNN: bond_init использует edge_attr (cat[atom_feat, edge_attr] → hidden).
+# В 2D: edge_dim=7 (против 39 в 3D) → экономит ~8k параметров.
+# hidden=243 даёт ~687k params (в пределах ±5%).
+model:
+  name: dmpnn
+  hidden: 244
+  num_steps: 4
+  dropout: 0.05
+  n_params_target: 695667

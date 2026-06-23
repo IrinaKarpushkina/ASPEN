@@ -1,0 +1,37 @@
+/bin/bash: /mnt/tank/scratch/ikarpushkina/miniconda3/lib/libtinfo.so.6: no version information available (required by /bin/bash)
+2026-06-23 17:31:25,860 - INFO - Device: cuda
+2026-06-23 17:31:25,862 - INFO - Building [2d_pure] dataset from /mnt/tank/scratch/ikarpushkina/sigma/ASPEN/data/train_test_val_df/chaos_atomic_train_with_coordinates.parquet (no cache)
+2026-06-23 17:35:13,334 - INFO - Caching dataset [2d_pure]: /mnt/tank/scratch/ikarpushkina/sigma/ASPEN/data/train_test_val_df/cache/chaos_atomic_train_with_coordinates.parquet.5773dbaf22.pt
+2026-06-23 17:35:26,373 - INFO - chaos_atomic_train_with_coordinates.parquet [2d_pure]: 36981 mols, 1077949 atoms, RDKit valid: 36981/36981 (100.0%)
+2026-06-23 17:35:26,375 - INFO - Building [2d_pure] dataset from /mnt/tank/scratch/ikarpushkina/sigma/ASPEN/data/train_test_val_df/chaos_atomic_val_with_coordinates.parquet (no cache)
+2026-06-23 17:36:09,131 - INFO - Caching dataset [2d_pure]: /mnt/tank/scratch/ikarpushkina/sigma/ASPEN/data/train_test_val_df/cache/chaos_atomic_val_with_coordinates.parquet.5773dbaf22.pt
+2026-06-23 17:36:12,259 - INFO - chaos_atomic_val_with_coordinates.parquet [2d_pure]: 7941 mols, 235573 atoms, RDKit valid: 7941/7941 (100.0%)
+2026-06-23 17:36:12,261 - INFO - Building [2d_pure] dataset from /mnt/tank/scratch/ikarpushkina/sigma/ASPEN/data/train_test_val_df/chaos_atomic_test_with_coordinates.parquet (no cache)
+2026-06-23 17:36:58,865 - INFO - Caching dataset [2d_pure]: /mnt/tank/scratch/ikarpushkina/sigma/ASPEN/data/train_test_val_df/cache/chaos_atomic_test_with_coordinates.parquet.5773dbaf22.pt
+2026-06-23 17:37:02,605 - INFO - chaos_atomic_test_with_coordinates.parquet [2d_pure]: 7800 mols, 221748 atoms, RDKit valid: 7800/7800 (100.0%)
+2026-06-23 17:37:03,278 - INFO - dmpnn: 697,342 params (target 695,667, diff 0.2%)
+2026-06-23 17:38:35,692 - INFO - [dmpnn_seed0_mse] Epoch   1/200 | Train=0.06687 | Val=0.05489 | wMAE=0.187466 | PolarMAE=0.026191 | EMD=0.001606 | MolEMD=0.000682 | R2=0.7368 | LR=2.98e-04 | 92.4s
+2026-06-23 17:38:35,750 - INFO -   -> new best (weighted_mae=0.187466), saved results/2d/checkpoints/dmpnn_seed0_mse.pt
+2026-06-23 17:40:15,066 - INFO - [dmpnn_seed0_mse] Epoch   2/200 | Train=0.04439 | Val=0.04541 | wMAE=0.170587 | PolarMAE=0.025134 | EMD=0.001471 | MolEMD=0.000562 | R2=0.7827 | LR=2.93e-04 | 99.3s
+2026-06-23 17:40:15,124 - INFO -   -> new best (weighted_mae=0.170587), saved results/2d/checkpoints/dmpnn_seed0_mse.pt
+2026-06-23 17:41:58,951 - INFO - [dmpnn_seed0_mse] Epoch   3/200 | Train=0.04105 | Val=0.04313 | wMAE=0.168005 | PolarMAE=0.022218 | EMD=0.001348 | MolEMD=0.000475 | R2=0.7912 | LR=2.84e-04 | 103.8s
+2026-06-23 17:41:59,027 - INFO -   -> new best (weighted_mae=0.168005), saved results/2d/checkpoints/dmpnn_seed0_mse.pt
+2026-06-23 17:44:12,069 - INFO - [dmpnn_seed0_mse] Epoch   4/200 | Train=0.03918 | Val=0.04240 | wMAE=0.169560 | PolarMAE=0.021800 | EMD=0.001365 | MolEMD=0.000509 | R2=0.7914 | LR=2.71e-04 | 133.0s
+2026-06-23 17:46:23,852 - INFO - [dmpnn_seed0_mse] Epoch   5/200 | Train=0.03768 | Val=0.04015 | wMAE=0.163402 | PolarMAE=0.021092 | EMD=0.001289 | MolEMD=0.000445 | R2=0.8034 | LR=2.56e-04 | 131.8s
+2026-06-23 17:46:23,963 - INFO -   -> new best (weighted_mae=0.163402), saved results/2d/checkpoints/dmpnn_seed0_mse.pt
+2026-06-23 17:48:15,934 - INFO - [dmpnn_seed0_mse] Epoch   6/200 | Train=0.03677 | Val=0.04041 | wMAE=0.165354 | PolarMAE=0.020935 | EMD=0.001267 | MolEMD=0.000444 | R2=0.7992 | LR=2.38e-04 | 112.0s
+2026-06-23 17:49:45,094 - INFO - [dmpnn_seed0_mse] Epoch   7/200 | Train=0.03583 | Val=0.03849 | wMAE=0.157831 | PolarMAE=0.020825 | EMD=0.001240 | MolEMD=0.000432 | R2=0.8138 | LR=2.18e-04 | 89.2s
+2026-06-23 17:49:45,155 - INFO -   -> new best (weighted_mae=0.157831), saved results/2d/checkpoints/dmpnn_seed0_mse.pt
+2026-06-23 17:51:14,771 - INFO - [dmpnn_seed0_mse] Epoch   8/200 | Train=0.03518 | Val=0.03794 | wMAE=0.158767 | PolarMAE=0.020619 | EMD=0.001234 | MolEMD=0.000417 | R2=0.8136 | LR=1.97e-04 | 89.6s
+2026-06-23 17:52:52,335 - INFO - [dmpnn_seed0_mse] Epoch   9/200 | Train=0.03457 | Val=0.03788 | wMAE=0.159065 | PolarMAE=0.021044 | EMD=0.001228 | MolEMD=0.000401 | R2=0.8142 | LR=1.74e-04 | 97.6s
+2026-06-23 17:54:22,085 - INFO - [dmpnn_seed0_mse] Epoch  10/200 | Train=0.03399 | Val=0.03665 | wMAE=0.156973 | PolarMAE=0.019978 | EMD=0.001194 | MolEMD=0.000388 | R2=0.8197 | LR=1.50e-04 | 89.7s
+2026-06-23 17:54:22,154 - INFO -   -> new best (weighted_mae=0.156973), saved results/2d/checkpoints/dmpnn_seed0_mse.pt
+2026-06-23 17:56:12,135 - INFO - [dmpnn_seed0_mse] Epoch  11/200 | Train=0.03351 | Val=0.03626 | wMAE=0.156345 | PolarMAE=0.019794 | EMD=0.001186 | MolEMD=0.000400 | R2=0.8205 | LR=1.27e-04 | 110.0s
+2026-06-23 17:56:12,218 - INFO -   -> new best (weighted_mae=0.156345), saved results/2d/checkpoints/dmpnn_seed0_mse.pt
+2026-06-23 17:58:34,534 - INFO - [dmpnn_seed0_mse] Epoch  12/200 | Train=0.03310 | Val=0.03678 | wMAE=0.155412 | PolarMAE=0.019586 | EMD=0.001159 | MolEMD=0.000385 | R2=0.8193 | LR=1.04e-04 | 142.3s
+2026-06-23 17:58:34,620 - INFO -   -> new best (weighted_mae=0.155412), saved results/2d/checkpoints/dmpnn_seed0_mse.pt
+2026-06-23 18:00:50,426 - INFO - [dmpnn_seed0_mse] Epoch  13/200 | Train=0.03279 | Val=0.03560 | wMAE=0.154128 | PolarMAE=0.019263 | EMD=0.001155 | MolEMD=0.000375 | R2=0.8258 | LR=8.26e-05 | 135.8s
+2026-06-23 18:00:50,544 - INFO -   -> new best (weighted_mae=0.154128), saved results/2d/checkpoints/dmpnn_seed0_mse.pt
+2026-06-23 18:02:31,630 - INFO - [dmpnn_seed0_mse] Epoch  14/200 | Train=0.03243 | Val=0.03568 | wMAE=0.154728 | PolarMAE=0.019112 | EMD=0.001144 | MolEMD=0.000379 | R2=0.8239 | LR=6.26e-05 | 101.1s
+2026-06-23 18:04:02,383 - INFO - [dmpnn_seed0_mse] Epoch  15/200 | Train=0.03214 | Val=0.03533 | wMAE=0.153733 | PolarMAE=0.019096 | EMD=0.001133 | MolEMD=0.000369 | R2=0.8251 | LR=4.48e-05 | 90.8s
+2026-06-23 18:04:02,444 - INFO -   -> new best (weighted_mae=0.153733), saved results/2d/checkpoints/dmpnn_seed0_mse.pt

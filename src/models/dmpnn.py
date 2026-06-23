@@ -19,14 +19,6 @@ dmpnn.py — Directed MPNN (D-MPNN / Chemprop) для атомарных σ-пр
 
   После T шагов атомные представления:
   h_v = ReLU( W_a * cat( x_v, sum_{w→v} h_{wv}^T ) )
-
-Исправления v2:
-  - build_reverse_index переписан через словарный поиск (dict) вместо
-    searchsorted — надёжно работает при любых collision-ах в edge кодах
-  - добавлен nan_to_num в forward() как защита от взрывного градиента
-  - bond_init использует bias=False + отдельный LayerNorm для стабильности
-  - clip_grad_norm уже применяется в train.py, но дополнительно
-    ограничиваем инициализацию весов через xavier_uniform_
 """
 
 import torch
@@ -35,7 +27,6 @@ import torch.nn.functional as F
 
 from torch_geometric.data import Data
 from torch_geometric.nn import global_mean_pool, global_max_pool
-from torch_geometric.nn import MessagePassing
 from torch_scatter import scatter
 
 from .layers import ResidualMLP
@@ -63,13 +54,13 @@ def build_reverse_index(edge_index: torch.Tensor) -> torch.Tensor:
     E = edge_index.size(1)
     reverse_idx = torch.zeros(E, dtype=torch.long, device=edge_index.device)
     for e, (i, j) in enumerate(zip(row, col)):
-        reverse_e = rev_dict.get((i, j), e)   # fallback: сам на себя (не должно быть)
+        reverse_e = rev_dict.get((j, i), e)   # fallback: сам на себя (не должно быть)
         reverse_idx[e] = reverse_e
 
     return reverse_idx
 
 
-class DMPNNConv(MessagePassing):
+class DMPNNConv(nn.Module):
     """
     Один шаг directed message passing с reverse-edge masking.
 
@@ -78,12 +69,12 @@ class DMPNNConv(MessagePassing):
     """
 
     def __init__(self, hidden: int, dropout: float = 0.05):
-        super().__init__(aggr="add")
+        super().__init__()
         self.W_m = nn.Linear(hidden, hidden, bias=False)
         self.W_i = nn.Linear(hidden, hidden, bias=True)
         self.norm = nn.LayerNorm(hidden)
         self.drop = nn.Dropout(dropout)
-        self.act  = nn.ReLU()
+        self.act = nn.ReLU()
 
         # Xavier инициализация для стабильного старта
         nn.init.xavier_uniform_(self.W_m.weight)
@@ -91,28 +82,24 @@ class DMPNNConv(MessagePassing):
 
     def forward(
         self,
-        h_edge:      torch.Tensor,    # (E, hidden) текущие bond states
-        h_init:      torch.Tensor,    # (E, hidden) начальная инициализация
-        edge_index:  torch.Tensor,    # (2, E)
-        reverse_idx: torch.Tensor,    # (E,)
-        num_nodes:   int,
+        h_edge: torch.Tensor,       # (E, hidden) текущие bond states
+        h_init: torch.Tensor,       # (E, hidden) начальная инициализация
+        edge_index: torch.Tensor,   # (2, E)
+        reverse_idx: torch.Tensor,  # (E,)
+        num_nodes: int,
     ) -> torch.Tensor:
+        # Агрегируем incoming bond states в узлы (по target node = edge_index[1])
+        # agg_full[v] = sum_{e: edge_index[1,e] == v} h_edge[e]
+        agg_full = scatter(
+            h_edge, edge_index[1], dim=0, dim_size=num_nodes, reduce="sum"
+        )  # (num_nodes, hidden)
 
-        # Суммируем все входящие bond states для каждого узла
-        # propagate: для узла v собирает h_edge[e] для всех рёбер e=(k→v)
-        agg_full = self.propagate(
-            edge_index, x=h_edge, size=(num_nodes, num_nodes)
-        )  # (N, hidden)
-
-        # Для ребра e=(v→w): agg_v - h_{wv}
-        # h_{wv} = h_edge[reverse_idx[e]] — bond state обратного ребра
+        # Для ребра e=(v→w): agg_v = agg_full[v] - h_edge[reverse_idx[e]]
+        # h_edge[reverse_idx[e]] — bond state обратного ребра (w→v)
         agg_edge = agg_full[edge_index[0]] - h_edge[reverse_idx]
 
         h_new = self.act(self.norm(self.W_i(h_init) + self.W_m(agg_edge)))
         return self.drop(h_new)
-
-    def message(self, x_j: torch.Tensor) -> torch.Tensor:
-        return x_j
 
 
 class DMPNNSigmaModel(nn.Module):
@@ -130,26 +117,27 @@ class DMPNNSigmaModel(nn.Module):
 
     def __init__(
         self,
-        hidden:       int   = 243,
-        num_steps:    int   = 4,
-        out_dim:      int   = 51,
-        dropout:      float = 0.05,
-        use_extended: bool  = True,
-        n_rbf:        int   = N_RBF,
+        hidden: int = 243,
+        num_steps: int = 4,
+        out_dim: int = 51,
+        dropout: float = 0.05,
+        use_extended: bool = True,
+        n_rbf: int = N_RBF,
+        mode: str = "3d",   # "3d" или "2d_pure"
     ):
         super().__init__()
-        self.hidden    = hidden
+        self.hidden = hidden
         self.num_steps = num_steps
-        n_feat = node_feat_dim(use_extended)
-        e_feat = edge_feat_dim(use_extended, n_rbf=n_rbf)
+        n_feat = node_feat_dim(use_extended, mode=mode)
+        e_feat = edge_feat_dim(use_extended, n_rbf=n_rbf, mode=mode)
 
         # Atom feature projection
-        self.z_embed   = nn.Embedding(MAX_Z + 1, hidden // 4)
+        self.z_embed = nn.Embedding(MAX_Z + 1, hidden // 4)
         self.atom_proj = nn.Linear(n_feat + hidden // 4, hidden)
         self.atom_norm = nn.LayerNorm(hidden)
 
         # Bond initialization
-        self.bond_init      = nn.Linear(hidden + e_feat, hidden, bias=False)
+        self.bond_init = nn.Linear(hidden + e_feat, hidden, bias=False)
         self.bond_init_norm = nn.LayerNorm(hidden)
 
         # D-MPNN conv (веса разделяются между шагами — как в оригинальном Chemprop)
@@ -175,7 +163,7 @@ class DMPNNSigmaModel(nn.Module):
         E = data.edge_index.size(1)
 
         # 1. Atom features
-        z_emb  = self.z_embed(data.z.clamp(max=MAX_Z))
+        z_emb = self.z_embed(data.z.clamp(max=MAX_Z))
         x_atom = self.atom_norm(
             F.relu(self.atom_proj(torch.cat([data.x, z_emb], dim=-1)))
         )
@@ -187,7 +175,7 @@ class DMPNNSigmaModel(nn.Module):
                 self.bond_init(torch.cat([x_atom[src], data.edge_attr], dim=-1))
             )
         )
-        # Защита от NaN на входе (могут быть в edge_attr при экстремальных координатах)
+        # Защита от NaN на входе
         h_init = torch.nan_to_num(h_init, nan=0.0, posinf=1.0, neginf=-1.0)
 
         # 3. Reverse edge index (кешируем на объекте данных между эпохами)
@@ -201,17 +189,16 @@ class DMPNNSigmaModel(nn.Module):
             h_bond = self.conv(h_bond, h_init, data.edge_index, rev_idx, N)
             h_bond = torch.nan_to_num(h_bond, nan=0.0)
 
-        # 5. Atom readout: суммируем входящие bond states
+        # 5. Atom readout: суммируем incoming bond states
         bond_agg = scatter(
-            h_bond, data.edge_index[1],
-            dim=0, dim_size=N, reduce="sum",
+            h_bond, data.edge_index[1], dim=0, dim_size=N, reduce="sum"
         )
 
         h = self.atom_readout(torch.cat([x_atom, bond_agg], dim=-1))
 
         # 6. Global context
         g_mean = global_mean_pool(h, data.batch)[data.batch]
-        g_max  = global_max_pool(h, data.batch)[data.batch]
+        g_max = global_max_pool(h, data.batch)[data.batch]
         h = self.global_norm(h + self.global_proj(torch.cat([h, g_mean, g_max], dim=-1)))
 
         return F.softplus(self.readout(h))

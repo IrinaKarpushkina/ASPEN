@@ -91,7 +91,10 @@ torch_scatter / torch_cluster / pyg-lib **не требуются** — radius_g
 
 ```bash
 cd /mnt/tank/scratch/ikarpushkina/sigma/ASPEN
+# Для 3d бэнчмарка
 python -m scripts.count_params --auto-tune --csv results/param_budget_table.csv
+# Для 2d бэнчмарка
+python -m scripts.count_params --configs-dir configs/2d --auto-tune --csv results/param_budget_table_2d.csv
 ```
 
 Текущие значения (с extended-признаками, target=695,667):
