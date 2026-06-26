@@ -35,3 +35,328 @@
 2026-06-23 18:02:31,630 - INFO - [dmpnn_seed0_mse] Epoch  14/200 | Train=0.03243 | Val=0.03568 | wMAE=0.154728 | PolarMAE=0.019112 | EMD=0.001144 | MolEMD=0.000379 | R2=0.8239 | LR=6.26e-05 | 101.1s
 2026-06-23 18:04:02,383 - INFO - [dmpnn_seed0_mse] Epoch  15/200 | Train=0.03214 | Val=0.03533 | wMAE=0.153733 | PolarMAE=0.019096 | EMD=0.001133 | MolEMD=0.000369 | R2=0.8251 | LR=4.48e-05 | 90.8s
 2026-06-23 18:04:02,444 - INFO -   -> new best (weighted_mae=0.153733), saved results/2d/checkpoints/dmpnn_seed0_mse.pt
+2026-06-23 18:05:29,950 - INFO - [dmpnn_seed0_mse] Epoch  16/200 | Train=0.03194 | Val=0.03504 | wMAE=0.154184 | PolarMAE=0.019178 | EMD=0.001141 | MolEMD=0.000373 | R2=0.8268 | LR=2.96e-05 | 87.5s
+2026-06-23 18:07:00,337 - INFO - [dmpnn_seed0_mse] Epoch  17/200 | Train=0.03173 | Val=0.03488 | wMAE=0.152807 | PolarMAE=0.019196 | EMD=0.001131 | MolEMD=0.000361 | R2=0.8280 | LR=1.73e-05 | 90.4s
+2026-06-23 18:07:00,401 - INFO -   -> new best (weighted_mae=0.152807), saved results/2d/checkpoints/dmpnn_seed0_mse.pt
+2026-06-23 18:08:31,485 - INFO - [dmpnn_seed0_mse] Epoch  18/200 | Train=0.03161 | Val=0.03460 | wMAE=0.152162 | PolarMAE=0.019063 | EMD=0.001128 | MolEMD=0.000362 | R2=0.8296 | LR=8.32e-06 | 91.1s
+2026-06-23 18:08:31,547 - INFO -   -> new best (weighted_mae=0.152162), saved results/2d/checkpoints/dmpnn_seed0_mse.pt
+2026-06-23 18:10:22,612 - INFO - [dmpnn_seed0_mse] Epoch  19/200 | Train=0.03152 | Val=0.03463 | wMAE=0.152524 | PolarMAE=0.019026 | EMD=0.001129 | MolEMD=0.000362 | R2=0.8288 | LR=2.84e-06 | 111.1s
+2026-06-23 18:12:54,226 - INFO - [dmpnn_seed0_mse] Epoch  20/200 | Train=0.03144 | Val=0.03460 | wMAE=0.152266 | PolarMAE=0.018988 | EMD=0.001125 | MolEMD=0.000360 | R2=0.8292 | LR=3.00e-04 | 151.6s
+2026-06-23 18:15:06,724 - INFO - [dmpnn_seed0_mse] Epoch  21/200 | Train=0.03399 | Val=0.03630 | wMAE=0.154168 | PolarMAE=0.019567 | EMD=0.001155 | MolEMD=0.000398 | R2=0.8227 | LR=3.00e-04 | 132.5s
+2026-06-23 18:16:38,559 - INFO - [dmpnn_seed0_mse] Epoch  22/200 | Train=0.03304 | Val=0.03612 | wMAE=0.155811 | PolarMAE=0.020356 | EMD=0.001188 | MolEMD=0.000377 | R2=0.8224 | LR=2.98e-04 | 91.8s
+2026-06-23 18:18:06,123 - INFO - [dmpnn_seed0_mse] Epoch  23/200 | Train=0.03270 | Val=0.03557 | wMAE=0.154687 | PolarMAE=0.019501 | EMD=0.001146 | MolEMD=0.000378 | R2=0.8241 | LR=2.96e-04 | 87.6s
+2026-06-23 18:19:41,482 - INFO - [dmpnn_seed0_mse] Epoch  24/200 | Train=0.03230 | Val=0.03648 | wMAE=0.154542 | PolarMAE=0.019616 | EMD=0.001159 | MolEMD=0.000375 | R2=0.8209 | LR=2.93e-04 | 95.4s
+2026-06-23 18:21:13,634 - INFO - [dmpnn_seed0_mse] Epoch  25/200 | Train=0.03205 | Val=0.03539 | wMAE=0.154600 | PolarMAE=0.019647 | EMD=0.001168 | MolEMD=0.000400 | R2=0.8252 | LR=2.89e-04 | 92.1s
+2026-06-23 18:22:46,860 - INFO - [dmpnn_seed0_mse] Epoch  26/200 | Train=0.03180 | Val=0.03452 | wMAE=0.151903 | PolarMAE=0.019236 | EMD=0.001134 | MolEMD=0.000378 | R2=0.8305 | LR=2.84e-04 | 93.2s
+2026-06-23 18:22:46,944 - INFO -   -> new best (weighted_mae=0.151903), saved results/2d/checkpoints/dmpnn_seed0_mse.pt
+2026-06-23 18:24:51,502 - INFO - [dmpnn_seed0_mse] Epoch  27/200 | Train=0.03153 | Val=0.03497 | wMAE=0.151426 | PolarMAE=0.019839 | EMD=0.001132 | MolEMD=0.000362 | R2=0.8281 | LR=2.78e-04 | 124.6s
+2026-06-23 18:24:51,589 - INFO -   -> new best (weighted_mae=0.151426), saved results/2d/checkpoints/dmpnn_seed0_mse.pt
+2026-06-23 18:27:22,392 - INFO - [dmpnn_seed0_mse] Epoch  28/200 | Train=0.03132 | Val=0.03478 | wMAE=0.153372 | PolarMAE=0.018953 | EMD=0.001139 | MolEMD=0.000401 | R2=0.8284 | LR=2.71e-04 | 150.8s
+2026-06-23 18:29:25,274 - INFO - [dmpnn_seed0_mse] Epoch  29/200 | Train=0.03117 | Val=0.03422 | wMAE=0.150403 | PolarMAE=0.018806 | EMD=0.001116 | MolEMD=0.000367 | R2=0.8310 | LR=2.64e-04 | 122.9s
+2026-06-23 18:29:25,334 - INFO -   -> new best (weighted_mae=0.150403), saved results/2d/checkpoints/dmpnn_seed0_mse.pt
+2026-06-23 18:30:53,206 - INFO - [dmpnn_seed0_mse] Epoch  30/200 | Train=0.03082 | Val=0.03436 | wMAE=0.150689 | PolarMAE=0.018922 | EMD=0.001107 | MolEMD=0.000359 | R2=0.8309 | LR=2.56e-04 | 87.9s
+2026-06-23 18:32:25,523 - INFO - [dmpnn_seed0_mse] Epoch  31/200 | Train=0.03073 | Val=0.03417 | wMAE=0.150536 | PolarMAE=0.019078 | EMD=0.001111 | MolEMD=0.000351 | R2=0.8318 | LR=2.48e-04 | 92.3s
+2026-06-23 18:33:58,300 - INFO - [dmpnn_seed0_mse] Epoch  32/200 | Train=0.03049 | Val=0.03381 | wMAE=0.149849 | PolarMAE=0.018785 | EMD=0.001096 | MolEMD=0.000358 | R2=0.8339 | LR=2.38e-04 | 92.8s
+2026-06-23 18:33:58,398 - INFO -   -> new best (weighted_mae=0.149849), saved results/2d/checkpoints/dmpnn_seed0_mse.pt
+2026-06-23 18:35:28,142 - INFO - [dmpnn_seed0_mse] Epoch  33/200 | Train=0.03028 | Val=0.03405 | wMAE=0.151174 | PolarMAE=0.018795 | EMD=0.001123 | MolEMD=0.000404 | R2=0.8310 | LR=2.29e-04 | 89.7s
+2026-06-23 18:37:06,787 - INFO - [dmpnn_seed0_mse] Epoch  34/200 | Train=0.03013 | Val=0.03351 | wMAE=0.149634 | PolarMAE=0.018739 | EMD=0.001111 | MolEMD=0.000352 | R2=0.8336 | LR=2.18e-04 | 98.6s
+2026-06-23 18:37:06,845 - INFO -   -> new best (weighted_mae=0.149634), saved results/2d/checkpoints/dmpnn_seed0_mse.pt
+2026-06-23 18:39:15,887 - INFO - [dmpnn_seed0_mse] Epoch  35/200 | Train=0.02994 | Val=0.03382 | wMAE=0.150989 | PolarMAE=0.018538 | EMD=0.001103 | MolEMD=0.000382 | R2=0.8310 | LR=2.08e-04 | 129.0s
+2026-06-23 18:41:35,258 - INFO - [dmpnn_seed0_mse] Epoch  36/200 | Train=0.02980 | Val=0.03343 | wMAE=0.149120 | PolarMAE=0.018548 | EMD=0.001095 | MolEMD=0.000347 | R2=0.8346 | LR=1.97e-04 | 139.4s
+2026-06-23 18:41:35,330 - INFO -   -> new best (weighted_mae=0.149120), saved results/2d/checkpoints/dmpnn_seed0_mse.pt
+2026-06-23 18:43:34,433 - INFO - [dmpnn_seed0_mse] Epoch  37/200 | Train=0.02960 | Val=0.03308 | wMAE=0.148675 | PolarMAE=0.018853 | EMD=0.001098 | MolEMD=0.000347 | R2=0.8359 | LR=1.85e-04 | 119.1s
+2026-06-23 18:43:34,494 - INFO -   -> new best (weighted_mae=0.148675), saved results/2d/checkpoints/dmpnn_seed0_mse.pt
+2026-06-23 18:45:03,246 - INFO - [dmpnn_seed0_mse] Epoch  38/200 | Train=0.02949 | Val=0.03288 | wMAE=0.147916 | PolarMAE=0.018583 | EMD=0.001090 | MolEMD=0.000342 | R2=0.8374 | LR=1.74e-04 | 88.8s
+2026-06-23 18:45:03,309 - INFO -   -> new best (weighted_mae=0.147916), saved results/2d/checkpoints/dmpnn_seed0_mse.pt
+2026-06-23 18:46:33,641 - INFO - [dmpnn_seed0_mse] Epoch  39/200 | Train=0.02938 | Val=0.03307 | wMAE=0.147132 | PolarMAE=0.019030 | EMD=0.001086 | MolEMD=0.000348 | R2=0.8366 | LR=1.62e-04 | 90.3s
+2026-06-23 18:46:33,705 - INFO -   -> new best (weighted_mae=0.147132), saved results/2d/checkpoints/dmpnn_seed0_mse.pt
+2026-06-23 18:48:11,182 - INFO - [dmpnn_seed0_mse] Epoch  40/200 | Train=0.02920 | Val=0.03277 | wMAE=0.147660 | PolarMAE=0.018275 | EMD=0.001074 | MolEMD=0.000342 | R2=0.8374 | LR=1.50e-04 | 97.5s
+2026-06-23 18:49:41,553 - INFO - [dmpnn_seed0_mse] Epoch  41/200 | Train=0.02906 | Val=0.03257 | wMAE=0.147399 | PolarMAE=0.018350 | EMD=0.001071 | MolEMD=0.000335 | R2=0.8389 | LR=1.39e-04 | 90.4s
+2026-06-23 18:51:29,159 - INFO - [dmpnn_seed0_mse] Epoch  42/200 | Train=0.02895 | Val=0.03288 | wMAE=0.147279 | PolarMAE=0.018592 | EMD=0.001071 | MolEMD=0.000337 | R2=0.8376 | LR=1.27e-04 | 107.6s
+2026-06-23 18:53:49,603 - INFO - [dmpnn_seed0_mse] Epoch  43/200 | Train=0.02883 | Val=0.03265 | wMAE=0.147144 | PolarMAE=0.018498 | EMD=0.001074 | MolEMD=0.000340 | R2=0.8378 | LR=1.16e-04 | 140.4s
+2026-06-23 18:56:04,620 - INFO - [dmpnn_seed0_mse] Epoch  44/200 | Train=0.02871 | Val=0.03252 | wMAE=0.146807 | PolarMAE=0.018387 | EMD=0.001072 | MolEMD=0.000347 | R2=0.8390 | LR=1.04e-04 | 135.0s
+2026-06-23 18:56:04,705 - INFO -   -> new best (weighted_mae=0.146807), saved results/2d/checkpoints/dmpnn_seed0_mse.pt
+2026-06-23 18:57:50,583 - INFO - [dmpnn_seed0_mse] Epoch  45/200 | Train=0.02861 | Val=0.03235 | wMAE=0.146518 | PolarMAE=0.018491 | EMD=0.001070 | MolEMD=0.000333 | R2=0.8397 | LR=9.33e-05 | 105.9s
+2026-06-23 18:57:50,647 - INFO -   -> new best (weighted_mae=0.146518), saved results/2d/checkpoints/dmpnn_seed0_mse.pt
+2026-06-23 18:59:29,340 - INFO - [dmpnn_seed0_mse] Epoch  46/200 | Train=0.02849 | Val=0.03257 | wMAE=0.148042 | PolarMAE=0.018139 | EMD=0.001066 | MolEMD=0.000340 | R2=0.8380 | LR=8.26e-05 | 98.7s
+2026-06-23 19:00:56,156 - INFO - [dmpnn_seed0_mse] Epoch  47/200 | Train=0.02839 | Val=0.03229 | wMAE=0.146843 | PolarMAE=0.018120 | EMD=0.001063 | MolEMD=0.000336 | R2=0.8399 | LR=7.24e-05 | 86.8s
+2026-06-23 19:02:29,911 - INFO - [dmpnn_seed0_mse] Epoch  48/200 | Train=0.02833 | Val=0.03253 | wMAE=0.146973 | PolarMAE=0.018137 | EMD=0.001057 | MolEMD=0.000334 | R2=0.8386 | LR=6.26e-05 | 93.8s
+2026-06-23 19:04:01,545 - INFO - [dmpnn_seed0_mse] Epoch  49/200 | Train=0.02823 | Val=0.03228 | wMAE=0.146882 | PolarMAE=0.018117 | EMD=0.001054 | MolEMD=0.000332 | R2=0.8397 | LR=5.34e-05 | 91.6s
+2026-06-23 19:05:59,692 - INFO - [dmpnn_seed0_mse] Epoch  50/200 | Train=0.02817 | Val=0.03214 | wMAE=0.146490 | PolarMAE=0.018067 | EMD=0.001058 | MolEMD=0.000332 | R2=0.8404 | LR=4.48e-05 | 118.1s
+2026-06-23 19:05:59,767 - INFO -   -> new best (weighted_mae=0.146490), saved results/2d/checkpoints/dmpnn_seed0_mse.pt
+2026-06-23 19:08:33,147 - INFO - [dmpnn_seed0_mse] Epoch  51/200 | Train=0.02812 | Val=0.03214 | wMAE=0.146197 | PolarMAE=0.018152 | EMD=0.001054 | MolEMD=0.000330 | R2=0.8405 | LR=3.68e-05 | 153.4s
+2026-06-23 19:08:33,228 - INFO -   -> new best (weighted_mae=0.146197), saved results/2d/checkpoints/dmpnn_seed0_mse.pt
+2026-06-23 19:10:44,952 - INFO - [dmpnn_seed0_mse] Epoch  52/200 | Train=0.02802 | Val=0.03211 | wMAE=0.145836 | PolarMAE=0.018151 | EMD=0.001051 | MolEMD=0.000330 | R2=0.8407 | LR=2.96e-05 | 131.7s
+2026-06-23 19:10:45,014 - INFO -   -> new best (weighted_mae=0.145836), saved results/2d/checkpoints/dmpnn_seed0_mse.pt
+2026-06-23 19:12:21,800 - INFO - [dmpnn_seed0_mse] Epoch  53/200 | Train=0.02798 | Val=0.03212 | wMAE=0.145969 | PolarMAE=0.018167 | EMD=0.001052 | MolEMD=0.000332 | R2=0.8410 | LR=2.30e-05 | 96.8s
+2026-06-23 19:13:50,651 - INFO - [dmpnn_seed0_mse] Epoch  54/200 | Train=0.02793 | Val=0.03192 | wMAE=0.145681 | PolarMAE=0.018044 | EMD=0.001053 | MolEMD=0.000330 | R2=0.8418 | LR=1.73e-05 | 88.8s
+2026-06-23 19:13:50,716 - INFO -   -> new best (weighted_mae=0.145681), saved results/2d/checkpoints/dmpnn_seed0_mse.pt
+2026-06-23 19:15:31,444 - INFO - [dmpnn_seed0_mse] Epoch  55/200 | Train=0.02788 | Val=0.03196 | wMAE=0.145758 | PolarMAE=0.018041 | EMD=0.001049 | MolEMD=0.000328 | R2=0.8415 | LR=1.24e-05 | 100.7s
+2026-06-23 19:16:54,672 - INFO - [dmpnn_seed0_mse] Epoch  56/200 | Train=0.02786 | Val=0.03194 | wMAE=0.145825 | PolarMAE=0.018086 | EMD=0.001051 | MolEMD=0.000329 | R2=0.8417 | LR=8.32e-06 | 83.2s
+2026-06-23 19:18:28,596 - INFO - [dmpnn_seed0_mse] Epoch  57/200 | Train=0.02782 | Val=0.03192 | wMAE=0.145606 | PolarMAE=0.018032 | EMD=0.001048 | MolEMD=0.000328 | R2=0.8418 | LR=5.13e-06 | 93.9s
+2026-06-23 19:18:28,658 - INFO -   -> new best (weighted_mae=0.145606), saved results/2d/checkpoints/dmpnn_seed0_mse.pt
+2026-06-23 19:20:34,400 - INFO - [dmpnn_seed0_mse] Epoch  58/200 | Train=0.02781 | Val=0.03191 | wMAE=0.145789 | PolarMAE=0.018052 | EMD=0.001050 | MolEMD=0.000328 | R2=0.8417 | LR=2.84e-06 | 125.7s
+2026-06-23 19:23:03,987 - INFO - [dmpnn_seed0_mse] Epoch  59/200 | Train=0.02779 | Val=0.03195 | wMAE=0.145752 | PolarMAE=0.018025 | EMD=0.001047 | MolEMD=0.000328 | R2=0.8415 | LR=1.46e-06 | 149.6s
+2026-06-23 19:25:06,524 - INFO - [dmpnn_seed0_mse] Epoch  60/200 | Train=0.02777 | Val=0.03193 | wMAE=0.145768 | PolarMAE=0.017996 | EMD=0.001047 | MolEMD=0.000328 | R2=0.8416 | LR=3.00e-04 | 122.5s
+2026-06-23 19:26:36,548 - INFO - [dmpnn_seed0_mse] Epoch  61/200 | Train=0.02977 | Val=0.03346 | wMAE=0.148646 | PolarMAE=0.018251 | EMD=0.001082 | MolEMD=0.000349 | R2=0.8352 | LR=3.00e-04 | 90.0s
+2026-06-23 19:28:08,391 - INFO - [dmpnn_seed0_mse] Epoch  62/200 | Train=0.02936 | Val=0.03329 | wMAE=0.148795 | PolarMAE=0.017964 | EMD=0.001084 | MolEMD=0.000353 | R2=0.8352 | LR=3.00e-04 | 91.8s
+2026-06-23 19:29:40,677 - INFO - [dmpnn_seed0_mse] Epoch  63/200 | Train=0.02920 | Val=0.03314 | wMAE=0.147702 | PolarMAE=0.019087 | EMD=0.001093 | MolEMD=0.000376 | R2=0.8365 | LR=2.99e-04 | 92.3s
+2026-06-23 19:31:21,072 - INFO - [dmpnn_seed0_mse] Epoch  64/200 | Train=0.02907 | Val=0.03304 | wMAE=0.148641 | PolarMAE=0.018408 | EMD=0.001083 | MolEMD=0.000341 | R2=0.8364 | LR=2.98e-04 | 100.4s
+2026-06-23 19:32:58,441 - INFO - [dmpnn_seed0_mse] Epoch  65/200 | Train=0.02900 | Val=0.03300 | wMAE=0.147720 | PolarMAE=0.018709 | EMD=0.001082 | MolEMD=0.000355 | R2=0.8371 | LR=2.97e-04 | 97.4s
+2026-06-23 19:35:17,997 - INFO - [dmpnn_seed0_mse] Epoch  66/200 | Train=0.02891 | Val=0.03259 | wMAE=0.147840 | PolarMAE=0.018483 | EMD=0.001075 | MolEMD=0.000339 | R2=0.8389 | LR=2.96e-04 | 139.6s
+2026-06-23 19:37:31,705 - INFO - [dmpnn_seed0_mse] Epoch  67/200 | Train=0.02882 | Val=0.03274 | wMAE=0.147157 | PolarMAE=0.018656 | EMD=0.001080 | MolEMD=0.000348 | R2=0.8378 | LR=2.94e-04 | 133.7s
+2026-06-23 19:39:23,694 - INFO - [dmpnn_seed0_mse] Epoch  68/200 | Train=0.02876 | Val=0.03281 | wMAE=0.148162 | PolarMAE=0.018479 | EMD=0.001079 | MolEMD=0.000352 | R2=0.8366 | LR=2.93e-04 | 112.0s
+2026-06-23 19:40:55,301 - INFO - [dmpnn_seed0_mse] Epoch  69/200 | Train=0.02868 | Val=0.03258 | wMAE=0.148822 | PolarMAE=0.018442 | EMD=0.001080 | MolEMD=0.000354 | R2=0.8384 | LR=2.91e-04 | 91.6s
+2026-06-23 19:42:25,692 - INFO - [dmpnn_seed0_mse] Epoch  70/200 | Train=0.02858 | Val=0.03332 | wMAE=0.148193 | PolarMAE=0.018704 | EMD=0.001057 | MolEMD=0.000344 | R2=0.8366 | LR=2.89e-04 | 90.4s
+2026-06-23 19:44:00,779 - INFO - [dmpnn_seed0_mse] Epoch  71/200 | Train=0.02852 | Val=0.03259 | wMAE=0.147802 | PolarMAE=0.018276 | EMD=0.001069 | MolEMD=0.000340 | R2=0.8389 | LR=2.86e-04 | 95.1s
+2026-06-23 19:45:31,011 - INFO - [dmpnn_seed0_mse] Epoch  72/200 | Train=0.02842 | Val=0.03278 | wMAE=0.146510 | PolarMAE=0.019031 | EMD=0.001082 | MolEMD=0.000358 | R2=0.8382 | LR=2.84e-04 | 90.2s
+2026-06-23 19:47:21,145 - INFO - [dmpnn_seed0_mse] Epoch  73/200 | Train=0.02836 | Val=0.03267 | wMAE=0.146492 | PolarMAE=0.018533 | EMD=0.001059 | MolEMD=0.000342 | R2=0.8384 | LR=2.81e-04 | 110.1s
+2026-06-23 19:49:55,044 - INFO - [dmpnn_seed0_mse] Epoch  74/200 | Train=0.02827 | Val=0.03285 | wMAE=0.146826 | PolarMAE=0.018309 | EMD=0.001052 | MolEMD=0.000342 | R2=0.8381 | LR=2.78e-04 | 153.9s
+2026-06-23 19:52:10,802 - INFO - [dmpnn_seed0_mse] Epoch  75/200 | Train=0.02822 | Val=0.03233 | wMAE=0.147209 | PolarMAE=0.018047 | EMD=0.001074 | MolEMD=0.000353 | R2=0.8399 | LR=2.75e-04 | 135.8s
+2026-06-23 19:53:45,731 - INFO - [dmpnn_seed0_mse] Epoch  76/200 | Train=0.02815 | Val=0.03251 | wMAE=0.146614 | PolarMAE=0.018549 | EMD=0.001071 | MolEMD=0.000344 | R2=0.8395 | LR=2.71e-04 | 94.9s
+2026-06-23 19:55:12,956 - INFO - [dmpnn_seed0_mse] Epoch  77/200 | Train=0.02806 | Val=0.03240 | wMAE=0.146775 | PolarMAE=0.018507 | EMD=0.001075 | MolEMD=0.000347 | R2=0.8399 | LR=2.68e-04 | 87.2s
+2026-06-23 19:55:12,957 - INFO - Early stopping at epoch 77.
+2026-06-23 19:55:12,957 - INFO - Loading best checkpoint for test evaluation...
+2026-06-23 19:55:51,198 - INFO - [dmpnn_seed0_mse] TEST METRICS: {'loss': 0.029659671794909696, 'weighted_r2': 0.8517714738845825, 'weighted_mae': 0.1431742012500763, 'polar_mae': 0.01980041153728962, 'cosine_similarity': 0.9096075706195287, 'emd_raw': 0.0010980017460343091, 'emd_normalized': 0.0010980017460343117, 'molecular_mae': 0.582999030508292, 'molecular_emd': 0.00030782435792901374, 'molecular_cosine': 0.9919451535474031, 'molecular_polar_mae': 0.25629128880440616}
+2026-06-23 19:55:51,203 - INFO - Saved results to results/2d/metrics/dmpnn_seed0_mse.json
+2026-06-23 19:56:22,579 - INFO - Device: cuda
+2026-06-23 19:56:22,580 - INFO - Loading cached dataset [2d_pure]: /mnt/tank/scratch/ikarpushkina/sigma/ASPEN/data/train_test_val_df/cache/chaos_atomic_train_with_coordinates.parquet.5773dbaf22.pt
+2026-06-23 19:56:37,284 - INFO - chaos_atomic_train_with_coordinates.parquet [2d_pure]: 36981 mols, 1077949 atoms, RDKit valid: 36981/36981 (100.0%)
+2026-06-23 19:56:37,284 - INFO - Loading cached dataset [2d_pure]: /mnt/tank/scratch/ikarpushkina/sigma/ASPEN/data/train_test_val_df/cache/chaos_atomic_val_with_coordinates.parquet.5773dbaf22.pt
+2026-06-23 19:56:42,258 - INFO - chaos_atomic_val_with_coordinates.parquet [2d_pure]: 7941 mols, 235573 atoms, RDKit valid: 7941/7941 (100.0%)
+2026-06-23 19:56:42,259 - INFO - Loading cached dataset [2d_pure]: /mnt/tank/scratch/ikarpushkina/sigma/ASPEN/data/train_test_val_df/cache/chaos_atomic_test_with_coordinates.parquet.5773dbaf22.pt
+2026-06-23 19:56:46,432 - INFO - chaos_atomic_test_with_coordinates.parquet [2d_pure]: 7800 mols, 221748 atoms, RDKit valid: 7800/7800 (100.0%)
+2026-06-23 19:56:47,524 - INFO - dmpnn: 697,342 params (target 695,667, diff 0.2%)
+2026-06-23 19:58:17,395 - INFO - [dmpnn_seed1_mse] Epoch   1/200 | Train=0.06550 | Val=0.05112 | wMAE=0.182308 | PolarMAE=0.027843 | EMD=0.001595 | MolEMD=0.000660 | R2=0.7562 | LR=2.98e-04 | 89.9s
+2026-06-23 19:58:17,462 - INFO -   -> new best (weighted_mae=0.182308), saved results/2d/checkpoints/dmpnn_seed1_mse.pt
+2026-06-23 19:59:46,510 - INFO - [dmpnn_seed1_mse] Epoch   2/200 | Train=0.04440 | Val=0.04592 | wMAE=0.172113 | PolarMAE=0.023567 | EMD=0.001418 | MolEMD=0.000569 | R2=0.7786 | LR=2.93e-04 | 89.0s
+2026-06-23 19:59:46,579 - INFO -   -> new best (weighted_mae=0.172113), saved results/2d/checkpoints/dmpnn_seed1_mse.pt
+2026-06-23 20:01:50,135 - INFO - [dmpnn_seed1_mse] Epoch   3/200 | Train=0.04104 | Val=0.04337 | wMAE=0.165499 | PolarMAE=0.023568 | EMD=0.001385 | MolEMD=0.000537 | R2=0.7911 | LR=2.84e-04 | 123.6s
+2026-06-23 20:01:50,197 - INFO -   -> new best (weighted_mae=0.165499), saved results/2d/checkpoints/dmpnn_seed1_mse.pt
+2026-06-23 20:04:20,448 - INFO - [dmpnn_seed1_mse] Epoch   4/200 | Train=0.03900 | Val=0.04101 | wMAE=0.162541 | PolarMAE=0.022262 | EMD=0.001315 | MolEMD=0.000471 | R2=0.8020 | LR=2.71e-04 | 150.3s
+2026-06-23 20:04:20,513 - INFO -   -> new best (weighted_mae=0.162541), saved results/2d/checkpoints/dmpnn_seed1_mse.pt
+2026-06-23 20:06:21,352 - INFO - [dmpnn_seed1_mse] Epoch   5/200 | Train=0.03771 | Val=0.03986 | wMAE=0.160834 | PolarMAE=0.021420 | EMD=0.001288 | MolEMD=0.000447 | R2=0.8063 | LR=2.56e-04 | 120.8s
+2026-06-23 20:06:21,411 - INFO -   -> new best (weighted_mae=0.160834), saved results/2d/checkpoints/dmpnn_seed1_mse.pt
+2026-06-23 20:07:49,789 - INFO - [dmpnn_seed1_mse] Epoch   6/200 | Train=0.03662 | Val=0.04003 | wMAE=0.162200 | PolarMAE=0.021312 | EMD=0.001273 | MolEMD=0.000447 | R2=0.8044 | LR=2.38e-04 | 88.4s
+2026-06-23 20:09:18,524 - INFO - [dmpnn_seed1_mse] Epoch   7/200 | Train=0.03576 | Val=0.03791 | wMAE=0.158187 | PolarMAE=0.019766 | EMD=0.001213 | MolEMD=0.000430 | R2=0.8149 | LR=2.18e-04 | 88.7s
+2026-06-23 20:09:18,586 - INFO -   -> new best (weighted_mae=0.158187), saved results/2d/checkpoints/dmpnn_seed1_mse.pt
+2026-06-23 20:10:52,577 - INFO - [dmpnn_seed1_mse] Epoch   8/200 | Train=0.03506 | Val=0.03862 | wMAE=0.160875 | PolarMAE=0.020666 | EMD=0.001247 | MolEMD=0.000447 | R2=0.8085 | LR=1.97e-04 | 94.0s
+2026-06-23 20:12:14,936 - INFO - [dmpnn_seed1_mse] Epoch   9/200 | Train=0.03442 | Val=0.03743 | wMAE=0.157042 | PolarMAE=0.020439 | EMD=0.001218 | MolEMD=0.000403 | R2=0.8188 | LR=1.74e-04 | 82.4s
+2026-06-23 20:12:14,994 - INFO -   -> new best (weighted_mae=0.157042), saved results/2d/checkpoints/dmpnn_seed1_mse.pt
+2026-06-23 20:13:45,892 - INFO - [dmpnn_seed1_mse] Epoch  10/200 | Train=0.03386 | Val=0.03690 | wMAE=0.158645 | PolarMAE=0.019685 | EMD=0.001182 | MolEMD=0.000400 | R2=0.8172 | LR=1.50e-04 | 90.9s
+2026-06-23 20:15:52,918 - INFO - [dmpnn_seed1_mse] Epoch  11/200 | Train=0.03341 | Val=0.03627 | wMAE=0.155859 | PolarMAE=0.019473 | EMD=0.001187 | MolEMD=0.000399 | R2=0.8221 | LR=1.27e-04 | 127.0s
+2026-06-23 20:15:52,983 - INFO -   -> new best (weighted_mae=0.155859), saved results/2d/checkpoints/dmpnn_seed1_mse.pt
+2026-06-23 20:18:19,895 - INFO - [dmpnn_seed1_mse] Epoch  12/200 | Train=0.03301 | Val=0.03556 | wMAE=0.153866 | PolarMAE=0.019363 | EMD=0.001152 | MolEMD=0.000374 | R2=0.8252 | LR=1.04e-04 | 146.9s
+2026-06-23 20:18:19,957 - INFO -   -> new best (weighted_mae=0.153866), saved results/2d/checkpoints/dmpnn_seed1_mse.pt
+2026-06-23 20:20:21,946 - INFO - [dmpnn_seed1_mse] Epoch  13/200 | Train=0.03265 | Val=0.03587 | wMAE=0.155115 | PolarMAE=0.019218 | EMD=0.001150 | MolEMD=0.000378 | R2=0.8228 | LR=8.26e-05 | 122.0s
+2026-06-23 20:21:56,227 - INFO - [dmpnn_seed1_mse] Epoch  14/200 | Train=0.03233 | Val=0.03532 | wMAE=0.153726 | PolarMAE=0.018802 | EMD=0.001133 | MolEMD=0.000372 | R2=0.8256 | LR=6.26e-05 | 94.3s
+2026-06-23 20:21:56,285 - INFO -   -> new best (weighted_mae=0.153726), saved results/2d/checkpoints/dmpnn_seed1_mse.pt
+2026-06-23 20:23:24,978 - INFO - [dmpnn_seed1_mse] Epoch  15/200 | Train=0.03205 | Val=0.03476 | wMAE=0.152380 | PolarMAE=0.018991 | EMD=0.001133 | MolEMD=0.000364 | R2=0.8288 | LR=4.48e-05 | 88.7s
+2026-06-23 20:23:25,036 - INFO -   -> new best (weighted_mae=0.152380), saved results/2d/checkpoints/dmpnn_seed1_mse.pt
+2026-06-23 20:25:00,109 - INFO - [dmpnn_seed1_mse] Epoch  16/200 | Train=0.03184 | Val=0.03461 | wMAE=0.152511 | PolarMAE=0.019000 | EMD=0.001132 | MolEMD=0.000359 | R2=0.8296 | LR=2.96e-05 | 95.1s
+2026-06-23 20:26:42,324 - INFO - [dmpnn_seed1_mse] Epoch  17/200 | Train=0.03169 | Val=0.03469 | wMAE=0.152497 | PolarMAE=0.018902 | EMD=0.001123 | MolEMD=0.000361 | R2=0.8286 | LR=1.73e-05 | 102.2s
+2026-06-23 20:28:18,847 - INFO - [dmpnn_seed1_mse] Epoch  18/200 | Train=0.03154 | Val=0.03457 | wMAE=0.151888 | PolarMAE=0.018981 | EMD=0.001121 | MolEMD=0.000356 | R2=0.8299 | LR=8.32e-06 | 96.5s
+2026-06-23 20:28:18,922 - INFO -   -> new best (weighted_mae=0.151888), saved results/2d/checkpoints/dmpnn_seed1_mse.pt
+2026-06-23 20:30:39,813 - INFO - [dmpnn_seed1_mse] Epoch  19/200 | Train=0.03146 | Val=0.03446 | wMAE=0.151595 | PolarMAE=0.019006 | EMD=0.001121 | MolEMD=0.000356 | R2=0.8304 | LR=2.84e-06 | 140.9s
+2026-06-23 20:30:39,892 - INFO -   -> new best (weighted_mae=0.151595), saved results/2d/checkpoints/dmpnn_seed1_mse.pt
+2026-06-23 20:32:52,174 - INFO - [dmpnn_seed1_mse] Epoch  20/200 | Train=0.03138 | Val=0.03445 | wMAE=0.151750 | PolarMAE=0.018864 | EMD=0.001116 | MolEMD=0.000356 | R2=0.8302 | LR=3.00e-04 | 132.3s
+2026-06-23 20:34:39,805 - INFO - [dmpnn_seed1_mse] Epoch  21/200 | Train=0.03381 | Val=0.03656 | wMAE=0.157173 | PolarMAE=0.019586 | EMD=0.001162 | MolEMD=0.000394 | R2=0.8192 | LR=3.00e-04 | 107.6s
+2026-06-23 20:36:09,434 - INFO - [dmpnn_seed1_mse] Epoch  22/200 | Train=0.03304 | Val=0.03624 | wMAE=0.153652 | PolarMAE=0.019641 | EMD=0.001152 | MolEMD=0.000404 | R2=0.8223 | LR=2.98e-04 | 89.6s
+2026-06-23 20:37:43,115 - INFO - [dmpnn_seed1_mse] Epoch  23/200 | Train=0.03259 | Val=0.03552 | wMAE=0.155651 | PolarMAE=0.019549 | EMD=0.001172 | MolEMD=0.000384 | R2=0.8239 | LR=2.96e-04 | 93.7s
+2026-06-23 20:39:10,561 - INFO - [dmpnn_seed1_mse] Epoch  24/200 | Train=0.03226 | Val=0.03538 | wMAE=0.154903 | PolarMAE=0.019171 | EMD=0.001148 | MolEMD=0.000382 | R2=0.8251 | LR=2.93e-04 | 87.4s
+2026-06-23 20:40:48,609 - INFO - [dmpnn_seed1_mse] Epoch  25/200 | Train=0.03201 | Val=0.03560 | wMAE=0.153895 | PolarMAE=0.019684 | EMD=0.001159 | MolEMD=0.000382 | R2=0.8245 | LR=2.89e-04 | 98.0s
+2026-06-23 20:42:32,518 - INFO - [dmpnn_seed1_mse] Epoch  26/200 | Train=0.03173 | Val=0.03465 | wMAE=0.152060 | PolarMAE=0.019311 | EMD=0.001122 | MolEMD=0.000363 | R2=0.8293 | LR=2.84e-04 | 103.9s
+2026-06-23 20:44:59,188 - INFO - [dmpnn_seed1_mse] Epoch  27/200 | Train=0.03148 | Val=0.03461 | wMAE=0.151884 | PolarMAE=0.018986 | EMD=0.001126 | MolEMD=0.000366 | R2=0.8280 | LR=2.78e-04 | 146.7s
+2026-06-23 20:47:20,109 - INFO - [dmpnn_seed1_mse] Epoch  28/200 | Train=0.03129 | Val=0.03464 | wMAE=0.152595 | PolarMAE=0.019153 | EMD=0.001113 | MolEMD=0.000374 | R2=0.8292 | LR=2.71e-04 | 140.9s
+2026-06-23 20:48:53,542 - INFO - [dmpnn_seed1_mse] Epoch  29/200 | Train=0.03106 | Val=0.03430 | wMAE=0.151475 | PolarMAE=0.018783 | EMD=0.001115 | MolEMD=0.000360 | R2=0.8297 | LR=2.64e-04 | 93.4s
+2026-06-23 20:48:53,606 - INFO -   -> new best (weighted_mae=0.151475), saved results/2d/checkpoints/dmpnn_seed1_mse.pt
+2026-06-23 20:50:22,287 - INFO - [dmpnn_seed1_mse] Epoch  30/200 | Train=0.03083 | Val=0.03419 | wMAE=0.151534 | PolarMAE=0.019076 | EMD=0.001111 | MolEMD=0.000362 | R2=0.8318 | LR=2.56e-04 | 88.7s
+2026-06-23 20:51:51,103 - INFO - [dmpnn_seed1_mse] Epoch  31/200 | Train=0.03066 | Val=0.03411 | wMAE=0.151013 | PolarMAE=0.019005 | EMD=0.001112 | MolEMD=0.000355 | R2=0.8312 | LR=2.48e-04 | 88.8s
+2026-06-23 20:51:51,168 - INFO -   -> new best (weighted_mae=0.151013), saved results/2d/checkpoints/dmpnn_seed1_mse.pt
+2026-06-23 20:53:31,518 - INFO - [dmpnn_seed1_mse] Epoch  32/200 | Train=0.03047 | Val=0.03425 | wMAE=0.150354 | PolarMAE=0.018632 | EMD=0.001107 | MolEMD=0.000354 | R2=0.8305 | LR=2.38e-04 | 100.3s
+2026-06-23 20:53:31,594 - INFO -   -> new best (weighted_mae=0.150354), saved results/2d/checkpoints/dmpnn_seed1_mse.pt
+2026-06-23 20:55:02,290 - INFO - [dmpnn_seed1_mse] Epoch  33/200 | Train=0.03031 | Val=0.03398 | wMAE=0.151461 | PolarMAE=0.019007 | EMD=0.001113 | MolEMD=0.000368 | R2=0.8310 | LR=2.29e-04 | 90.7s
+2026-06-23 20:57:02,801 - INFO - [dmpnn_seed1_mse] Epoch  34/200 | Train=0.03012 | Val=0.03371 | wMAE=0.149847 | PolarMAE=0.018817 | EMD=0.001093 | MolEMD=0.000355 | R2=0.8330 | LR=2.18e-04 | 120.5s
+2026-06-23 20:57:02,877 - INFO -   -> new best (weighted_mae=0.149847), saved results/2d/checkpoints/dmpnn_seed1_mse.pt
+2026-06-23 20:59:33,981 - INFO - [dmpnn_seed1_mse] Epoch  35/200 | Train=0.02993 | Val=0.03371 | wMAE=0.149642 | PolarMAE=0.018502 | EMD=0.001081 | MolEMD=0.000342 | R2=0.8336 | LR=2.08e-04 | 151.1s
+2026-06-23 20:59:34,048 - INFO -   -> new best (weighted_mae=0.149642), saved results/2d/checkpoints/dmpnn_seed1_mse.pt
+2026-06-23 21:01:41,327 - INFO - [dmpnn_seed1_mse] Epoch  36/200 | Train=0.02976 | Val=0.03375 | wMAE=0.151425 | PolarMAE=0.018765 | EMD=0.001114 | MolEMD=0.000355 | R2=0.8319 | LR=1.97e-04 | 127.3s
+2026-06-23 21:03:06,034 - INFO - [dmpnn_seed1_mse] Epoch  37/200 | Train=0.02961 | Val=0.03315 | wMAE=0.148528 | PolarMAE=0.018222 | EMD=0.001075 | MolEMD=0.000345 | R2=0.8362 | LR=1.85e-04 | 84.7s
+2026-06-23 21:03:06,101 - INFO -   -> new best (weighted_mae=0.148528), saved results/2d/checkpoints/dmpnn_seed1_mse.pt
+2026-06-23 21:04:36,586 - INFO - [dmpnn_seed1_mse] Epoch  38/200 | Train=0.02947 | Val=0.03297 | wMAE=0.148926 | PolarMAE=0.018239 | EMD=0.001086 | MolEMD=0.000347 | R2=0.8364 | LR=1.74e-04 | 90.5s
+2026-06-23 21:06:10,504 - INFO - [dmpnn_seed1_mse] Epoch  39/200 | Train=0.02934 | Val=0.03288 | wMAE=0.147864 | PolarMAE=0.018301 | EMD=0.001075 | MolEMD=0.000339 | R2=0.8371 | LR=1.62e-04 | 93.9s
+2026-06-23 21:06:10,564 - INFO -   -> new best (weighted_mae=0.147864), saved results/2d/checkpoints/dmpnn_seed1_mse.pt
+2026-06-23 21:07:35,691 - INFO - [dmpnn_seed1_mse] Epoch  40/200 | Train=0.02920 | Val=0.03278 | wMAE=0.148189 | PolarMAE=0.018344 | EMD=0.001077 | MolEMD=0.000347 | R2=0.8375 | LR=1.50e-04 | 85.1s
+2026-06-23 21:09:07,899 - INFO - [dmpnn_seed1_mse] Epoch  41/200 | Train=0.02904 | Val=0.03324 | wMAE=0.148411 | PolarMAE=0.018268 | EMD=0.001068 | MolEMD=0.000340 | R2=0.8355 | LR=1.39e-04 | 92.2s
+2026-06-23 21:11:12,732 - INFO - [dmpnn_seed1_mse] Epoch  42/200 | Train=0.02893 | Val=0.03269 | wMAE=0.147488 | PolarMAE=0.018321 | EMD=0.001075 | MolEMD=0.000335 | R2=0.8383 | LR=1.27e-04 | 124.8s
+2026-06-23 21:11:12,805 - INFO -   -> new best (weighted_mae=0.147488), saved results/2d/checkpoints/dmpnn_seed1_mse.pt
+2026-06-23 21:13:42,237 - INFO - [dmpnn_seed1_mse] Epoch  43/200 | Train=0.02881 | Val=0.03276 | wMAE=0.147351 | PolarMAE=0.018236 | EMD=0.001061 | MolEMD=0.000339 | R2=0.8383 | LR=1.16e-04 | 149.4s
+2026-06-23 21:13:42,298 - INFO -   -> new best (weighted_mae=0.147351), saved results/2d/checkpoints/dmpnn_seed1_mse.pt
+2026-06-23 21:15:42,399 - INFO - [dmpnn_seed1_mse] Epoch  44/200 | Train=0.02870 | Val=0.03247 | wMAE=0.147828 | PolarMAE=0.018268 | EMD=0.001072 | MolEMD=0.000339 | R2=0.8390 | LR=1.04e-04 | 120.1s
+2026-06-23 21:17:14,009 - INFO - [dmpnn_seed1_mse] Epoch  45/200 | Train=0.02857 | Val=0.03237 | wMAE=0.147180 | PolarMAE=0.018019 | EMD=0.001059 | MolEMD=0.000338 | R2=0.8396 | LR=9.33e-05 | 91.6s
+2026-06-23 21:17:14,073 - INFO -   -> new best (weighted_mae=0.147180), saved results/2d/checkpoints/dmpnn_seed1_mse.pt
+2026-06-23 21:18:41,023 - INFO - [dmpnn_seed1_mse] Epoch  46/200 | Train=0.02848 | Val=0.03239 | wMAE=0.146610 | PolarMAE=0.018386 | EMD=0.001066 | MolEMD=0.000343 | R2=0.8398 | LR=8.26e-05 | 86.9s
+2026-06-23 21:18:41,082 - INFO -   -> new best (weighted_mae=0.146610), saved results/2d/checkpoints/dmpnn_seed1_mse.pt
+2026-06-23 21:20:19,069 - INFO - [dmpnn_seed1_mse] Epoch  47/200 | Train=0.02839 | Val=0.03220 | wMAE=0.146658 | PolarMAE=0.018291 | EMD=0.001063 | MolEMD=0.000339 | R2=0.8405 | LR=7.24e-05 | 98.0s
+2026-06-23 21:21:44,804 - INFO - [dmpnn_seed1_mse] Epoch  48/200 | Train=0.02833 | Val=0.03218 | wMAE=0.146599 | PolarMAE=0.018052 | EMD=0.001054 | MolEMD=0.000334 | R2=0.8406 | LR=6.26e-05 | 85.7s
+2026-06-23 21:21:44,871 - INFO -   -> new best (weighted_mae=0.146599), saved results/2d/checkpoints/dmpnn_seed1_mse.pt
+2026-06-23 21:23:17,631 - INFO - [dmpnn_seed1_mse] Epoch  49/200 | Train=0.02823 | Val=0.03203 | wMAE=0.146266 | PolarMAE=0.018058 | EMD=0.001056 | MolEMD=0.000335 | R2=0.8415 | LR=5.34e-05 | 92.8s
+2026-06-23 21:23:17,689 - INFO -   -> new best (weighted_mae=0.146266), saved results/2d/checkpoints/dmpnn_seed1_mse.pt
+2026-06-23 21:25:24,878 - INFO - [dmpnn_seed1_mse] Epoch  50/200 | Train=0.02815 | Val=0.03227 | wMAE=0.148001 | PolarMAE=0.017849 | EMD=0.001060 | MolEMD=0.000339 | R2=0.8390 | LR=4.48e-05 | 127.2s
+2026-06-23 21:27:52,141 - INFO - [dmpnn_seed1_mse] Epoch  51/200 | Train=0.02809 | Val=0.03202 | wMAE=0.146017 | PolarMAE=0.017987 | EMD=0.001048 | MolEMD=0.000326 | R2=0.8410 | LR=3.68e-05 | 147.3s
+2026-06-23 21:27:52,221 - INFO -   -> new best (weighted_mae=0.146017), saved results/2d/checkpoints/dmpnn_seed1_mse.pt
+2026-06-23 21:29:54,855 - INFO - [dmpnn_seed1_mse] Epoch  52/200 | Train=0.02805 | Val=0.03197 | wMAE=0.146147 | PolarMAE=0.017950 | EMD=0.001049 | MolEMD=0.000328 | R2=0.8415 | LR=2.96e-05 | 122.6s
+2026-06-23 21:31:23,770 - INFO - [dmpnn_seed1_mse] Epoch  53/200 | Train=0.02798 | Val=0.03193 | wMAE=0.146194 | PolarMAE=0.017951 | EMD=0.001052 | MolEMD=0.000329 | R2=0.8418 | LR=2.30e-05 | 88.9s
+2026-06-23 21:32:56,118 - INFO - [dmpnn_seed1_mse] Epoch  54/200 | Train=0.02792 | Val=0.03198 | wMAE=0.145788 | PolarMAE=0.018166 | EMD=0.001050 | MolEMD=0.000330 | R2=0.8415 | LR=1.73e-05 | 92.3s
+2026-06-23 21:32:56,196 - INFO -   -> new best (weighted_mae=0.145788), saved results/2d/checkpoints/dmpnn_seed1_mse.pt
+2026-06-23 21:34:31,617 - INFO - [dmpnn_seed1_mse] Epoch  55/200 | Train=0.02790 | Val=0.03183 | wMAE=0.145967 | PolarMAE=0.018017 | EMD=0.001051 | MolEMD=0.000328 | R2=0.8421 | LR=1.24e-05 | 95.4s
+2026-06-23 21:36:19,572 - INFO - [dmpnn_seed1_mse] Epoch  56/200 | Train=0.02786 | Val=0.03185 | wMAE=0.145697 | PolarMAE=0.017993 | EMD=0.001047 | MolEMD=0.000327 | R2=0.8421 | LR=8.32e-06 | 108.0s
+2026-06-23 21:36:19,638 - INFO -   -> new best (weighted_mae=0.145697), saved results/2d/checkpoints/dmpnn_seed1_mse.pt
+2026-06-23 21:38:01,583 - INFO - [dmpnn_seed1_mse] Epoch  57/200 | Train=0.02781 | Val=0.03188 | wMAE=0.145662 | PolarMAE=0.017962 | EMD=0.001045 | MolEMD=0.000327 | R2=0.8420 | LR=5.13e-06 | 101.9s
+2026-06-23 21:38:01,776 - INFO -   -> new best (weighted_mae=0.145662), saved results/2d/checkpoints/dmpnn_seed1_mse.pt
+2026-06-23 21:40:15,317 - INFO - [dmpnn_seed1_mse] Epoch  58/200 | Train=0.02778 | Val=0.03184 | wMAE=0.145705 | PolarMAE=0.017966 | EMD=0.001046 | MolEMD=0.000327 | R2=0.8420 | LR=2.84e-06 | 133.5s
+2026-06-23 21:42:23,505 - INFO - [dmpnn_seed1_mse] Epoch  59/200 | Train=0.02777 | Val=0.03180 | wMAE=0.145722 | PolarMAE=0.017952 | EMD=0.001049 | MolEMD=0.000327 | R2=0.8423 | LR=1.46e-06 | 128.2s
+2026-06-23 21:44:19,167 - INFO - [dmpnn_seed1_mse] Epoch  60/200 | Train=0.02777 | Val=0.03185 | wMAE=0.145693 | PolarMAE=0.017956 | EMD=0.001047 | MolEMD=0.000327 | R2=0.8421 | LR=3.00e-04 | 115.7s
+2026-06-23 21:45:49,756 - INFO - [dmpnn_seed1_mse] Epoch  61/200 | Train=0.02977 | Val=0.03318 | wMAE=0.148167 | PolarMAE=0.018881 | EMD=0.001082 | MolEMD=0.000354 | R2=0.8361 | LR=3.00e-04 | 90.6s
+2026-06-23 21:47:16,043 - INFO - [dmpnn_seed1_mse] Epoch  62/200 | Train=0.02934 | Val=0.03324 | wMAE=0.147008 | PolarMAE=0.018756 | EMD=0.001070 | MolEMD=0.000351 | R2=0.8374 | LR=3.00e-04 | 86.3s
+2026-06-23 21:48:48,260 - INFO - [dmpnn_seed1_mse] Epoch  63/200 | Train=0.02920 | Val=0.03286 | wMAE=0.148284 | PolarMAE=0.018344 | EMD=0.001079 | MolEMD=0.000353 | R2=0.8372 | LR=2.99e-04 | 92.2s
+2026-06-23 21:50:21,106 - INFO - [dmpnn_seed1_mse] Epoch  64/200 | Train=0.02902 | Val=0.03281 | wMAE=0.147881 | PolarMAE=0.018677 | EMD=0.001082 | MolEMD=0.000344 | R2=0.8373 | LR=2.98e-04 | 92.8s
+2026-06-23 21:52:11,017 - INFO - [dmpnn_seed1_mse] Epoch  65/200 | Train=0.02894 | Val=0.03275 | wMAE=0.147524 | PolarMAE=0.018363 | EMD=0.001073 | MolEMD=0.000343 | R2=0.8380 | LR=2.97e-04 | 109.9s
+2026-06-23 21:54:35,076 - INFO - [dmpnn_seed1_mse] Epoch  66/200 | Train=0.02892 | Val=0.03266 | wMAE=0.148430 | PolarMAE=0.018742 | EMD=0.001082 | MolEMD=0.000339 | R2=0.8385 | LR=2.96e-04 | 144.1s
+2026-06-23 21:56:49,155 - INFO - [dmpnn_seed1_mse] Epoch  67/200 | Train=0.02879 | Val=0.03328 | wMAE=0.147701 | PolarMAE=0.018578 | EMD=0.001079 | MolEMD=0.000367 | R2=0.8355 | LR=2.94e-04 | 134.1s
+2026-06-23 21:58:29,915 - INFO - [dmpnn_seed1_mse] Epoch  68/200 | Train=0.02871 | Val=0.03272 | wMAE=0.147440 | PolarMAE=0.018693 | EMD=0.001077 | MolEMD=0.000350 | R2=0.8382 | LR=2.93e-04 | 100.8s
+2026-06-23 22:00:03,286 - INFO - [dmpnn_seed1_mse] Epoch  69/200 | Train=0.02869 | Val=0.03334 | wMAE=0.148630 | PolarMAE=0.018253 | EMD=0.001065 | MolEMD=0.000368 | R2=0.8359 | LR=2.91e-04 | 93.4s
+2026-06-23 22:01:29,361 - INFO - [dmpnn_seed1_mse] Epoch  70/200 | Train=0.02857 | Val=0.03260 | wMAE=0.147123 | PolarMAE=0.018351 | EMD=0.001067 | MolEMD=0.000336 | R2=0.8388 | LR=2.89e-04 | 86.1s
+2026-06-23 22:02:58,131 - INFO - [dmpnn_seed1_mse] Epoch  71/200 | Train=0.02851 | Val=0.03229 | wMAE=0.147098 | PolarMAE=0.018295 | EMD=0.001068 | MolEMD=0.000338 | R2=0.8399 | LR=2.86e-04 | 88.8s
+2026-06-23 22:04:29,409 - INFO - [dmpnn_seed1_mse] Epoch  72/200 | Train=0.02841 | Val=0.03292 | wMAE=0.147378 | PolarMAE=0.018471 | EMD=0.001067 | MolEMD=0.000339 | R2=0.8370 | LR=2.84e-04 | 91.3s
+2026-06-23 22:06:16,949 - INFO - [dmpnn_seed1_mse] Epoch  73/200 | Train=0.02838 | Val=0.03248 | wMAE=0.147305 | PolarMAE=0.018406 | EMD=0.001069 | MolEMD=0.000338 | R2=0.8387 | LR=2.81e-04 | 107.5s
+2026-06-23 22:08:49,167 - INFO - [dmpnn_seed1_mse] Epoch  74/200 | Train=0.02828 | Val=0.03215 | wMAE=0.146860 | PolarMAE=0.018446 | EMD=0.001074 | MolEMD=0.000336 | R2=0.8412 | LR=2.78e-04 | 152.2s
+2026-06-23 22:11:01,193 - INFO - [dmpnn_seed1_mse] Epoch  75/200 | Train=0.02817 | Val=0.03217 | wMAE=0.146666 | PolarMAE=0.018225 | EMD=0.001062 | MolEMD=0.000337 | R2=0.8403 | LR=2.75e-04 | 132.0s
+2026-06-23 22:12:32,336 - INFO - [dmpnn_seed1_mse] Epoch  76/200 | Train=0.02814 | Val=0.03201 | wMAE=0.146433 | PolarMAE=0.018391 | EMD=0.001065 | MolEMD=0.000341 | R2=0.8416 | LR=2.71e-04 | 91.1s
+2026-06-23 22:13:59,187 - INFO - [dmpnn_seed1_mse] Epoch  77/200 | Train=0.02808 | Val=0.03261 | wMAE=0.146293 | PolarMAE=0.018574 | EMD=0.001065 | MolEMD=0.000356 | R2=0.8389 | LR=2.68e-04 | 86.8s
+2026-06-23 22:14:00,126 - INFO - Early stopping at epoch 77.
+2026-06-23 22:14:00,126 - INFO - Loading best checkpoint for test evaluation...
+2026-06-23 22:14:37,574 - INFO - [dmpnn_seed1_mse] TEST METRICS: {'loss': 0.02958369641349866, 'weighted_r2': 0.8520970940589905, 'weighted_mae': 0.14303109049797058, 'polar_mae': 0.019744697958230972, 'cosine_similarity': 0.9095530849943146, 'emd_raw': 0.0010964775716019283, 'emd_normalized': 0.0010964775716019307, 'molecular_mae': 0.5803830049186945, 'molecular_emd': 0.0003079673344885133, 'molecular_cosine': 0.9920437371425139, 'molecular_polar_mae': 0.25606718917938476}
+2026-06-23 22:14:37,587 - INFO - Saved results to results/2d/metrics/dmpnn_seed1_mse.json
+2026-06-23 22:17:21,319 - INFO - Device: cuda
+2026-06-23 22:17:21,556 - INFO - Loading cached dataset [2d_pure]: /mnt/tank/scratch/ikarpushkina/sigma/ASPEN/data/train_test_val_df/cache/chaos_atomic_train_with_coordinates.parquet.5773dbaf22.pt
+2026-06-23 22:17:37,263 - INFO - chaos_atomic_train_with_coordinates.parquet [2d_pure]: 36981 mols, 1077949 atoms, RDKit valid: 36981/36981 (100.0%)
+2026-06-23 22:17:37,284 - INFO - Loading cached dataset [2d_pure]: /mnt/tank/scratch/ikarpushkina/sigma/ASPEN/data/train_test_val_df/cache/chaos_atomic_val_with_coordinates.parquet.5773dbaf22.pt
+2026-06-23 22:17:39,925 - INFO - chaos_atomic_val_with_coordinates.parquet [2d_pure]: 7941 mols, 235573 atoms, RDKit valid: 7941/7941 (100.0%)
+2026-06-23 22:17:39,957 - INFO - Loading cached dataset [2d_pure]: /mnt/tank/scratch/ikarpushkina/sigma/ASPEN/data/train_test_val_df/cache/chaos_atomic_test_with_coordinates.parquet.5773dbaf22.pt
+2026-06-23 22:17:42,620 - INFO - chaos_atomic_test_with_coordinates.parquet [2d_pure]: 7800 mols, 221748 atoms, RDKit valid: 7800/7800 (100.0%)
+2026-06-23 22:17:43,293 - INFO - dmpnn: 697,342 params (target 695,667, diff 0.2%)
+2026-06-23 22:19:26,101 - INFO - [dmpnn_seed2_mse] Epoch   1/200 | Train=0.06608 | Val=0.05239 | wMAE=0.181042 | PolarMAE=0.027828 | EMD=0.001575 | MolEMD=0.000669 | R2=0.7520 | LR=2.98e-04 | 102.8s
+2026-06-23 22:19:26,207 - INFO -   -> new best (weighted_mae=0.181042), saved results/2d/checkpoints/dmpnn_seed2_mse.pt
+2026-06-23 22:21:36,993 - INFO - [dmpnn_seed2_mse] Epoch   2/200 | Train=0.04428 | Val=0.04579 | wMAE=0.171984 | PolarMAE=0.024727 | EMD=0.001450 | MolEMD=0.000564 | R2=0.7805 | LR=2.93e-04 | 130.8s
+2026-06-23 22:21:37,092 - INFO -   -> new best (weighted_mae=0.171984), saved results/2d/checkpoints/dmpnn_seed2_mse.pt
+2026-06-23 22:23:43,844 - INFO - [dmpnn_seed2_mse] Epoch   3/200 | Train=0.04080 | Val=0.04270 | wMAE=0.165465 | PolarMAE=0.022368 | EMD=0.001348 | MolEMD=0.000472 | R2=0.7946 | LR=2.84e-04 | 126.7s
+2026-06-23 22:23:43,964 - INFO -   -> new best (weighted_mae=0.165465), saved results/2d/checkpoints/dmpnn_seed2_mse.pt
+2026-06-23 22:25:38,349 - INFO - [dmpnn_seed2_mse] Epoch   4/200 | Train=0.03889 | Val=0.04118 | wMAE=0.163177 | PolarMAE=0.022368 | EMD=0.001288 | MolEMD=0.000447 | R2=0.8004 | LR=2.71e-04 | 114.4s
+2026-06-23 22:25:38,465 - INFO -   -> new best (weighted_mae=0.163177), saved results/2d/checkpoints/dmpnn_seed2_mse.pt
+2026-06-23 22:27:13,449 - INFO - [dmpnn_seed2_mse] Epoch   5/200 | Train=0.03755 | Val=0.04006 | wMAE=0.163349 | PolarMAE=0.021861 | EMD=0.001267 | MolEMD=0.000425 | R2=0.8048 | LR=2.56e-04 | 95.0s
+2026-06-23 22:28:38,640 - INFO - [dmpnn_seed2_mse] Epoch   6/200 | Train=0.03654 | Val=0.03968 | wMAE=0.160987 | PolarMAE=0.020582 | EMD=0.001231 | MolEMD=0.000416 | R2=0.8059 | LR=2.38e-04 | 85.2s
+2026-06-23 22:28:38,723 - INFO -   -> new best (weighted_mae=0.160987), saved results/2d/checkpoints/dmpnn_seed2_mse.pt
+2026-06-23 22:30:19,425 - INFO - [dmpnn_seed2_mse] Epoch   7/200 | Train=0.03569 | Val=0.03914 | wMAE=0.160775 | PolarMAE=0.021201 | EMD=0.001236 | MolEMD=0.000426 | R2=0.8088 | LR=2.18e-04 | 100.7s
+2026-06-23 22:30:19,530 - INFO -   -> new best (weighted_mae=0.160775), saved results/2d/checkpoints/dmpnn_seed2_mse.pt
+2026-06-23 22:31:52,534 - INFO - [dmpnn_seed2_mse] Epoch   8/200 | Train=0.03506 | Val=0.03819 | wMAE=0.159399 | PolarMAE=0.020266 | EMD=0.001214 | MolEMD=0.000400 | R2=0.8128 | LR=1.97e-04 | 93.0s
+2026-06-23 22:31:52,616 - INFO -   -> new best (weighted_mae=0.159399), saved results/2d/checkpoints/dmpnn_seed2_mse.pt
+2026-06-23 22:33:24,564 - INFO - [dmpnn_seed2_mse] Epoch   9/200 | Train=0.03443 | Val=0.03838 | wMAE=0.156332 | PolarMAE=0.020065 | EMD=0.001166 | MolEMD=0.000412 | R2=0.8138 | LR=1.74e-04 | 91.9s
+2026-06-23 22:33:24,693 - INFO -   -> new best (weighted_mae=0.156332), saved results/2d/checkpoints/dmpnn_seed2_mse.pt
+2026-06-23 22:35:28,444 - INFO - [dmpnn_seed2_mse] Epoch  10/200 | Train=0.03391 | Val=0.03737 | wMAE=0.158265 | PolarMAE=0.019883 | EMD=0.001198 | MolEMD=0.000399 | R2=0.8150 | LR=1.50e-04 | 123.7s
+2026-06-23 22:37:49,936 - INFO - [dmpnn_seed2_mse] Epoch  11/200 | Train=0.03352 | Val=0.03694 | wMAE=0.156217 | PolarMAE=0.019135 | EMD=0.001151 | MolEMD=0.000379 | R2=0.8190 | LR=1.27e-04 | 141.5s
+2026-06-23 22:37:50,277 - INFO -   -> new best (weighted_mae=0.156217), saved results/2d/checkpoints/dmpnn_seed2_mse.pt
+2026-06-23 22:39:50,058 - INFO - [dmpnn_seed2_mse] Epoch  12/200 | Train=0.03305 | Val=0.03647 | wMAE=0.155135 | PolarMAE=0.019362 | EMD=0.001138 | MolEMD=0.000370 | R2=0.8204 | LR=1.04e-04 | 119.8s
+2026-06-23 22:39:50,152 - INFO -   -> new best (weighted_mae=0.155135), saved results/2d/checkpoints/dmpnn_seed2_mse.pt
+2026-06-23 22:41:19,205 - INFO - [dmpnn_seed2_mse] Epoch  13/200 | Train=0.03267 | Val=0.03580 | wMAE=0.154021 | PolarMAE=0.019341 | EMD=0.001140 | MolEMD=0.000368 | R2=0.8241 | LR=8.26e-05 | 89.1s
+2026-06-23 22:41:19,580 - INFO -   -> new best (weighted_mae=0.154021), saved results/2d/checkpoints/dmpnn_seed2_mse.pt
+2026-06-23 22:42:47,672 - INFO - [dmpnn_seed2_mse] Epoch  14/200 | Train=0.03235 | Val=0.03541 | wMAE=0.152909 | PolarMAE=0.019289 | EMD=0.001142 | MolEMD=0.000376 | R2=0.8266 | LR=6.26e-05 | 88.1s
+2026-06-23 22:42:47,758 - INFO -   -> new best (weighted_mae=0.152909), saved results/2d/checkpoints/dmpnn_seed2_mse.pt
+2026-06-23 22:44:22,329 - INFO - [dmpnn_seed2_mse] Epoch  15/200 | Train=0.03211 | Val=0.03525 | wMAE=0.152979 | PolarMAE=0.019231 | EMD=0.001132 | MolEMD=0.000362 | R2=0.8272 | LR=4.48e-05 | 94.6s
+2026-06-23 22:45:57,368 - INFO - [dmpnn_seed2_mse] Epoch  16/200 | Train=0.03189 | Val=0.03540 | wMAE=0.153821 | PolarMAE=0.019063 | EMD=0.001120 | MolEMD=0.000358 | R2=0.8255 | LR=2.96e-05 | 95.0s
+2026-06-23 22:47:40,980 - INFO - [dmpnn_seed2_mse] Epoch  17/200 | Train=0.03170 | Val=0.03502 | wMAE=0.152139 | PolarMAE=0.019274 | EMD=0.001121 | MolEMD=0.000357 | R2=0.8283 | LR=1.73e-05 | 103.6s
+2026-06-23 22:47:41,118 - INFO -   -> new best (weighted_mae=0.152139), saved results/2d/checkpoints/dmpnn_seed2_mse.pt
+2026-06-23 22:49:52,849 - INFO - [dmpnn_seed2_mse] Epoch  18/200 | Train=0.03159 | Val=0.03516 | wMAE=0.152580 | PolarMAE=0.019037 | EMD=0.001115 | MolEMD=0.000358 | R2=0.8273 | LR=8.32e-06 | 131.7s
+2026-06-23 22:51:59,547 - INFO - [dmpnn_seed2_mse] Epoch  19/200 | Train=0.03147 | Val=0.03492 | wMAE=0.152355 | PolarMAE=0.018986 | EMD=0.001114 | MolEMD=0.000356 | R2=0.8282 | LR=2.84e-06 | 126.7s
+2026-06-23 22:53:53,236 - INFO - [dmpnn_seed2_mse] Epoch  20/200 | Train=0.03141 | Val=0.03487 | wMAE=0.152026 | PolarMAE=0.019008 | EMD=0.001113 | MolEMD=0.000354 | R2=0.8285 | LR=3.00e-04 | 113.7s
+2026-06-23 22:53:53,344 - INFO -   -> new best (weighted_mae=0.152026), saved results/2d/checkpoints/dmpnn_seed2_mse.pt
+2026-06-23 22:55:23,800 - INFO - [dmpnn_seed2_mse] Epoch  21/200 | Train=0.03383 | Val=0.03669 | wMAE=0.154964 | PolarMAE=0.019643 | EMD=0.001162 | MolEMD=0.000403 | R2=0.8211 | LR=3.00e-04 | 90.5s
+2026-06-23 22:56:57,691 - INFO - [dmpnn_seed2_mse] Epoch  22/200 | Train=0.03310 | Val=0.03616 | wMAE=0.153113 | PolarMAE=0.019839 | EMD=0.001146 | MolEMD=0.000380 | R2=0.8238 | LR=2.98e-04 | 93.9s
+2026-06-23 22:58:30,969 - INFO - [dmpnn_seed2_mse] Epoch  23/200 | Train=0.03264 | Val=0.03538 | wMAE=0.153790 | PolarMAE=0.019459 | EMD=0.001155 | MolEMD=0.000370 | R2=0.8262 | LR=2.96e-04 | 93.3s
+2026-06-23 23:00:00,708 - INFO - [dmpnn_seed2_mse] Epoch  24/200 | Train=0.03235 | Val=0.03558 | wMAE=0.152025 | PolarMAE=0.019455 | EMD=0.001126 | MolEMD=0.000366 | R2=0.8262 | LR=2.93e-04 | 89.7s
+2026-06-23 23:00:00,818 - INFO -   -> new best (weighted_mae=0.152025), saved results/2d/checkpoints/dmpnn_seed2_mse.pt
+2026-06-23 23:01:47,610 - INFO - [dmpnn_seed2_mse] Epoch  25/200 | Train=0.03204 | Val=0.03603 | wMAE=0.156079 | PolarMAE=0.019007 | EMD=0.001132 | MolEMD=0.000377 | R2=0.8200 | LR=2.89e-04 | 106.8s
+2026-06-23 23:04:16,140 - INFO - [dmpnn_seed2_mse] Epoch  26/200 | Train=0.03181 | Val=0.03534 | wMAE=0.151912 | PolarMAE=0.019713 | EMD=0.001136 | MolEMD=0.000363 | R2=0.8272 | LR=2.84e-04 | 148.5s
+2026-06-23 23:04:16,240 - INFO -   -> new best (weighted_mae=0.151912), saved results/2d/checkpoints/dmpnn_seed2_mse.pt
+2026-06-23 23:06:29,463 - INFO - [dmpnn_seed2_mse] Epoch  27/200 | Train=0.03152 | Val=0.03515 | wMAE=0.151610 | PolarMAE=0.018907 | EMD=0.001104 | MolEMD=0.000363 | R2=0.8273 | LR=2.78e-04 | 133.2s
+2026-06-23 23:06:29,591 - INFO -   -> new best (weighted_mae=0.151610), saved results/2d/checkpoints/dmpnn_seed2_mse.pt
+2026-06-23 23:08:06,302 - INFO - [dmpnn_seed2_mse] Epoch  28/200 | Train=0.03129 | Val=0.03504 | wMAE=0.153202 | PolarMAE=0.019600 | EMD=0.001143 | MolEMD=0.000371 | R2=0.8271 | LR=2.71e-04 | 96.7s
+2026-06-23 23:09:32,059 - INFO - [dmpnn_seed2_mse] Epoch  29/200 | Train=0.03110 | Val=0.03400 | wMAE=0.150417 | PolarMAE=0.019328 | EMD=0.001115 | MolEMD=0.000369 | R2=0.8329 | LR=2.64e-04 | 85.8s
+2026-06-23 23:09:32,191 - INFO -   -> new best (weighted_mae=0.150417), saved results/2d/checkpoints/dmpnn_seed2_mse.pt
+2026-06-23 23:11:03,434 - INFO - [dmpnn_seed2_mse] Epoch  30/200 | Train=0.03088 | Val=0.03467 | wMAE=0.152272 | PolarMAE=0.018906 | EMD=0.001122 | MolEMD=0.000362 | R2=0.8294 | LR=2.56e-04 | 91.2s
+2026-06-23 23:12:38,148 - INFO - [dmpnn_seed2_mse] Epoch  31/200 | Train=0.03069 | Val=0.03410 | wMAE=0.150336 | PolarMAE=0.019144 | EMD=0.001105 | MolEMD=0.000354 | R2=0.8324 | LR=2.48e-04 | 94.7s
+2026-06-23 23:12:38,280 - INFO -   -> new best (weighted_mae=0.150336), saved results/2d/checkpoints/dmpnn_seed2_mse.pt
+2026-06-23 23:14:05,710 - INFO - [dmpnn_seed2_mse] Epoch  32/200 | Train=0.03046 | Val=0.03478 | wMAE=0.151519 | PolarMAE=0.019279 | EMD=0.001104 | MolEMD=0.000375 | R2=0.8285 | LR=2.38e-04 | 87.4s
+2026-06-23 23:16:03,459 - INFO - [dmpnn_seed2_mse] Epoch  33/200 | Train=0.03029 | Val=0.03355 | wMAE=0.149404 | PolarMAE=0.018828 | EMD=0.001099 | MolEMD=0.000345 | R2=0.8341 | LR=2.29e-04 | 117.7s
+2026-06-23 23:16:03,604 - INFO -   -> new best (weighted_mae=0.149404), saved results/2d/checkpoints/dmpnn_seed2_mse.pt
+2026-06-23 23:18:32,670 - INFO - [dmpnn_seed2_mse] Epoch  34/200 | Train=0.03009 | Val=0.03341 | wMAE=0.150085 | PolarMAE=0.018402 | EMD=0.001099 | MolEMD=0.000355 | R2=0.8348 | LR=2.18e-04 | 149.1s
+2026-06-23 23:20:37,967 - INFO - [dmpnn_seed2_mse] Epoch  35/200 | Train=0.02994 | Val=0.03379 | wMAE=0.151228 | PolarMAE=0.018945 | EMD=0.001102 | MolEMD=0.000353 | R2=0.8317 | LR=2.08e-04 | 125.3s
+2026-06-23 23:22:06,071 - INFO - [dmpnn_seed2_mse] Epoch  36/200 | Train=0.02978 | Val=0.03360 | wMAE=0.147849 | PolarMAE=0.018480 | EMD=0.001073 | MolEMD=0.000361 | R2=0.8344 | LR=1.97e-04 | 88.1s
+2026-06-23 23:22:06,189 - INFO -   -> new best (weighted_mae=0.147849), saved results/2d/checkpoints/dmpnn_seed2_mse.pt
+2026-06-23 23:23:32,335 - INFO - [dmpnn_seed2_mse] Epoch  37/200 | Train=0.02963 | Val=0.03343 | wMAE=0.149903 | PolarMAE=0.018685 | EMD=0.001091 | MolEMD=0.000349 | R2=0.8342 | LR=1.85e-04 | 86.1s
+2026-06-23 23:25:05,709 - INFO - [dmpnn_seed2_mse] Epoch  38/200 | Train=0.02949 | Val=0.03308 | wMAE=0.148550 | PolarMAE=0.018266 | EMD=0.001074 | MolEMD=0.000343 | R2=0.8364 | LR=1.74e-04 | 93.4s
+2026-06-23 23:26:32,316 - INFO - [dmpnn_seed2_mse] Epoch  39/200 | Train=0.02932 | Val=0.03316 | wMAE=0.147386 | PolarMAE=0.018624 | EMD=0.001074 | MolEMD=0.000346 | R2=0.8364 | LR=1.62e-04 | 86.6s
+2026-06-23 23:26:32,471 - INFO -   -> new best (weighted_mae=0.147386), saved results/2d/checkpoints/dmpnn_seed2_mse.pt
+2026-06-23 23:28:09,885 - INFO - [dmpnn_seed2_mse] Epoch  40/200 | Train=0.02920 | Val=0.03313 | wMAE=0.147921 | PolarMAE=0.018523 | EMD=0.001071 | MolEMD=0.000342 | R2=0.8358 | LR=1.50e-04 | 97.4s
+2026-06-23 23:30:08,558 - INFO - [dmpnn_seed2_mse] Epoch  41/200 | Train=0.02906 | Val=0.03285 | wMAE=0.147271 | PolarMAE=0.018615 | EMD=0.001075 | MolEMD=0.000344 | R2=0.8380 | LR=1.39e-04 | 118.7s
+2026-06-23 23:30:08,642 - INFO -   -> new best (weighted_mae=0.147271), saved results/2d/checkpoints/dmpnn_seed2_mse.pt
+2026-06-23 23:32:37,717 - INFO - [dmpnn_seed2_mse] Epoch  42/200 | Train=0.02896 | Val=0.03258 | wMAE=0.146976 | PolarMAE=0.018484 | EMD=0.001064 | MolEMD=0.000337 | R2=0.8389 | LR=1.27e-04 | 149.1s
+2026-06-23 23:32:37,784 - INFO -   -> new best (weighted_mae=0.146976), saved results/2d/checkpoints/dmpnn_seed2_mse.pt
+2026-06-23 23:34:39,326 - INFO - [dmpnn_seed2_mse] Epoch  43/200 | Train=0.02880 | Val=0.03266 | wMAE=0.147333 | PolarMAE=0.018635 | EMD=0.001074 | MolEMD=0.000346 | R2=0.8388 | LR=1.16e-04 | 121.5s
+2026-06-23 23:36:06,209 - INFO - [dmpnn_seed2_mse] Epoch  44/200 | Train=0.02871 | Val=0.03284 | wMAE=0.147177 | PolarMAE=0.018235 | EMD=0.001057 | MolEMD=0.000335 | R2=0.8380 | LR=1.04e-04 | 86.9s
+2026-06-23 23:37:34,946 - INFO - [dmpnn_seed2_mse] Epoch  45/200 | Train=0.02858 | Val=0.03290 | wMAE=0.146961 | PolarMAE=0.018534 | EMD=0.001062 | MolEMD=0.000343 | R2=0.8375 | LR=9.33e-05 | 88.7s
+2026-06-23 23:37:35,009 - INFO -   -> new best (weighted_mae=0.146961), saved results/2d/checkpoints/dmpnn_seed2_mse.pt
+2026-06-23 23:39:08,055 - INFO - [dmpnn_seed2_mse] Epoch  46/200 | Train=0.02849 | Val=0.03270 | wMAE=0.148186 | PolarMAE=0.018163 | EMD=0.001062 | MolEMD=0.000345 | R2=0.8372 | LR=8.26e-05 | 93.0s
+2026-06-23 23:40:39,415 - INFO - [dmpnn_seed2_mse] Epoch  47/200 | Train=0.02839 | Val=0.03253 | wMAE=0.146344 | PolarMAE=0.018208 | EMD=0.001051 | MolEMD=0.000337 | R2=0.8394 | LR=7.24e-05 | 91.4s
+2026-06-23 23:40:39,480 - INFO -   -> new best (weighted_mae=0.146344), saved results/2d/checkpoints/dmpnn_seed2_mse.pt
+2026-06-23 23:42:09,461 - INFO - [dmpnn_seed2_mse] Epoch  48/200 | Train=0.02830 | Val=0.03253 | wMAE=0.146645 | PolarMAE=0.018398 | EMD=0.001059 | MolEMD=0.000335 | R2=0.8395 | LR=6.26e-05 | 90.0s
+2026-06-23 23:44:17,249 - INFO - [dmpnn_seed2_mse] Epoch  49/200 | Train=0.02821 | Val=0.03242 | wMAE=0.146524 | PolarMAE=0.018076 | EMD=0.001047 | MolEMD=0.000330 | R2=0.8396 | LR=5.34e-05 | 127.8s
+2026-06-23 23:46:41,274 - INFO - [dmpnn_seed2_mse] Epoch  50/200 | Train=0.02815 | Val=0.03235 | wMAE=0.146421 | PolarMAE=0.018193 | EMD=0.001052 | MolEMD=0.000334 | R2=0.8400 | LR=4.48e-05 | 144.0s
+2026-06-23 23:48:38,858 - INFO - [dmpnn_seed2_mse] Epoch  51/200 | Train=0.02807 | Val=0.03219 | wMAE=0.145991 | PolarMAE=0.018162 | EMD=0.001048 | MolEMD=0.000327 | R2=0.8408 | LR=3.68e-05 | 117.6s
+2026-06-23 23:48:38,916 - INFO -   -> new best (weighted_mae=0.145991), saved results/2d/checkpoints/dmpnn_seed2_mse.pt
+2026-06-23 23:50:07,861 - INFO - [dmpnn_seed2_mse] Epoch  52/200 | Train=0.02802 | Val=0.03208 | wMAE=0.145844 | PolarMAE=0.018047 | EMD=0.001048 | MolEMD=0.000329 | R2=0.8412 | LR=2.96e-05 | 88.9s
+2026-06-23 23:50:07,928 - INFO -   -> new best (weighted_mae=0.145844), saved results/2d/checkpoints/dmpnn_seed2_mse.pt
+2026-06-23 23:51:42,414 - INFO - [dmpnn_seed2_mse] Epoch  53/200 | Train=0.02796 | Val=0.03217 | wMAE=0.146160 | PolarMAE=0.018147 | EMD=0.001048 | MolEMD=0.000328 | R2=0.8408 | LR=2.30e-05 | 94.5s
+2026-06-23 23:53:16,299 - INFO - [dmpnn_seed2_mse] Epoch  54/200 | Train=0.02791 | Val=0.03217 | wMAE=0.145806 | PolarMAE=0.018103 | EMD=0.001043 | MolEMD=0.000327 | R2=0.8409 | LR=1.73e-05 | 93.9s
+2026-06-23 23:53:16,359 - INFO -   -> new best (weighted_mae=0.145806), saved results/2d/checkpoints/dmpnn_seed2_mse.pt
+2026-06-23 23:54:40,173 - INFO - [dmpnn_seed2_mse] Epoch  55/200 | Train=0.02788 | Val=0.03222 | wMAE=0.145862 | PolarMAE=0.018093 | EMD=0.001041 | MolEMD=0.000327 | R2=0.8406 | LR=1.24e-05 | 83.8s
+2026-06-23 23:56:15,543 - INFO - [dmpnn_seed2_mse] Epoch  56/200 | Train=0.02785 | Val=0.03210 | wMAE=0.145824 | PolarMAE=0.017996 | EMD=0.001042 | MolEMD=0.000327 | R2=0.8409 | LR=8.32e-06 | 95.4s
+2026-06-23 23:58:20,790 - INFO - [dmpnn_seed2_mse] Epoch  57/200 | Train=0.02781 | Val=0.03212 | wMAE=0.145737 | PolarMAE=0.018089 | EMD=0.001044 | MolEMD=0.000327 | R2=0.8411 | LR=5.13e-06 | 125.2s
+2026-06-23 23:58:20,870 - INFO -   -> new best (weighted_mae=0.145737), saved results/2d/checkpoints/dmpnn_seed2_mse.pt
+2026-06-24 00:00:44,161 - INFO - [dmpnn_seed2_mse] Epoch  58/200 | Train=0.02779 | Val=0.03213 | wMAE=0.145910 | PolarMAE=0.018033 | EMD=0.001043 | MolEMD=0.000326 | R2=0.8409 | LR=2.84e-06 | 143.3s
+2026-06-24 00:02:43,584 - INFO - [dmpnn_seed2_mse] Epoch  59/200 | Train=0.02777 | Val=0.03209 | wMAE=0.145677 | PolarMAE=0.017986 | EMD=0.001040 | MolEMD=0.000326 | R2=0.8411 | LR=1.46e-06 | 119.4s
+2026-06-24 00:02:43,663 - INFO -   -> new best (weighted_mae=0.145677), saved results/2d/checkpoints/dmpnn_seed2_mse.pt
+2026-06-24 00:04:13,570 - INFO - [dmpnn_seed2_mse] Epoch  60/200 | Train=0.02776 | Val=0.03209 | wMAE=0.145760 | PolarMAE=0.018031 | EMD=0.001042 | MolEMD=0.000327 | R2=0.8412 | LR=3.00e-04 | 89.9s
+2026-06-24 00:05:38,135 - INFO - [dmpnn_seed2_mse] Epoch  61/200 | Train=0.02977 | Val=0.03322 | wMAE=0.146986 | PolarMAE=0.018533 | EMD=0.001058 | MolEMD=0.000344 | R2=0.8358 | LR=3.00e-04 | 84.6s
+2026-06-24 00:07:19,909 - INFO - [dmpnn_seed2_mse] Epoch  62/200 | Train=0.02936 | Val=0.03341 | wMAE=0.147449 | PolarMAE=0.018481 | EMD=0.001059 | MolEMD=0.000344 | R2=0.8351 | LR=3.00e-04 | 101.8s
+2026-06-24 00:08:49,300 - INFO - [dmpnn_seed2_mse] Epoch  63/200 | Train=0.02917 | Val=0.03354 | wMAE=0.147838 | PolarMAE=0.018494 | EMD=0.001056 | MolEMD=0.000342 | R2=0.8335 | LR=2.99e-04 | 89.4s
+2026-06-24 00:10:18,708 - INFO - [dmpnn_seed2_mse] Epoch  64/200 | Train=0.02909 | Val=0.03301 | wMAE=0.147738 | PolarMAE=0.018248 | EMD=0.001071 | MolEMD=0.000347 | R2=0.8373 | LR=2.98e-04 | 89.4s
+2026-06-24 00:12:24,204 - INFO - [dmpnn_seed2_mse] Epoch  65/200 | Train=0.02895 | Val=0.03349 | wMAE=0.148646 | PolarMAE=0.018289 | EMD=0.001066 | MolEMD=0.000361 | R2=0.8347 | LR=2.97e-04 | 125.5s
+2026-06-24 00:14:48,889 - INFO - [dmpnn_seed2_mse] Epoch  66/200 | Train=0.02890 | Val=0.03410 | wMAE=0.150059 | PolarMAE=0.018641 | EMD=0.001085 | MolEMD=0.000397 | R2=0.8323 | LR=2.96e-04 | 144.7s
+2026-06-24 00:16:46,707 - INFO - [dmpnn_seed2_mse] Epoch  67/200 | Train=0.02886 | Val=0.03321 | wMAE=0.148228 | PolarMAE=0.018587 | EMD=0.001073 | MolEMD=0.000349 | R2=0.8358 | LR=2.94e-04 | 117.8s
+2026-06-24 00:18:23,381 - INFO - [dmpnn_seed2_mse] Epoch  68/200 | Train=0.02870 | Val=0.03291 | wMAE=0.147841 | PolarMAE=0.018272 | EMD=0.001061 | MolEMD=0.000341 | R2=0.8367 | LR=2.93e-04 | 96.7s
+2026-06-24 00:19:47,872 - INFO - [dmpnn_seed2_mse] Epoch  69/200 | Train=0.02867 | Val=0.03261 | wMAE=0.147791 | PolarMAE=0.018645 | EMD=0.001083 | MolEMD=0.000351 | R2=0.8394 | LR=2.91e-04 | 84.5s
+2026-06-24 00:21:29,060 - INFO - [dmpnn_seed2_mse] Epoch  70/200 | Train=0.02858 | Val=0.03299 | wMAE=0.147662 | PolarMAE=0.019054 | EMD=0.001086 | MolEMD=0.000357 | R2=0.8370 | LR=2.89e-04 | 101.2s
+2026-06-24 00:22:55,626 - INFO - [dmpnn_seed2_mse] Epoch  71/200 | Train=0.02849 | Val=0.03294 | wMAE=0.147129 | PolarMAE=0.018372 | EMD=0.001060 | MolEMD=0.000340 | R2=0.8373 | LR=2.86e-04 | 86.6s
+2026-06-24 00:24:24,192 - INFO - [dmpnn_seed2_mse] Epoch  72/200 | Train=0.02841 | Val=0.03258 | wMAE=0.147435 | PolarMAE=0.018433 | EMD=0.001063 | MolEMD=0.000334 | R2=0.8384 | LR=2.84e-04 | 88.6s
+2026-06-24 00:26:28,981 - INFO - [dmpnn_seed2_mse] Epoch  73/200 | Train=0.02833 | Val=0.03277 | wMAE=0.146571 | PolarMAE=0.018860 | EMD=0.001075 | MolEMD=0.000356 | R2=0.8383 | LR=2.81e-04 | 124.8s
+2026-06-24 00:28:55,848 - INFO - [dmpnn_seed2_mse] Epoch  74/200 | Train=0.02825 | Val=0.03265 | wMAE=0.146600 | PolarMAE=0.019023 | EMD=0.001069 | MolEMD=0.000349 | R2=0.8385 | LR=2.78e-04 | 146.9s
+2026-06-24 00:30:54,185 - INFO - [dmpnn_seed2_mse] Epoch  75/200 | Train=0.02818 | Val=0.03263 | wMAE=0.145894 | PolarMAE=0.018251 | EMD=0.001047 | MolEMD=0.000344 | R2=0.8392 | LR=2.75e-04 | 118.3s
+2026-06-24 00:32:22,170 - INFO - [dmpnn_seed2_mse] Epoch  76/200 | Train=0.02812 | Val=0.03298 | wMAE=0.146201 | PolarMAE=0.018046 | EMD=0.001041 | MolEMD=0.000351 | R2=0.8371 | LR=2.71e-04 | 88.0s
+2026-06-24 00:33:51,272 - INFO - [dmpnn_seed2_mse] Epoch  77/200 | Train=0.02808 | Val=0.03257 | wMAE=0.146963 | PolarMAE=0.018405 | EMD=0.001053 | MolEMD=0.000341 | R2=0.8390 | LR=2.68e-04 | 89.1s
+2026-06-24 00:35:26,306 - INFO - [dmpnn_seed2_mse] Epoch  78/200 | Train=0.02796 | Val=0.03257 | wMAE=0.146404 | PolarMAE=0.018444 | EMD=0.001056 | MolEMD=0.000346 | R2=0.8393 | LR=2.64e-04 | 95.0s
+2026-06-24 00:36:49,010 - INFO - [dmpnn_seed2_mse] Epoch  79/200 | Train=0.02790 | Val=0.03257 | wMAE=0.146631 | PolarMAE=0.018522 | EMD=0.001057 | MolEMD=0.000335 | R2=0.8390 | LR=2.60e-04 | 82.7s
+2026-06-24 00:36:49,011 - INFO - Early stopping at epoch 79.
+2026-06-24 00:36:49,011 - INFO - Loading best checkpoint for test evaluation...
+2026-06-24 00:37:29,767 - INFO - [dmpnn_seed2_mse] TEST METRICS: {'loss': 0.029656636434105727, 'weighted_r2': 0.8520225882530212, 'weighted_mae': 0.1431945413351059, 'polar_mae': 0.019733939319849014, 'cosine_similarity': 0.9094778690629104, 'emd_raw': 0.0010903882682002407, 'emd_normalized': 0.0010903882682002436, 'molecular_mae': 0.5832058469549968, 'molecular_emd': 0.0003075789198177434, 'molecular_cosine': 0.9920255283208994, 'molecular_polar_mae': 0.2558335496415981}
+2026-06-24 00:37:29,773 - INFO - Saved results to results/2d/metrics/dmpnn_seed2_mse.json
