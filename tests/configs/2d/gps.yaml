@@ -1,0 +1,13 @@
+defaults: base.yaml
+
+# GPS uses edge_attr through its internal GINEConv, and gets molecule-wide
+# context "for free" from GPSConv's built-in global attention — no extra
+# pooling block needed (see src/models/gps.py).
+model:
+  name: gps
+  hidden: 128          # auto-tuned via scripts.count_params --auto-tune -> 721,459 params (+3.07%)
+  num_layers: 4
+  heads: 4
+  walk_length: 16
+  dropout: 0.05
+  n_params_target: 700000

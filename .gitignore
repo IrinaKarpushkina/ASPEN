@@ -1,0 +1,7 @@
+*.parquet
+*.pt
+__pycache__/
+*.pyc
+*.log
+*.out
+*.err

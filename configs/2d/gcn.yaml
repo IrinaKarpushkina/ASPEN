@@ -1,0 +1,8 @@
+defaults: base.yaml
+
+model:
+  name: gcn
+  hidden: 327          # auto-tuned via scripts.count_params --auto-tune -> 701,973 params (+0.28%)
+  num_layers: 4
+  dropout: 0.05
+  n_params_target: 700000

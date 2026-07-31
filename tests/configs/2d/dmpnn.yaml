@@ -1,0 +1,10 @@
+defaults: base.yaml
+
+# D-MPNN: bond_init consumes edge_attr (cat[atom_feat, edge_attr] -> hidden).
+# In this 2D-only repo edge_dim=7 (topology only).
+model:
+  name: dmpnn
+  hidden: 303          # auto-tuned via scripts.count_params --auto-tune -> 698,325 params (-0.24%)
+  num_steps: 4
+  dropout: 0.05
+  n_params_target: 700000

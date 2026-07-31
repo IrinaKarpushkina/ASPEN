@@ -1,0 +1,13 @@
+defaults: base.yaml
+
+# AttentiveFP uses edge_attr in GATEConv (first layer) and its own
+# super-node attention readout (mol_conv/mol_gru) for molecule context —
+# see src/models/attentive_fp.py and PROVENANCE.md.
+model:
+  name: attentive_fp
+  hidden: 121          # auto-tuned via scripts.count_params --auto-tune -> 701,436 params (+0.21%)
+  num_layers: 4
+  num_timesteps: 2
+  dropout: 0.05
+  use_molecule_context: true
+  n_params_target: 700000
