@@ -1,10 +1,8 @@
 model,width_param,width_value,n_params,target,diff_pct
-attentive_fp,hidden,123,691830,695667,-0.55
-dmpnn,hidden,243,698307,695667,0.38
-final,hidden,213,806825,695667,15.98
-gat,hidden,256,701683,695667,0.86
-gatv2,hidden,216,690981,695667,-0.67
-gcn,hidden,255,694032,695667,-0.24
-gine,hidden,211,693494,695667,-0.31
-gps,hidden,124,693831,695667,-0.26
-schnet,hidden_channels,150,693202,695667,-0.35
+attentive_fp,hidden,121,701436,700000,0.21
+dmpnn,hidden,303,698325,700000,-0.24
+gat,hidden,328,709105,700000,1.3
+gatv2,hidden,256,701427,700000,0.2
+gcn,hidden,327,701973,700000,0.28
+gine,hidden,254,698702,700000,-0.19
+gps,hidden,128,721459,700000,3.07

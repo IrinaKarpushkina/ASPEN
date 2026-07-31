@@ -2,15 +2,12 @@
 evaluate.py — единый evaluation loop для всех архитектур.
 
 evaluate() возвращает полный набор метрик из metrics.compute_all_metrics,
-плюс 'loss' — значение training objective ЭТОЙ модели (MSE или Combined,
-в зависимости от криетриона). 'loss' НЕ сравнивается между архитектурами
-с разными loss; для кросс-архитектурного сравнения используются
-weighted_mae / emd_raw / emd_normalized / molecular_*.
+плюс 'loss' (MSE — единственный training objective в этом репозитории,
+поэтому 'loss' напрямую сравним между архитектурами).
 
 checkpoint selection criterion (best model) — weighted_mae на валидации,
-ОДИНАКОВЫЙ для всех моделей независимо от training loss. Это устраняет
-проблему "loss несравним между MSE и CombinedLoss" даже для выбора
-лучшего чекпоинта.
+ОДИНАКОВЫЙ для всех моделей. Это устраняет любую возможность, что разные
+модели выбираются по разным критериям.
 """
 from __future__ import annotations
 import logging
@@ -32,7 +29,7 @@ CHECKPOINT_METRIC = "weighted_mae"   # lower is better
 def evaluate(model, loader, criterion, bin_weights_np, device, use_amp=False) -> dict:
     model.eval()
     total_loss = 0.0
-    n_batches  = 0
+    n_batches = 0
     all_preds, all_targets, mol_sizes = [], [], []
 
     for data in loader:
@@ -40,10 +37,10 @@ def evaluate(model, loader, criterion, bin_weights_np, device, use_amp=False) ->
             data = data.to(device, non_blocking=True)
             with torch.autocast(device_type="cuda", enabled=(use_amp and device.type == "cuda")):
                 preds = model(data)
-                loss  = criterion(preds, data.y)
+                loss = criterion(preds, data.y)
 
             total_loss += float(loss.item())
-            n_batches  += 1
+            n_batches += 1
 
             all_preds.append(preds.float().cpu().numpy())
             all_targets.append(data.y.float().cpu().numpy())
@@ -51,7 +48,7 @@ def evaluate(model, loader, criterion, bin_weights_np, device, use_amp=False) ->
         except Exception as e:
             logger.error(f"Eval error: {e}\n{traceback.format_exc()}")
 
-    preds_np   = np.concatenate(all_preds,   axis=0)
+    preds_np = np.concatenate(all_preds, axis=0)
     targets_np = np.concatenate(all_targets, axis=0)
     loss_value = total_loss / max(n_batches, 1)
 

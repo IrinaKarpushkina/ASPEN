@@ -11,33 +11,38 @@
 #SBATCH --error=logs/benchmark_2d_%j.err
 
 # ─────────────────────────────────────────────────────────────────────────────
-# 2D бенчмарк: граф из химических связей SMILES/RDKit, никаких координат.
-# Node features: 14-dim | Edge features: 7-dim (topology only, no RBF)
+# 2D-only benchmark: graph built from RDKit chemical bonds, no coordinates.
+# Node features: 14-dim | Edge features: 7-dim (topology only, no RBF).
 #
-# SchNet исключён намеренно — он принципиально 3D-архитектура.
-# Все остальные архитектуры идентичны 3D-бенчмарку (гиперпараметры,
-# бюджет параметров, seed-ы) — только source of geometry убран.
+# EDIT before running:
+#   - conda env name / activation path below
+#   - cd path below
+#   - configs/base.yaml data.{train,val,test}_path / cache_dir
+#   - #SBATCH --partition / --nodelist for your cluster
 # ─────────────────────────────────────────────────────────────────────────────
 
-mkdir -p logs results/2d/checkpoints results/2d/metrics
+mkdir -p logs results/checkpoints results/metrics
 
 source /mnt/tank/scratch/ikarpushkina/miniconda3/etc/profile.d/conda.sh
 conda activate sigma
 
-cd /mnt/tank/scratch/ikarpushkina/sigma/ASPEN_benchmark/ASPEN
+cd /mnt/tank/scratch/ikarpushkina/sigma/ASPEN2D/ASPEN
 
 echo "Job started: $(date)"
 echo "Node: $(hostname)"
-nvidia-smi
+nvidia-smi || true
 
-# SchNet исключён (нет configs/2d/schnet.yaml — это намеренно)
-#MODELS="${MODELS:-gcn gat gatv2 gine attentive_fp dmpnn gps}"
-MODELS="${MODELS:-dmpnn}"
+MODELS="${MODELS:-gps}"
+#MODELS="${MODELS:-gcn gat gatv2 gine dmpnn attentive_fp gps}"
 SEEDS="${SEEDS:-0 1 2}"
 
 echo "Models: $MODELS"
 echo "Seeds:  $SEEDS"
 echo ""
+
+# Sanity check before spending GPU time (fast, CPU-only):
+python -m pytest tests/ -q || { echo "Tests failed, aborting."; exit 1; }
+python -m scripts.count_params
 
 for model in $MODELS; do
     config="configs/2d/${model}.yaml"
@@ -48,7 +53,7 @@ for model in $MODELS; do
     fi
 
     for seed in $SEEDS; do
-        result_file="results/2d/metrics/${model}_seed${seed}_mse.json"
+        result_file="results/metrics/${model}_seed${seed}_mse.json"
         if [ -f "$result_file" ]; then
             echo "SKIP: $result_file already exists"
             continue
@@ -59,10 +64,9 @@ for model in $MODELS; do
         echo "========================================="
 
         python -m src.train \
-            --config   "$config"          \
-            --seed     "$seed"            \
-            --loss     mse                \
-            --output-dir results/2d
+            --config "$config" \
+            --seed "$seed" \
+            --output-dir results
 
         echo "  Done: $model seed $seed"
         echo ""
@@ -73,9 +77,9 @@ echo "All runs finished: $(date)"
 echo "Aggregating results..."
 
 python -m scripts.aggregate_results \
+    --metrics-dir results/metrics \
     --loss mse \
     --sort emd_raw \
-    --metrics-dir results/2d/metrics \
-    --csv results/2d/comparison_table_level1_2d.csv
+    --csv results/comparison_table_2d.csv
 
-echo "Done. Results: results/2d/comparison_table_level1_2d.csv"
+echo "Done. Results: results/comparison_table_2d.csv"

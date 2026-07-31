@@ -1,14 +1,34 @@
 """
-count_params.py — фактическое число параметров каждой архитектуры.
+count_params.py — фактическое число параметров каждой архитектуры и
+(опционально) авто-подбор hidden-размера под целевой бюджет параметров.
 
 Запуск:
-    python -m scripts.count_params                           # 3D конфиги
-    python -m scripts.count_params --configs-dir configs/2d # 2D конфиги
-    python -m scripts.count_params --auto-tune               # + подбор hidden
+    python -m scripts.count_params
+    python -m scripts.count_params --auto-tune
     python -m scripts.count_params --csv results/param_budget_table.csv
 
-Результат идёт в Supplementary как "Table S1: Model parameter budgets" —
-обязательное требование fair-comparison (Dwivedi et al., JMLR 2022).
+
+# Для 2D
+python scripts/count_params.py --configs-dir configs/2d
+
+# Для 3D
+python scripts/count_params.py --configs-dir configs/3d
+
+# С авто-подбором
+python scripts/count_params.py --configs-dir configs/2d --auto-tune
+
+
+Матчинг числа параметров между архитектурами — стандартное требование
+"controlled comparison" (Dwivedi et al., JMLR 2022, "Benchmarking Graph
+Neural Networks": сравнивать архитектуры нужно при примерно равном
+бюджете параметров, иначе разница в метриках может объясняться просто
+тем, что у одной модели больше весов). Результат этого скрипта стоит
+включать в Supplementary как "Table S1: Model parameter budgets".
+
+ВАЖНО после рефакторинга (см. PROVENANCE.md): удаление общего
+global_proj/global_norm блока у GCN/GAT/GATv2/GINE/DMPNN заметно изменило
+число параметров при том же hidden — почти наверняка нужно перезапустить
+--auto-tune и обновить hidden в configs/*.yaml перед финальными прогонами.
 """
 from __future__ import annotations
 import argparse
@@ -24,15 +44,14 @@ from src.config import load_config
 from src.models import MODEL_REGISTRY
 
 
-def count_params(model_cfg: dict, use_extended: bool, mode: str = "3d") -> int:
+def count_params(model_cfg: dict) -> int:
     cfg = dict(model_cfg)
     name = cfg.pop("name")
     cfg.pop("n_params_target", None)
     model_cls = MODEL_REGISTRY[name]
     sig = inspect.signature(model_cls.__init__)
-    if "mode" in sig.parameters:
-        cfg["mode"] = mode
-    model = model_cls(use_extended=use_extended, **cfg)
+    cfg = {k: v for k, v in cfg.items() if k in sig.parameters}
+    model = model_cls(**cfg)
     return sum(p.numel() for p in model.parameters() if p.requires_grad)
 
 
@@ -40,10 +59,7 @@ def _width_key(model_cfg: dict) -> str:
     return "hidden_channels" if "hidden_channels" in model_cfg else "hidden"
 
 
-def auto_tune_hidden(
-    model_cfg: dict, use_extended: bool, target: int,
-    step: int = 1, lo: int = 32, hi: int = 1024, mode: str = "3d",
-) -> int:
+def auto_tune_hidden(model_cfg: dict, target: int, step: int = 1, lo: int = 32, hi: int = 1024) -> int:
     width_key = _width_key(model_cfg)
     best_hidden, best_diff = None, None
     h = lo
@@ -53,10 +69,8 @@ def auto_tune_hidden(
             continue
         cfg = dict(model_cfg)
         cfg[width_key] = h
-        if width_key == "hidden_channels":
-            cfg["num_filters"] = h
         try:
-            n = count_params(cfg, use_extended, mode=mode)
+            n = count_params(cfg)
         except Exception:
             h += step
             continue
@@ -69,21 +83,15 @@ def auto_tune_hidden(
 
 def main():
     parser = argparse.ArgumentParser()
-    parser.add_argument(
-        "--configs-dir", default="configs",
-        help="Папка с конфигами. Используйте 'configs/2d' для 2D-бенчмарка.",
-    )
+    _script_dir = os.path.dirname(os.path.abspath(__file__))
+    _default_configs = os.path.normpath(os.path.join(_script_dir, "..", "configs", "2d"))
+    parser.add_argument("--configs-dir", default=_default_configs)
     parser.add_argument("--auto-tune", action="store_true")
     parser.add_argument("--csv", default=None)
     args = parser.parse_args()
 
-    # Ищем base.yaml: сначала в самой папке, иначе поднимаемся выше.
-    base_yaml = os.path.join(args.configs_dir, "base.yaml")
-    if not os.path.exists(base_yaml):
-        base_yaml = os.path.join(os.path.dirname(args.configs_dir.rstrip("/")), "base.yaml")
-    base_cfg = load_config(base_yaml)
+    base_cfg = load_config(os.path.join(args.configs_dir, "base.yaml"))
     target = base_cfg["target_params"]
-    use_extended = base_cfg["data"]["use_extended"]
 
     rows = []
     for path in sorted(glob.glob(os.path.join(args.configs_dir, "*.yaml"))):
@@ -95,9 +103,8 @@ def main():
             continue
         model_cfg = cfg["model"]
         name = model_cfg["name"]
-        cfg_mode = cfg.get("data", {}).get("mode", "3d")
 
-        n_params = count_params(model_cfg, use_extended, mode=cfg_mode)
+        n_params = count_params(model_cfg)
         diff_pct = (n_params - target) / target * 100
         width_key = _width_key(model_cfg)
         width_val = model_cfg.get(width_key)
@@ -105,38 +112,28 @@ def main():
         suggestion = ""
         if args.auto_tune:
             step = model_cfg.get("heads", 1)
-            best_hidden = auto_tune_hidden(
-                model_cfg, use_extended, target, step=step, mode=cfg_mode,
-            )
+            best_hidden = auto_tune_hidden(model_cfg, target, step=step)
             if best_hidden != width_val:
                 tuned_cfg = dict(model_cfg)
                 tuned_cfg[width_key] = best_hidden
-                if width_key == "hidden_channels":
-                    tuned_cfg["num_filters"] = best_hidden
-                tuned_n = count_params(tuned_cfg, use_extended, mode=cfg_mode)
+                tuned_n = count_params(tuned_cfg)
                 suggestion = (
                     f"  -> suggest {width_key}={best_hidden} "
                     f"({tuned_n:,} params, {(tuned_n - target) / target * 100:+.2f}%)"
                 )
 
         print(
-            f"{name:12s} {width_key}={width_val:4d}  "
-            f"params={n_params:>9,}  diff={diff_pct:+6.2f}%  [{cfg_mode}]{suggestion}"
+            f"{name:14s} {width_key}={width_val:4d}  "
+            f"params={n_params:>9,}  diff={diff_pct:+6.2f}%{suggestion}"
         )
         rows.append({
-            "model": name,
-            "mode": cfg_mode,
-            "width_param": width_key,
-            "width_value": width_val,
-            "n_params": n_params,
-            "target": target,
-            "diff_pct": round(diff_pct, 2),
+            "model": name, "width_param": width_key, "width_value": width_val,
+            "n_params": n_params, "target": target, "diff_pct": round(diff_pct, 2),
         })
 
     if args.csv:
         os.makedirs(os.path.dirname(args.csv) or ".", exist_ok=True)
-        fieldnames = ["model", "mode", "width_param", "width_value",
-                      "n_params", "target", "diff_pct"]
+        fieldnames = ["model", "width_param", "width_value", "n_params", "target", "diff_pct"]
         with open(args.csv, "w", newline="") as f:
             writer = csv.DictWriter(f, fieldnames=fieldnames)
             writer.writeheader()

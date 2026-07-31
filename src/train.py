@@ -1,18 +1,24 @@
 """
-train.py — единый training entrypoint для ВСЕХ архитектур.
+train.py — единый training entrypoint для ВСЕХ архитектур (2D-only benchmark).
 
 Запуск:
-    python -m src.train --config configs/gatv2.yaml --seed 0
-    python -m src.train --config configs/final_model.yaml --seed 0 --loss combined
+    python -m src.train --config configs/gcn.yaml --seed 0
+    python -m src.train --config configs/gine.yaml --seed 1
 
 Все архитектурно-независимые настройки (batch size, lr, scheduler, max
-epochs, patience, cutoff, extended features) живут в configs/base.yaml.
-Каждый configs/<model>.yaml переопределяет только model.* (hidden, heads,
-...) и, при необходимости, n_params_target для авто-подбора hidden.
+epochs, patience) живут в configs/base.yaml. Каждый configs/<model>.yaml
+переопределяет только model.* (hidden, heads, ...).
 
 Выход:
-    results/checkpoints/<model_name>_seed<seed>_<loss>.pt
-    results/metrics/<model_name>_seed<seed>_<loss>.json
+    results/checkpoints/<model_name>_seed<seed>_mse.pt
+    results/metrics/<model_name>_seed<seed>_mse.json
+
+Начиная с этой версии, каждый JSON с метриками хранит поле "mode" и путь
+к использованному конфигу — это устраняет провенанс-пробел, из-за которого
+в предыдущей версии бенчмарка агрегированная "2D"-таблица случайно
+оказалась копией 3D-таблицы, и это осталось незамеченным, потому что
+ничто в самих файлах результатов не фиксировало, из какого режима они
+получены (см. PROVENANCE.md, "Как был найден баг #1").
 """
 from __future__ import annotations
 import argparse
@@ -29,7 +35,7 @@ from torch_geometric.loader import DataLoader
 from .config import load_config
 from .data.dataset import ChaosParquetDataset
 from .evaluate import evaluate, CHECKPOINT_METRIC
-from .losses import MSELoss, CombinedLoss
+from .losses import MSELoss
 from .models import MODEL_REGISTRY
 
 logging.basicConfig(
@@ -37,6 +43,8 @@ logging.basicConfig(
     format="%(asctime)s - %(levelname)s - %(message)s",
 )
 logger = logging.getLogger(__name__)
+
+MODE = "2d_pure"  # this repository is 2D-only; recorded in every result json
 
 
 def set_seed(seed: int):
@@ -46,34 +54,18 @@ def set_seed(seed: int):
     torch.cuda.manual_seed_all(seed)
 
 
-def build_model(cfg: dict, use_extended: bool, mode: str = "3d"):
-    import inspect
+def build_model(cfg: dict):
     model_cfg = dict(cfg["model"])
     name = model_cfg.pop("name")
-    model_cfg.pop("n_params_target", None)  # only used by count_params.py
+    model_cfg.pop("n_params_target", None)  # only used by scripts/count_params.py
     model_cls = MODEL_REGISTRY[name]
-    # Передаём mode только если модель явно его поддерживает.
-    # SchNet — исключительно 3D, параметра mode не имеет.
-    sig = inspect.signature(model_cls.__init__)
-    if "mode" in sig.parameters:
-        model_cfg["mode"] = mode
-    return model_cls(use_extended=use_extended, **model_cfg), name
-
-
-def build_loss(loss_name: str, bin_weights: torch.Tensor, device):
-    if loss_name == "mse":
-        return MSELoss()
-    elif loss_name == "combined":
-        return CombinedLoss(bin_weights.to(device))
-    raise ValueError(f"Unknown loss: {loss_name}")
+    return model_cls(**model_cfg), name
 
 
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--config", required=True)
     parser.add_argument("--seed", type=int, default=0)
-    parser.add_argument("--loss", default=None,
-                         help="Override cfg['loss'] (e.g. 'mse' or 'combined') — for ablation.")
     parser.add_argument("--output-dir", default="results")
     parser.add_argument("--force-recompute-cache", action="store_true")
     args = parser.parse_args()
@@ -86,38 +78,29 @@ def main():
 
     data_cfg = cfg["data"]
     train_cfg = cfg["training"]
-    loss_name = args.loss or cfg.get("loss", "mse")
-    use_extended = data_cfg.get("use_extended", True)
 
     # ── Datasets (precomputed + cached, see data/dataset.py) ────────────────
-    dataset_mode = data_cfg.get("mode", "3d")   # "3d" или "2d_pure"
     common_ds_kwargs = dict(
-        mode=dataset_mode,
-        use_extended=use_extended,
-        cutoff=data_cfg.get("cutoff", 12.0),
-        max_num_neighbors=data_cfg.get("max_num_neighbors", 32),
-        n_rbf=data_cfg.get("n_rbf", 32),
         cache_dir=data_cfg.get("cache_dir"),
         force_recompute=args.force_recompute_cache,
     )
     train_dataset = ChaosParquetDataset(data_cfg["train_path"], **common_ds_kwargs)
-    val_dataset   = ChaosParquetDataset(data_cfg["val_path"],   **common_ds_kwargs)
-    test_dataset  = ChaosParquetDataset(data_cfg["test_path"],  **common_ds_kwargs)
+    val_dataset = ChaosParquetDataset(data_cfg["val_path"], **common_ds_kwargs)
+    test_dataset = ChaosParquetDataset(data_cfg["test_path"], **common_ds_kwargs)
 
     batch_size = train_cfg["batch_size"]
     num_workers = train_cfg.get("num_workers", 4)
     train_loader = DataLoader(train_dataset, batch_size=batch_size, shuffle=True,
-                               num_workers=num_workers, pin_memory=True)
-    val_loader   = DataLoader(val_dataset, batch_size=batch_size, shuffle=False,
-                               num_workers=num_workers, pin_memory=True)
-    test_loader  = DataLoader(test_dataset, batch_size=batch_size, shuffle=False,
-                               num_workers=num_workers, pin_memory=True)
+                              num_workers=num_workers, pin_memory=True)
+    val_loader = DataLoader(val_dataset, batch_size=batch_size, shuffle=False,
+                             num_workers=num_workers, pin_memory=True)
+    test_loader = DataLoader(test_dataset, batch_size=batch_size, shuffle=False,
+                              num_workers=num_workers, pin_memory=True)
 
     bin_weights_np = train_dataset.bin_weights_numpy()
-    bin_weights_t  = torch.tensor(bin_weights_np, dtype=torch.float)
 
     # ── Model / loss / optimizer / scheduler ────────────────────────────────
-    model, model_name = build_model(cfg, use_extended, mode=dataset_mode)
+    model, model_name = build_model(cfg)
     model = model.to(device)
 
     n_params = sum(p.numel() for p in model.parameters() if p.requires_grad)
@@ -128,7 +111,7 @@ def main():
     else:
         logger.info(f"{model_name}: {n_params:,} params")
 
-    criterion = build_loss(loss_name, bin_weights_t, device)
+    criterion = MSELoss()
 
     optimizer = torch.optim.AdamW(
         model.parameters(),
@@ -144,10 +127,10 @@ def main():
     scaler = torch.amp.GradScaler("cuda", enabled=use_amp)
     grad_accum = train_cfg.get("grad_accum_steps", 1)
     max_epochs = train_cfg["max_epochs"]
-    patience   = train_cfg["patience"]
+    patience = train_cfg["patience"]
     max_grad_norm = train_cfg.get("max_grad_norm", 1.0)
 
-    run_id = f"{model_name}_seed{args.seed}_{loss_name}"
+    run_id = f"{model_name}_seed{args.seed}_mse"
     ckpt_dir = os.path.join(args.output_dir, "checkpoints")
     metrics_dir = os.path.join(args.output_dir, "metrics")
     os.makedirs(ckpt_dir, exist_ok=True)
@@ -191,7 +174,7 @@ def main():
         epoch_time = time.time() - t0
 
         logger.info(
-            f"[{run_id}] Epoch {epoch+1:3d}/{max_epochs} | "
+            f"[{run_id}] Epoch {epoch + 1:3d}/{max_epochs} | "
             f"Train={train_loss:.5f} | Val={val_metrics['loss']:.5f} | "
             f"wMAE={val_metrics['weighted_mae']:.6f} | "
             f"PolarMAE={val_metrics['polar_mae']:.6f} | "
@@ -220,7 +203,7 @@ def main():
         else:
             patience_ctr += 1
             if patience_ctr >= patience:
-                logger.info(f"Early stopping at epoch {epoch+1}.")
+                logger.info(f"Early stopping at epoch {epoch + 1}.")
                 break
 
     # ── Final test evaluation with best checkpoint ──────────────────────────
@@ -232,7 +215,9 @@ def main():
     logger.info(f"[{run_id}] TEST METRICS: {test_metrics}")
 
     result = {
-        "run_id": run_id, "model": model_name, "loss": loss_name, "seed": args.seed,
+        "run_id": run_id, "model": model_name, "loss": "mse", "seed": args.seed,
+        "mode": MODE,                    # provenance: which regime produced this file
+        "config_path": os.path.abspath(args.config),
         "n_params": n_params, "best_epoch": ckpt["epoch"],
         "val_metrics_at_best": ckpt["val_metrics"], "test_metrics": test_metrics,
         "history": history,

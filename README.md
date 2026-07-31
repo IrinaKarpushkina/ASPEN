@@ -1,213 +1,168 @@
-# Sigma-profile GNN benchmark — controlled comparison
+# ASPEN2D — a clean, 2D-only GNN benchmark for sigma-profile prediction
 
-Структура для честного (controlled, fixed-parameter-budget) сравнения
-GNN-архитектур при предсказании атомарных σ-профилей, следуя протоколу
-Dwivedi et al. (JMLR 2022, "Benchmarking Graph Neural Networks").
+This is a from-scratch, methodologically-audited rewrite of a previous
+sigma-profile GNN benchmark. It compares 7 message-passing architectures
+on **2D molecular graphs only** (built from SMILES/RDKit chemical bonds —
+no 3D coordinates anywhere in the model code). Every model is either a
+`torch_geometric` layer or a direct reimplementation of its paper's
+equations; every design decision is written down in `PROVENANCE.md`,
+together with the bugs this rewrite fixes relative to the previous
+version.
 
-## Принципы
+**3D architectures (SchNet, PaiNN, ...) are intentionally not
+implemented here** — see `configs/3d/` and `src/models/models_3d/`
+(currently empty placeholders) for where they will go later.
 
-1. **Level 1 — controlled comparison**: GCN, GAT, GATv2, GINE, SchNet и
-   финальная модель обучаются с ОДИНАКОВЫМ: loss (MSE), scheduler
-   (CosineAnnealingWarmRestarts), batch size (24, grad_accum=2 → eff. 48),
-   cutoff (12 Å), max_num_neighbors (32), node/edge признаками, и
-   параметрическим бюджетом (~695k, ±5%). Любая разница в метриках —
-   архитектурный эффект, а не следствие разных гиперпараметров.
+## What's compared
 
-2. **Level 2 — loss ablation**: финальная модель обучается с MSE
-   (как все baseline) и с CombinedLoss (6-компонентный, см.
-   `src/losses/combined.py`). Это изолирует вклад вашего loss-дизайна
-   от вклада архитектуры.
+| Model | Paper | Official code |
+|---|---|---|
+| GCN | Kipf & Welling, ICLR 2017 | github.com/tkipf/gcn |
+| GAT | Velickovic et al., ICLR 2018 | github.com/PetarV-/GAT |
+| GATv2 | Brody et al., ICLR 2022 | github.com/tech-srl/how_attentive_are_gats |
+| GINE | Xu et al. 2019 / Hu et al. 2020 | github.com/weihua916/powerful-gnns, github.com/snap-stanford/pretrain-gnns |
+| D-MPNN | Yang et al. 2019 (Chemprop) | github.com/chemprop/chemprop |
+| AttentiveFP | Xiong et al. 2020 | github.com/OpenDrugAI/AttentiveFP |
+| GraphGPS | Rampasek et al., NeurIPS 2022 | github.com/rampasek/GraphGPS |
 
-3. **Единый источник правды**: все константы (`src/data/constants.py`),
-   построение признаков (`src/data/features.py`), метрики
-   (`src/metrics.py`), output head (`src/models/layers.py`) и training
-   loop (`src/train.py`) используются ВСЕМИ моделями. Изменить что-то
-   для одной модели = изменить для всех.
+All 7 are matched to ~700,000 parameters (±5%, see
+`results/param_budget_table.csv`), and none of them share the bolt-on
+global-pooling block that compressed architecture differences in the
+previous benchmark — see `PROVENANCE.md` §1 "Bug #2" for why that
+mattered, and §2 for what each model does instead.
 
-## Структура
-
-```
-ASPEN/
-├── configs/
-│   ├── base.yaml          # ОБЩИЕ настройки (пути, batch, lr, scheduler...)
-│   ├── gcn.yaml            # model.* — только архитектурно-специфичное
-│   ├── gat.yaml
-│   ├── gatv2.yaml
-│   ├── gine.yaml
-│   ├── schnet.yaml
-│   └── final_model.yaml    # ЗАМЕНИТЕ src/models/final_model.py на вашу архитектуру
-├── src/
-│   ├── config.py           # загрузка/слияние base.yaml + model.yaml
-│   ├── train.py             # единый training entrypoint
-│   ├── evaluate.py          # единый evaluation loop
-│   ├── metrics.py            # все метрики (weighted_mae, EMD, molecular_*, ...)
-│   ├── data/
-│   │   ├── constants.py     # ELEMENT_TO_Z, SIGMA_BINS, CUTOFF, ...
-│   │   ├── features.py      # node/edge features, pure-PyTorch radius_graph
-│   │   └── dataset.py        # ChaosParquetDataset (precompute + disk cache)
-│   ├── losses/
-│   │   ├── simple.py         # MSELoss
-│   │   └── combined.py        # CombinedLoss (для ablation)
-│   └── models/
-│       ├── layers.py          # ResidualMLP (общий output head)
-│       ├── gcn.py / gat.py / gatv2.py / gine.py / schnet.py
-│       └── final_model.py      # ЗАМЕНИТЬ на актуальную архитектуру
-├── scripts/
-│   ├── count_params.py        # таблица параметров + авто-подбор hidden
-│   ├── run_benchmark.sh        # Level 1: все baseline, N seed-ов
-│   ├── run_ablation.sh         # Level 2: final model, MSE vs Combined
-│   └── aggregate_results.py    # results/metrics/*.json -> сводная таблица
-├── requirements.txt
-└── results/                    # создаётся автоматически
-    ├── checkpoints/<model>_seed<N>_<loss>.pt
-    └── metrics/<model>_seed<N>_<loss>.json
-```
-
-## Установка на сервере
+## 1. Setup
 
 ```bash
-cd /mnt/tank/scratch/ikarpushkina/sigma/ASPEN
-
-# Распакуйте архив сюда (он принесёт src/, configs/, scripts/, requirements.txt,
-# README.md — поверх существующих data/, models/, scripts/*, tests/).
-# ВНИМАНИЕ: в архиве scripts/ содержит НОВЫЕ файлы (count_params.py,
-# run_benchmark.sh, run_ablation.sh, aggregate_results.py, __init__.py).
-# Если в вашем scripts/ уже есть подпапки architectures/, data_processing/
-# и т.д. — они не затрутся, новые файлы лягут рядом.
-
-pip install --break-system-packages -r requirements.txt
-
-# (опционально, но рекомендуется) — RDKit нужен для extended-признаков
-# (гибридизация, формальный заряд, ароматичность, Gasteiger charges, типы связей).
-python -c "import rdkit; print(rdkit.__version__)"
+python -m venv venv && source venv/bin/activate     # or your usual conda env
+pip install -r requirements.txt
 ```
 
-torch_scatter / torch_cluster / pyg-lib **не требуются** — radius_graph
-реализован на чистом PyTorch в `src/data/features.py::radius_graph_pure`,
-чтобы не зависеть от компилируемых расширений, привязанных к конкретной
-версии CUDA/torch.
+Requires Python ≥3.10, a working RDKit install, and (for real training
+runs) a CUDA GPU — the pipeline runs on CPU too, just slowly.
 
-## Шаг 1 — проверка параметрических бюджетов
+## 2. Put your data in place
+
+Drop your train/val/test parquet files into `data/raw/` (or point
+`configs/base.yaml` at wherever they already live). Expected schema —
+**one row per atom**:
+
+| column | meaning |
+|---|---|
+| `mol_id` | molecule identifier (grouping key) |
+| `atom_index` | per-molecule atom order, 0..N-1 |
+| `element` | element symbol (`'H'`, `'C'`, `'N'`, ...) |
+| `smiles` | SMILES string for the whole molecule (same value for every row of a given `mol_id`) |
+| `sigma_0` … `sigma_50` | 51 sigma-profile bins (the prediction target) |
+
+`coord_x`/`coord_y`/`coord_z` columns, if present, are simply **ignored**
+— this is the 2D-only benchmark on purpose (see `src/data/dataset.py`
+docstring).
+
+Then edit the paths in `configs/base.yaml`:
+```yaml
+data:
+  train_path: data/raw/chaos_atomic_train.parquet
+  val_path:   data/raw/chaos_atomic_val.parquet
+  test_path:  data/raw/chaos_atomic_test.parquet
+  cache_dir:  data/cache
+```
+The first run per split will parse every molecule with RDKit and cache
+the resulting graphs to `cache_dir` (a few minutes to tens of minutes
+depending on dataset size); subsequent runs on the same split load
+instantly from cache.
+
+## 3. Sanity-check before training (fast, CPU-only, ~5 seconds)
 
 ```bash
-cd /mnt/tank/scratch/ikarpushkina/sigma/ASPEN
-# Для 3d бэнчмарка
-python -m scripts.count_params --auto-tune --csv results/param_budget_table.csv
-# Для 2d бэнчмарка
-python -m scripts.count_params --configs-dir configs/2d --auto-tune --csv results/param_budget_table_2d.csv
+python -m pytest tests/ -q
+python -m scripts.count_params          # confirms all 7 models are within +/-5% of target_params
 ```
 
-Текущие значения (с extended-признаками, target=695,667):
+`tests/` includes, among others:
+- a regression test that no architecture has the old shared
+  global-pooling block back (`test_no_shared_global_block.py`)
+- a golden test comparing `GCNConv`'s output to Kipf & Welling's actual
+  propagation formula on a hand-built graph (`test_gcn_conv_formula.py`)
+- a golden test for D-MPNN's reverse-edge masking
+  (`test_dmpnn_reverse_edge.py`) — this is how Bug #4 in `PROVENANCE.md`
+  was found
+- a forward-pass smoke test + batch-invariance check for every model
+  (`test_forward_shapes.py`)
 
-| model  | hidden          | params  | diff   |
-|--------|-----------------|---------|--------|
-| gcn    | 256             | 699,635 | +0.57% |
-| gat    | 256             | 701,683 | +0.86% |
-| gatv2  | 216             | 690,981 | -0.67% |
-| gine   | 213             | 706,288 | +1.53% |
-| schnet | hidden_channels=150 | 693,202 | -0.35% |
+If you change any model's architecture, `scripts/count_params.py
+--auto-tune` will suggest a new `hidden` to keep the parameter budget
+matched — update the corresponding `configs/<model>.yaml` and re-run the
+tests above.
 
-Всё в пределах ±2% — для статьи можно использовать как есть, либо
-применить значения из колонки `-> suggest ...` для более точного попадания.
-Таблица `param_budget_table.csv` идёт в Supplementary напрямую.
-
-## Шаг 2 — первый запуск (построит и закеширует датасет)
-
-При первом запуске любой модели датасет строится с нуля: для каждой
-молекулы строится radius graph (CPU, pure PyTorch), RDKit Mol из SMILES
-(с валидацией порядка атомов — см. лог `RDKit mol valid: X/Y`), node/edge
-признаки. Результат кешируется в
-`data/train_test_val_df/cache/*.pt` — повторные запуски (другая модель,
-другой seed) читают кеш мгновенно.
+## 4. Train one model
 
 ```bash
-# Быстрая проверка на одной модели (построит кеш для train/val/test)
-python -m src.train --config configs/gcn.yaml --seed 0
+python -m src.train --config configs/gine.yaml --seed 0
+```
+Writes `results/checkpoints/gine_seed0_mse.pt` and
+`results/metrics/gine_seed0_mse.json` (the latter now records `"mode":
+"2d_pure"` and the config path used — see `PROVENANCE.md` Bug #1 for why).
+
+## 5. Run the full benchmark (all 7 models x 3 seeds)
+
+Locally:
+```bash
+MODELS="gcn gat gatv2 gine dmpnn attentive_fp gps" SEEDS="0 1 2" bash run_benchmark_2d.sh
 ```
 
-Проверьте в логе строку вида:
+On a SLURM cluster, edit the `#SBATCH` header and the conda-activation /
+`cd` lines in `run_benchmark_2d.sh` for your cluster, then:
+```bash
+sbatch run_benchmark_2d.sh
 ```
-chaos_atomic_train_with_coordinates.parquet: NNNNN molecules, MMMMMMM atoms,
-extended=True, RDKit mol valid: XXXXX/NNNNN (YY.Y%)
-```
+This script runs the test suite first and aborts if it fails, then trains
+every (model, seed) pair not already present in `results/metrics/`, then
+aggregates everything into `results/comparison_table_2d.csv` (+ a
+ready-to-paste `results/comparison_table_2d.tex` LaTeX table).
 
-**Если процент `RDKit mol valid` низкий** (скажем, <80%) — это означает,
-что порядок атомов после `Chem.MolFromSmiles(...).AddHs()` не совпадает с
-`atom_index` в parquet для многих молекул, и extended-признаки для них
-будут нулями (безопасный fallback, но менее информативный). Это стоит
-упомянуть в Methods/Limitations статьи. Если процент близок к 0% —
-вероятно, исходный pipeline генерации 3D-структур переставляет атомы
-(например, через xtb/CREST) иначе, чем RDKit; в этом случае стоит either
-(a) сохранить mapping atom_index ↔ RDKit-индекс на этапе генерации данных,
-либо (b) временно работать с `use_extended: false` в `configs/base.yaml`
-(только 7 base-признаков, без RDKit).
-
-## Шаг 3 — Level 1: controlled comparison (все baseline)
+## 6. Aggregate / re-aggregate results manually
 
 ```bash
-# 3 seed-а на модель, ~12-20 часов на GPU в зависимости от размера train
-SEEDS="0 1 2" bash scripts/run_benchmark.sh gcn gat gatv2 gine schnet
+python -m scripts.aggregate_results \
+    --metrics-dir results/metrics \
+    --loss mse \
+    --sort emd_raw \
+    --csv results/comparison_table_2d.csv
+```
+Note `--metrics-dir` has **no default** — this is deliberate (see
+`PROVENANCE.md` Bug #1). The script also refuses to mix result files from
+different `mode`s in one table unless you pass `--allow-mixed-mode`.
 
-# Сводная таблица (mean ± std по seed-ам)
-python -m scripts.aggregate_results --loss mse --csv results/comparison_table_level1.csv
+## Repository layout
+
+```
+configs/            2D model configs (base.yaml + one per architecture)
+configs/3d/          <- empty, placeholder for a future 3D benchmark
+data/raw/            <- put your parquet files here
+data/cache/           on-disk cache of precomputed graphs (auto-created)
+models/               (currently unused; reserved for saved final models)
+results/checkpoints/  training checkpoints (*.pt)
+results/metrics/      per-run metrics (*.json)
+src/data/            featurizer + dataset
+src/models/           7 architectures + shared ResidualMLP head
+src/models/models_3d/ <- empty, placeholder for SchNet/PaiNN/etc.
+src/losses/          MSE loss
+src/train.py, evaluate.py, metrics.py, config.py
+scripts/              count_params.py, aggregate_results.py
+tests/                 unit + regression tests (run before every training job)
+PROVENANCE.md          full audit trail: papers, official repos, bugs fixed
 ```
 
-Используйте для сравнения архитектур: `weighted_mae`, `weighted_r2`,
-`polar_mae`, `emd_raw`, `emd_normalized`, `molecular_mae`, `molecular_emd`,
-`molecular_cosine`, `molecular_polar_mae`. **Не сравнивайте** `loss`
-между MSE-моделями и CombinedLoss-моделями — разные шкалы.
+## Adding the 3D benchmark later
 
-Чекпоинт лучшей эпохи выбирается по `weighted_mae` на валидации —
-одинаковый критерий для всех архитектур (см. `src/evaluate.py::CHECKPOINT_METRIC`).
-
-## Шаг 4 — замена final_model.py на вашу архитектуру
-
-`src/models/final_model.py` сейчас — временный GINE-based stub (5 слоёв).
-Когда определитесь с финальной архитектурой:
-
-1. Перепишите класс `FinalSigmaModel` в `final_model.py`, сохранив контракт:
-   - `__init__(self, ..., out_dim=51, dropout=0.05, use_extended=True)`
-   - `forward(self, data) -> Tensor (N_atoms, 51)`, неотрицательный (softplus)
-   - использует `data.x`, `data.edge_index`, `data.edge_attr`, `data.z`,
-     `data.pos`, `data.batch` — НИЧЕГО не пересчитывает внутри forward
-     (всё уже в dataset.py)
-2. Обновите `configs/final_model.yaml` под новые гиперпараметры
-3. `python -m scripts.count_params --auto-tune` — подберите hidden под бюджет
-4. `bash scripts/run_benchmark.sh final` — Level 1 (MSE, та же таблица что у baseline)
-5. `bash scripts/run_ablation.sh` — Level 2 (MSE vs CombinedLoss)
-
-## Шаг 5 — Level 2: loss ablation
-
-```bash
-SEEDS="0 1 2" bash scripts/run_ablation.sh
-
-python -m scripts.aggregate_results --loss mse      --csv results/final_mse.csv
-python -m scripts.aggregate_results --loss combined --csv results/final_combined.csv
-```
-
-## Использование GPU "по максимуму"
-
-- `training.use_amp: true` в `base.yaml` — mixed precision (autocast + GradScaler)
-- `training.num_workers: 4` — параллельная подгрузка батчей
-- `training.grad_accum_steps: 2` с `batch_size: 24` → effective batch 48;
-  если на GPU достаточно памяти, можно поднять `batch_size` и/или убрать
-  grad_accum — но делайте это **для всех конфигов одинаково**, иначе
-  нарушится fair comparison.
-- Кеш датасета (`data/train_test_val_df/cache/*.pt`) убирает CPU-bottleneck
-  (RDKit/radius_graph) из тренировочного цикла — после первого запуска GPU
-  не ждёт CPU.
-
-## Что проверено (smoke test)
-
-Все 6 моделей (gcn/gat/gatv2/gine/schnet/final) прогнаны end-to-end на
-синтетических данных (3 молекулы: этанол, бензол, уксусная кислота,
-случайные σ-профили) — обучение, чекпоинтинг, evaluate, aggregate_results,
-ablation (mse/combined) работают без ошибок. Параметрические бюджеты
-посчитаны и находятся в пределах ±2% от 695,667.
-
-**Не проверено** (нужно сделать на реальных данных на сервере):
-- Процент `RDKit mol valid` на полном train/val/test (см. Шаг 2)
-- Время на эпоху / общее время Level 1 на реальном объёме данных
-  (~1.08M атомов в train)
-- Память GPU при batch_size=24 + extended features (39-dim edge_attr) для
-  GINE/final на больших молекулах
+`configs/3d/` and `src/models/models_3d/` are placeholders on purpose.
+When you add e.g. SchNet:
+1. Read `PROVENANCE.md` §1 "Bug #3" first — it documents a specific
+   pitfall (radius-graph density) to avoid for GCN/GAT/GATv2's 3D variants.
+2. Keep the 2D and 3D featurizers in separate files (as they are now:
+   `src/data/features.py` is 2D-only) rather than a `mode=` flag inside
+   one shared function — that separation is what made Bug #2 possible to
+   find and fix cleanly here.
+3. Re-run `scripts/count_params.py --auto-tune` for the 3D configs; do not
+   assume the 2D `hidden` values transfer (input/edge dims differ).

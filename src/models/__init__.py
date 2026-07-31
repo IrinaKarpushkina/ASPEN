@@ -1,23 +1,14 @@
-from .layers import ResidualMLP
-from .gcn import GCNSigmaModel
-from .gat import GATSigmaModel
-from .gatv2 import GATv2SigmaModel
-from .gine import GINESigmaModel
-from .schnet import SchNetSigmaModel
-from .final_model import FinalSigmaModel
-from .attentive_fp import AtomAttentiveFPModel
-from .dmpnn import DMPNNSigmaModel
-from .gps import GPSSigmaModel
+from .models_2d import MODEL_REGISTRY_2D
 
+try:
+    from .models_3d import MODEL_REGISTRY_3D
+except (ImportError, ModuleNotFoundError):
+    MODEL_REGISTRY_3D = {}
 
+# Единый реестр всех моделей (2D + 3D)
 MODEL_REGISTRY = {
-    "gcn":   GCNSigmaModel,
-    "gat":   GATSigmaModel,
-    "gatv2": GATv2SigmaModel,
-    "gine":  GINESigmaModel,
-    "schnet": SchNetSigmaModel,
-    "final": FinalSigmaModel,
-    "attentive_fp": AtomAttentiveFPModel,
-    "dmpnn":        DMPNNSigmaModel,
-    "gps":          GPSSigmaModel,
+    **MODEL_REGISTRY_2D,
+    **MODEL_REGISTRY_3D,
 }
+
+__all__ = ["MODEL_REGISTRY", "MODEL_REGISTRY_2D", "MODEL_REGISTRY_3D"]

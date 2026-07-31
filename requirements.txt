@@ -1,6 +1,6 @@
-# Версии не закреплены жёстко — на сервере уже установлен рабочий стек
-# (torch + CUDA + torch_geometric, использовавшийся в исходных baseline-скриптах).
-# Эти строки — минимальный список того, что использует новый код.
+# Tested against: torch 2.13 (cu130), torch_geometric 2.8, rdkit 2026.03.
+# Versions below are minimums, not pins — use whatever recent stack you
+# already have installed if it satisfies these.
 
 torch>=2.0
 torch_geometric>=2.4
@@ -10,9 +10,11 @@ numpy
 scipy
 pyarrow
 pyyaml
-tqdm
+pytest
 
-# NOTE: torch_scatter / torch_cluster / pyg-lib НЕ требуются — radius_graph
-# реализован в src/data/features.py на чистом PyTorch (radius_graph_pure),
-# чтобы избежать проблем сборки compiled-расширений под конкретную
-# версию CUDA/torch.
+# NOTE: torch_scatter / torch_cluster / pyg-lib are NOT required.
+# - Graph construction is chemical-bond-based (RDKit), no radius_graph.
+# - src/models/dmpnn.py uses torch_geometric.utils.scatter instead of the
+#   external torch_scatter package (the previous version of this benchmark
+#   imported torch_scatter directly even though its own requirements.txt
+#   claimed it wasn't needed — fixed here, see PROVENANCE.md).

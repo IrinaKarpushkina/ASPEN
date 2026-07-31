@@ -1,0 +1,33 @@
+# base.yaml — общие настройки для ВСЕХ архитектур в этом 2D-бенчмарке.
+#
+# Любое изменение здесь применяется ко всем архитектурам одновременно —
+# это и есть "controlled comparison" по Dwivedi et al. (JMLR 2022,
+# "Benchmarking Graph Neural Networks").
+#
+# ЗАМЕНИТЕ пути ниже на реальные пути к вашим parquet-файлам и папке кеша.
+
+data:
+  train_path: data/raw/chaos_atomic_train.parquet
+  val_path:   data/raw/chaos_atomic_val.parquet
+  test_path:  data/raw/chaos_atomic_test.parquet
+  cache_dir:  data/cache
+
+training:
+  batch_size: 24
+  grad_accum_steps: 2       # effective batch = 48, identical for ALL models
+  num_workers: 4
+  lr: 3.0e-4
+  weight_decay: 1.0e-5
+  max_epochs: 200
+  patience: 20
+  scheduler_T0: 20
+  scheduler_Tmult: 2
+  eta_min: 1.0e-6
+  max_grad_norm: 1.0
+  use_amp: true             # mixed precision — used automatically only if a GPU is available
+
+# Reference parameter budget — every architecture targets this (+/-5%).
+# After removing the shared global-pooling block from GCN/GAT/GATv2/GINE/
+# DMPNN (see PROVENANCE.md), hidden sizes had to be re-tuned to hit this
+# budget again — see scripts/count_params.py --auto-tune.
+target_params: 700000

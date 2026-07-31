@@ -1,15 +1,13 @@
 """
 config.py — загрузка и слияние YAML-конфигов.
 
-Поддерживает ДВУХУРОВНЕВОЕ наследование через defaults:
+Поддерживает наследование через `defaults`:
 
-    configs/2d/gcn.yaml     → defaults: ../base_2d.yaml
-    configs/base_2d.yaml    → defaults: base.yaml
-    configs/base.yaml       (корень, нет defaults)
+    configs/2d/gcn.yaml  ->  defaults: ../base.yaml
 
-Цепочка разрешается рекурсивно: каждый уровень полностью
-сливается перед следующим, child-ключи всегда перекрывают parent.
-Старый однуровневый синтаксис полностью совместим.
+Цепочка разрешается рекурсивно: каждый уровень полностью сливается перед
+следующим, child-ключи всегда перекрывают parent. Ported unchanged from
+the original benchmark.
 """
 from __future__ import annotations
 import os
@@ -35,7 +33,6 @@ def load_config(path: str) -> dict:
 
     if "defaults" in cfg:
         base_path = os.path.join(os.path.dirname(path), cfg["defaults"])
-        # Рекурсия: base_path сам может иметь defaults
         base_cfg = load_config(base_path)
         cfg = _deep_merge(base_cfg, cfg)
 

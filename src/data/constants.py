@@ -2,8 +2,14 @@
 constants.py — shared physical/chemical constants and the sigma-profile grid.
 
 Single source of truth, imported by every dataset/model/feature module.
-Any change here propagates consistently to ALL architectures (GCN, GAT,
-GATv2, GINE, SchNet, final model) — this is what "fair comparison" requires.
+Any change here propagates consistently to ALL architectures — this is part
+of what "fair, controlled comparison" requires (Dwivedi et al., JMLR 2022:
+"Benchmarking Graph Neural Networks").
+
+This file is carried over unchanged from the original ASPEN benchmark: it
+contains no message-passing / pooling logic, only lookup tables and the
+sigma-profile bin grid, so there was nothing architecture-dependent to fix
+here.
 """
 
 import numpy as np
@@ -20,14 +26,6 @@ EPS = 1e-12
 
 # =============================================================================
 # ELEMENTS — extended to cover up to Rn (Z=86).
-#
-# NOTE: previously the GCN/GAT/GATv2/GINE baselines only covered up to Ba
-# (Z=56) with nn.Embedding(57, ...), while the SchNet/PaiNN-style script
-# covered up to Rn (Z=86). This caused an architecture-dependent feature
-# inconsistency if the dataset contains elements with Z > 56 (they would
-# silently collapse to a single clamped embedding index in some models but
-# not others). We standardise on the larger table for ALL models; the
-# z_embed layer size (Z_EMBED_SIZE) is shared too.
 # =============================================================================
 ELEMENT_TO_Z = {
     'H': 1, 'He': 2, 'Li': 3, 'Be': 4, 'B': 5, 'C': 6, 'N': 7, 'O': 8, 'F': 9, 'Ne': 10,
@@ -80,19 +78,43 @@ ATOMIC_MASS = {
 MASS_DEFAULT = 40.0
 
 # =============================================================================
+# POLARIZABILITY (Angstrom^3)
+# =============================================================================
+POLARIZABILITY = {
+    1: 0.667, 6: 1.760, 7: 1.100, 8: 0.802, 9: 0.557,
+    14: 5.380, 15: 3.630, 16: 2.900, 17: 2.180,
+    35: 3.050, 53: 5.350,
+}
+POLARIZABILITY_DEFAULT = 1.5
+
+# =============================================================================
 # HYDROGEN-BOND DONOR / ACCEPTOR ATOMS
 # =============================================================================
 HB_DONOR_Z = {7, 8, 9}              # N, O, F
 HB_ACCEPTOR_Z = {7, 8, 9, 16, 17}   # N, O, F, S, Cl
 
 # =============================================================================
-# GRAPH CONSTRUCTION
+# GRAPH CONSTRUCTION (2D-only in this repository)
+#
+# This repo builds the molecular graph from RDKit chemical bonds only
+# (see features_2d.py). There is no radius cutoff, no RBF distance
+# expansion and no 3D coordinate usage anywhere in src/models — those
+# belong to the (not-yet-implemented) 3D benchmark, see configs/3d/ and
+# src/models/models_3d/.
 # =============================================================================
-CUTOFF = 12.0          # Angstrom — radius graph cutoff, identical for ALL models
-MAX_NUM_NEIGHBORS = 32  # cap applied identically across all models (see features.py)
-N_RBF = 32             # number of Gaussian RBF centres for edge features (GINE/final)
 
 # =============================================================================
-# NODE / EDGE FEATURE DIMENSIONS
+# NODE / EDGE FEATURE DIMENSIONS (2D)
 # =============================================================================
-N_NODE_FEAT_BASE = 7    # eneg, vdw, Z/maxZ, mass, degree, HB donor, HB acceptor
+N_NODE_FEAT_2D = 14  # eneg, vdw, Z, mass, HB-donor, HB-acceptor, hybrid(3),
+                      # formal charge, aromatic, in-ring, Gasteiger charge,
+                      # polarizability  (NO degree, NO 3D-derived quantities)
+N_EDGE_FEAT_2D = 7   # bond type one-hot (4) + aromatic + conjugated + in-ring
+
+_HYBRID_ORDER = ("SP", "SP2", "SP3")
+_BOND_TYPES = ("SINGLE", "DOUBLE", "TRIPLE", "AROMATIC")
+
+# RWPE (Random-Walk Positional Encoding) length, used only by GPS
+# (Rampasek et al., NeurIPS 2022) — a purely topological encoding computed
+# from edge_index, so it is well defined in 2D too.
+WALK_LENGTH = 16

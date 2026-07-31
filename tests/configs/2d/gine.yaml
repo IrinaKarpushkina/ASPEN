@@ -1,0 +1,10 @@
+defaults: base.yaml
+
+# GINE consumes edge_attr through GINEConv(edge_dim=...). In this 2D-only
+# repo edge_dim=7 (topology only), no RBF distances.
+model:
+  name: gine
+  hidden: 254          # auto-tuned via scripts.count_params --auto-tune -> 698,702 params (-0.19%)
+  num_layers: 4
+  dropout: 0.05
+  n_params_target: 700000

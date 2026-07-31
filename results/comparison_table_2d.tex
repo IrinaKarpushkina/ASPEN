@@ -1,0 +1,18 @@
+\begin{table}[ht]
+\centering
+\caption{Controlled 2D-only comparison of GNN architectures (mean\,$\pm$\,std over seeds, MSE loss, matched parameter budget). \textbf{Bold} = best mean per metric.}
+\label{tab:benchmark_2d_mse}
+\small
+\begin{tabular}{l r c c c c c c c c c c }
+\toprule
+Model & $N_{\text{params}}$ & $R^2_w$ & wMAE & PolarMAE & Cosine & EMD & EMD$_\mathrm{norm}$ & Mol.MAE & Mol.EMD & Mol.Cos & Mol.PolMAE \\
+\midrule
+DMPNN & 698,325 & \textbf{0.8541$\pm$0.0022} & \textbf{0.1423$\pm$0.0013} & \textbf{0.0197$\pm$0.0002} & \textbf{0.9104$\pm$0.0010} & \textbf{0.0011$\pm$0.0000} & \textbf{0.0011$\pm$0.0000} & 0.5838$\pm$0.0091 & 0.0003$\pm$0.0000 & \textbf{0.9920$\pm$0.0002} & 0.2572$\pm$0.0040 \\
+ATTENTIVE_FP & 701,436 & 0.8514$\pm$0.0027 & 0.1438$\pm$0.0016 & 0.0197$\pm$0.0002 & 0.9085$\pm$0.0015 & 0.0011$\pm$0.0000 & 0.0011$\pm$0.0000 & \textbf{0.5811$\pm$0.0091} & \textbf{0.0003$\pm$0.0000} & 0.9918$\pm$0.0002 & \textbf{0.2568$\pm$0.0043} \\
+GINE & 698,702 & 0.8404$\pm$0.0001 & 0.1478$\pm$0.0001 & 0.0204$\pm$0.0000 & 0.9046$\pm$0.0001 & 0.0011$\pm$0.0000 & 0.0011$\pm$0.0000 & 0.6340$\pm$0.0005 & 0.0004$\pm$0.0000 & 0.9903$\pm$0.0000 & 0.2755$\pm$0.0007 \\
+GATV2 & 701,427 & 0.8381$\pm$0.0025 & 0.1486$\pm$0.0014 & 0.0203$\pm$0.0002 & 0.9032$\pm$0.0013 & 0.0012$\pm$0.0000 & 0.0012$\pm$0.0000 & 0.6399$\pm$0.0100 & 0.0004$\pm$0.0000 & 0.9901$\pm$0.0003 & 0.2758$\pm$0.0036 \\
+GAT & 709,105 & 0.8366$\pm$0.0003 & 0.1492$\pm$0.0001 & 0.0203$\pm$0.0000 & 0.9025$\pm$0.0000 & 0.0012$\pm$0.0000 & 0.0012$\pm$0.0000 & 0.6436$\pm$0.0011 & 0.0004$\pm$0.0000 & 0.9900$\pm$0.0000 & 0.2765$\pm$0.0009 \\
+GCN & 701,973 & 0.8231$\pm$0.0006 & 0.1552$\pm$0.0002 & 0.0210$\pm$0.0000 & 0.8970$\pm$0.0003 & 0.0012$\pm$0.0000 & 0.0012$\pm$0.0000 & 0.6908$\pm$0.0016 & 0.0004$\pm$0.0000 & 0.9883$\pm$0.0001 & 0.2940$\pm$0.0006 \\
+\bottomrule
+\end{tabular}
+\end{table}

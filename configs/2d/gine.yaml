@@ -1,13 +1,10 @@
-defaults: ../base_2d.yaml
+defaults: base.yaml
 
-# GINE использует edge_attr через GINEConv(edge_dim=...).
-# В 2D: edge_dim=7 (против 39 в 3D) → экономит ~27k параметров.
-# hidden=211 даёт ~668k params (−3.9% от бюджета, в пределах ±5%).
-# Для точной настройки: python -m scripts.count_params --configs-dir configs/2d --auto-tune
+# GINE consumes edge_attr through GINEConv(edge_dim=...). In this 2D-only
+# repo edge_dim=7 (topology only), no RBF distances.
 model:
   name: gine
-  hidden: 216
+  hidden: 254          # Размер вектора признаков, которым описывается каждый атом внутри слоев сети.auto-tuned via scripts.count_params --auto-tune -> 698,702 params (-0.19%)
   num_layers: 4
-  n_rbf: 32      # игнорируется в 2d_pure, но нужен для edge_feat_dim()
   dropout: 0.05
-  n_params_target: 695667
+  n_params_target: 700000
