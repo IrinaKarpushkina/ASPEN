@@ -1,0 +1,8 @@
+defaults: base.yaml
+
+model:
+  name: painn
+  hidden: 120            # auto-tuned via scripts.count_params --auto-tune -> 728,421 params (+4.06%)
+  num_layers: 4
+  dropout: 0.05
+  n_params_target: 700000

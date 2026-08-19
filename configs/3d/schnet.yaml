@@ -1,0 +1,9 @@
+defaults: base.yaml
+
+model:
+  name: schnet
+  hidden_channels: 192   # auto-tuned via scripts.count_params --auto-tune -> 716,547 params (+2.36%)
+  num_filters: 192
+  num_interactions: 4
+  dropout: 0.05
+  n_params_target: 700000

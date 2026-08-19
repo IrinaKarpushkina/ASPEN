@@ -6,7 +6,7 @@ output. Catches shape/dtype/NaN bugs before a multi-hour training job does.
 import torch
 from torch_geometric.data import Data, Batch
 
-from src.models import MODEL_REGISTRY
+from src.models import MODEL_REGISTRY_2D as MODEL_REGISTRY
 from src.data.constants import WALK_LENGTH, N_NODE_FEAT_2D, N_EDGE_FEAT_2D
 
 _MODEL_KWARGS = {

@@ -1,0 +1,32 @@
+# requirements-3d.txt — ADDITIONAL dependencies for the 3D benchmark
+# (configs/3d/, src/data/*_3d.py, src/models/models_3d/), on top of
+# everything already in requirements.txt.
+#
+# pip install -r requirements.txt -r requirements-3d.txt
+#
+# Kept as a SEPARATE file (rather than appended to requirements.txt) so
+# the 2D-only benchmark's dependency footprint is completely unchanged —
+# see PROVENANCE.md, "3D benchmark" section.
+#
+# Deliberately NOT required, and NOT imported anywhere in src/data/ or in
+# any 3D model except mace.py:
+#   torch_scatter, torch_cluster, pyg-lib, torch_sparse
+# The radius graph, DimeNet/DimeNet++/SphereNet triplets, and torsions are
+# all precomputed once per molecule in pure PyTorch
+# (src/data/geometry_3d.py) specifically to avoid these compiled
+# extensions, which are notoriously version-locked to an exact
+# torch+CUDA build and are a common source of broken installs.
+
+sympy>=1.12   # required by torch_geometric.nn.models.dimenet.SphericalBasisLayer
+              # (DimeNet, DimeNet++, SphereNet all use it) — usually already
+              # pulled in transitively by torch_geometric, listed explicitly
+              # here for clarity.
+
+e3nn>=0.5     # required ONLY by src/models/models_3d/mace.py, for genuine
+              # Clebsch-Gordan spherical-harmonics tensor products
+              # (o3.Irreps, o3.spherical_harmonics, o3.FullyConnectedTensorProduct,
+              # o3.Linear). If e3nn is not installed, every other 3D
+              # architecture (SchNet, PaiNN, DimeNet, DimeNet++, SphereNet,
+              # EGNN, TorchMD-Net, Uni-Mol) still works — MACE is simply
+              # absent from MODEL_REGISTRY_3D, with a logged warning (see
+              # src/models/models_3d/__init__.py).

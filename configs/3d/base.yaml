@@ -1,0 +1,39 @@
+# base.yaml — общие настройки для ВСЕХ 3D-архитектур в этом бенчмарке.
+#
+# Тот же принцип, что и в configs/2d/base.yaml: любое изменение здесь
+# применяется ко всем 3D-архитектурам одновременно — controlled comparison
+# по Dwivedi et al. (JMLR 2022, "Benchmarking Graph Neural Networks").
+#
+# ЗАМЕНИТЕ пути ниже на реальные пути к вашим parquet-файлам и папке кеша,
+# если они отличаются от того, что уже прописано в configs/2d/base.yaml.
+# Если ваш parquet содержит coord_x/coord_y/coord_z (как предполагает имя
+# файла в configs/2d/base.yaml: "..._with_coordinates.parquet"), эти
+# колонки будут использованы напрямую (см. src/data/features_3d.py). Если
+# нет — координаты будут сгенерированы один раз через RDKit ETKDGv3 и
+# закешированы (см. features_3d.py docstring), что тоже отражается в логах
+# датасета (stats['n_generated_conformers']).
+
+data:
+  train_path: /mnt/tank/scratch/ikarpushkina/sigma/ASPEN/data/train_test_val_df/chaos_atomic_train_with_coordinates.parquet
+  val_path:   /mnt/tank/scratch/ikarpushkina/sigma/ASPEN/data/train_test_val_df/chaos_atomic_val_with_coordinates.parquet
+  test_path:  /mnt/tank/scratch/ikarpushkina/sigma/ASPEN/data/train_test_val_df/chaos_atomic_test_with_coordinates.parquet
+  cache_dir:  /mnt/tank/scratch/ikarpushkina/sigma/ASPEN/data/train_test_val_df/cache_3d   # SEPARATE from the 2D cache_dir on purpose
+
+training:
+  batch_size: 24
+  grad_accum_steps: 2       # effective batch = 48, identical to the 2D benchmark and to every 3D model here
+  num_workers: 4
+  lr: 3.0e-4
+  weight_decay: 1.0e-5
+  max_epochs: 200
+  patience: 20
+  scheduler_T0: 20
+  scheduler_Tmult: 2
+  eta_min: 1.0e-6
+  max_grad_norm: 1.0
+  use_amp: true             # mixed precision — used automatically only if a GPU is available
+
+# Reference parameter budget — every 3D architecture targets this (+/-5%),
+# IDENTICAL to the 2D benchmark's target_params, so 2D and 3D architectures
+# are ALSO comparable to each other, not just within each regime.
+target_params: 700000

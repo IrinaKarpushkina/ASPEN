@@ -18,7 +18,7 @@ block silently creep back in.
 """
 import torch.nn as nn
 
-from src.models import MODEL_REGISTRY
+from src.models import MODEL_REGISTRY_2D as MODEL_REGISTRY
 
 
 def _has_named_submodule(model: nn.Module, name: str) -> bool:

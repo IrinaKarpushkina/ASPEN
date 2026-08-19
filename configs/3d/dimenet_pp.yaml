@@ -1,0 +1,20 @@
+defaults: base.yaml
+
+# DimeNet++ (pp: true, the improved/recommended variant) -- see
+# src/models/models_3d/dimenet.py. num_radial/num_spherical kept at the
+# paper's own defaults (6/7), NOT auto-tuned.
+model:
+  name: dimenet_pp
+  hidden_channels: 118   # auto-tuned via scripts.count_params --auto-tune -> 716,984 params (+2.36%)
+  out_emb_channels: 118  # tied to hidden_channels here; kept equal for simplicity
+  num_blocks: 3
+  int_emb_size: 32
+  basis_emb_size: 8
+  num_spherical: 7
+  num_radial: 6
+  num_before_skip: 1
+  num_after_skip: 2
+  num_output_layers: 2
+  dropout: 0.05
+  pp: true
+  n_params_target: 700000

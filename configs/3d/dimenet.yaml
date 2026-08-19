@@ -1,0 +1,18 @@
+defaults: base.yaml
+
+# Original DimeNet (pp: false) -- see src/models/models_3d/dimenet.py.
+# num_radial/num_spherical kept at the paper's own defaults (6/7), NOT
+# auto-tuned (they control the angular-basis size, not raw capacity).
+model:
+  name: dimenet
+  hidden_channels: 100   # auto-tuned via scripts.count_params --auto-tune -> 700,440 params (+0.06%)
+  num_blocks: 3
+  num_bilinear: 8
+  num_spherical: 7
+  num_radial: 6
+  num_before_skip: 1
+  num_after_skip: 2
+  num_output_layers: 2
+  dropout: 0.05
+  pp: false
+  n_params_target: 700000

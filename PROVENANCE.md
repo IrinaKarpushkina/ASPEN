@@ -6,9 +6,14 @@ what (if anything) had to change relative to the previous version of this
 benchmark. Its purpose is to make every piece of code in `src/models/`
 auditable against a citable source — no unexplained design choices.
 
-This repository is **2D-only**. 3D architectures (SchNet, PaiNN, ...)
-are intentionally not implemented — see `configs/3d/` and
-`src/models/models_3d/` (placeholders) for where they will go.
+This repository originally shipped **2D-only**; the 3D benchmark
+(SchNet, PaiNN, DimeNet, DimeNet++, SphereNet, EGNN, TorchMD-Net, MACE,
+Uni-Mol) has now been added — see `configs/3d/`, `src/models/models_3d/`,
+`src/data/*_3d.py`, and Sections 2.5/3.5/5 below. **Nothing in the 2D
+code path (`src/data/features.py`, `src/data/dataset.py`,
+`src/models/models_2d/`, `configs/2d/`, `src/train.py`) was modified** to
+add this — every 3D file is new, and the only pre-existing files touched
+at all are this one and `README.md` (documentation only).
 
 ---
 
@@ -52,16 +57,83 @@ per-architecture sections below). AttentiveFP now uses its **own**
 super-node attention readout instead. GPS needed no change (see below).
 `tests/test_no_shared_global_block.py` is a regression test for this.
 
-### Bug #3 — radius-graph density asymmetry (3D-only, informational)
-Not applicable to this repository (2D-only), but recorded for when the 3D
-benchmark is implemented: GCN/GAT/GATv2 do not consume `edge_attr`, so in
-the old 3D benchmark the *only* thing that changed for them between 2D and
-3D was topology — and a `cutoff=12Å, max_num_neighbors=32` radius graph is
-likely near-complete for small organic molecules, causing oversmoothing.
-When you implement `src/models/models_3d/`, either (a) use a chemically
-motivated smaller cutoff for these three architectures, or (b) pass
-`edge_weight`/`edge_attr` into `GCNConv`/`GATConv`/`GATv2Conv` (all three
-support it) so they can learn to down-weight distant neighbours.
+### Bug #3 — radius-graph density asymmetry (3D-only)
+Recorded here before any 3D code existed; **now addressed** in this 3D
+implementation. GCN/GAT/GATv2-style architectures without edge features
+(none of which are actually in the 3D registry — every 3D architecture
+here consumes distance in some form) would oversmooth on a too-dense
+cutoff graph. `src/data/constants_3d.py` fixes `CUTOFF = 5.0` Å /
+`MAX_NUM_NEIGHBORS = 32` — matching the cutoff SchNet/DimeNet's own QM9
+training used (Schutt et al. 2017; Klicpera et al. 2020), not the denser
+`cutoff=12Å` mentioned in the original note — and, importantly, uses the
+**same** cutoff graph for every 3D architecture that consumes one (see
+`constants_3d.py` docstring), which is the 3D equivalent of "every 2D
+model sees the same RDKit bond graph" (controlled comparison, Dwivedi et
+al. 2022).
+
+### Bug #6 — two 2D test files iterate the COMBINED model registry, not `MODEL_REGISTRY_2D` (found while adding the 3D benchmark)
+`tests/test_forward_shapes.py` and `tests/test_no_shared_global_block.py`
+both `from src.models import MODEL_REGISTRY` and iterate
+`MODEL_REGISTRY.items()` directly — i.e. they were written against the
+**combined** 2D+3D registry (`src/models/__init__.py`'s `MODEL_REGISTRY`),
+not the 2D-only `MODEL_REGISTRY_2D` also exported from that same module.
+This was invisible before this PR because `MODEL_REGISTRY_3D` was empty
+(`src/models/models_3d/__init__.py` did not exist yet), so
+`MODEL_REGISTRY == MODEL_REGISTRY_2D` by accident. Now that
+`MODEL_REGISTRY_3D` is populated (as `src/models/models_3d/README.md`
+already anticipated it would be — no change to `src/models/__init__.py`
+was needed for that), both tests fail: they try to instantiate 3D models
+(`schnet`, `painn`, ...) with 2D-style constructor kwargs
+(`hidden`/`heads`/`num_steps`, no `hidden_channels`/`num_filters`/etc.)
+and with 2D-shaped toy graphs.
+
+**This is a latent gap in the 2D test suite, not a bug in the 2D
+architectures or their production code** — per this rewrite's own
+constraint of not modifying existing 2D code/tests, IT HAS NOT BEEN
+FIXED HERE. The one-line fix, for whoever owns the 2D test suite, is to
+replace `from src.models import MODEL_REGISTRY` with
+`from src.models import MODEL_REGISTRY_2D as MODEL_REGISTRY` (or iterate
+`MODEL_REGISTRY_2D` directly) in both files. Until that's done, run the
+2D-only test subset explicitly when validating a 2D-only change:
+```bash
+python -m pytest tests/ -q -k "not _3d"   # will still hit the two tests above
+# or, once fixed:
+python -m pytest tests/test_forward_shapes.py tests/test_no_shared_global_block.py -q
+```
+The 3D-specific tests (`tests/test_forward_shapes_3d.py`, etc.) correctly
+import `MODEL_REGISTRY_3D` from the start and are unaffected.
+
+### Bug #7 — 3D on-disk cache computed/stored triplet indices for EVERY model, even ones that never use them (found on a real training run: 21GB cache for SchNet)
+`ChaosParquet3DDataset` originally computed and cached DimeNet-style
+triplet/torsion indices (`build_triplets`/`build_torsions`,
+`src/data/geometry_3d.py`) UNCONDITIONALLY, regardless of which model the
+dataset was being built for. Only 3 of the 9 3D architectures
+(DimeNet, DimeNet++, SphereNet) ever read `tri_idx_*`/`tor_idx_*` — the
+other 6 (SchNet, PaiNN, EGNN, TorchMD-Net, MACE, Uni-Mol) never touch
+them, but paid the full build-time and disk cost anyway. Triplet counts
+scale roughly as (avg node degree)^2, so for a dense real dataset (cutoff
+5A, organic/ionic-liquid molecules with many H atoms) this produced tens
+of GB of cache for a SchNet run that never needed any of it, and — on one
+run — outright failed with a disk write error mid-cache.
+
+Fixed two ways:
+1. `precompute_molecule_tensors_3d`/`ChaosParquet3DDataset` gained a
+   `compute_triplets` flag; `src/train_3d.py` sets it automatically based
+   on the model being trained (`_MODELS_NEEDING_TRIPLETS = {"dimenet",
+   "dimenet_pp", "spherenet"}`) — nothing to configure by hand.
+2. When triplets ARE computed, their index tensors are now stored as
+   `int32` instead of PyTorch's `int64` default (molecules are nowhere
+   near 2^31 atoms/edges), roughly halving their footprint on top of (1).
+   Verified both PyTorch fancy-indexing (`h[idx]`) and
+   `torch_geometric.utils.scatter` accept `int32` index tensors directly
+   (no cast needed inside model forward passes); `Data3D.__inc__`'s
+   batching-offset addition (`tensor + python_int`) also preserves the
+   `int32` dtype.
+
+`_cache_key()` includes `compute_triplets` and bumped its version suffix,
+so any pre-existing cache built before this fix is automatically
+invalidated (rebuilt once) rather than silently reused in an inconsistent
+format.
 
 ### Bug #4 — D-MPNN reverse-edge index built backwards (found while writing tests for this rewrite)
 `build_reverse_index()` (inherited from the previous benchmark) built its
@@ -184,7 +256,138 @@ extension was needed. Fixed by switching to
 
 ---
 
-## 3. Shared infrastructure — audited, not part of the bug
+## 2.5. Per-architecture provenance — 3D benchmark
+
+Full equations/adaptation rationale live as docstrings in each model file
+(kept there, not duplicated in full here, so there is exactly one place
+to update if the code changes); this section is the citation index and a
+one-paragraph summary of what, if anything, deviates from the paper.
+
+### SchNet — `src/models/models_3d/schnet.py`
+- Paper: Schutt et al., *"SchNet: A Continuous-filter Convolutional
+  Neural Network for Modeling Quantum Interactions"*, NeurIPS 2017.
+  https://papers.nips.cc/paper/6700
+- Official: https://github.com/atomistic-machine-learning/SchNet
+- Layer used: `torch_geometric.nn.models.schnet.InteractionBlock` /
+  `GaussianSmearing` (PyG's official building blocks), called directly,
+  stopping before SchNet's own molecule-level pooling — same "reuse the
+  official building blocks, adapt for atom-level output" pattern this
+  repo already uses for AttentiveFP/GPS in 2D.
+- No `torch_cluster`/`pyg-lib` dependency: the radius graph is
+  precomputed once per molecule (`src/data/geometry_3d.py`), not built by
+  PyG's `RadiusInteractionGraph` at forward time.
+
+### PaiNN — `src/models/models_3d/painn.py`
+- Paper: Schutt, Unke & Gastegger, *"Equivariant Message Passing for the
+  Prediction of Tensorial Properties and Molecular Spectra"*, ICML 2021.
+  https://proceedings.mlr.press/v139/schutt21a.html
+- Official: https://github.com/atomistic-machine-learning/schnetpack
+- No PyG built-in layer exists (checked against PyG 2.8) — direct
+  reimplementation of the paper's scalar/vector message + update block
+  equations (Eqs. 5-13). Rotation/translation invariance of the final
+  scalar output verified in `tests/test_equivariance_3d.py`.
+
+### DimeNet / DimeNet++ — `src/models/models_3d/dimenet.py`
+- Papers: Klicpera, Gross & Gunnemann, *"Directional Message Passing for
+  Molecular Graphs"*, ICLR 2020 (https://arxiv.org/abs/2003.03123);
+  Klicpera, Giri, Margraf & Gunnemann, DimeNet++, NeurIPS-W 2020.
+- Official: https://github.com/gasteigerjo/dimenet (TensorFlow)
+- Layer used: `torch_geometric.nn.models.dimenet`'s
+  `BesselBasisLayer`/`SphericalBasisLayer`/`InteractionBlock`/
+  `InteractionPPBlock`/`OutputBlock`/`OutputPPBlock` (PyG's official
+  building blocks), stopping before the molecule-level sum, exactly as
+  for SchNet above.
+- Triplets (the `(k -> j -> i)` angular indices) are precomputed with a
+  from-scratch, `SparseTensor`-free reimplementation of PyG's own
+  `triplets()` (`src/data/geometry_3d.py::build_triplets`) — the official
+  function requires `torch_sparse`, a compiled extension this repo does
+  not depend on. Verified hand-checkably in `tests/test_geometry_3d.py`.
+- One registry entry each: `dimenet` (`pp: false`, original DimeNet) and
+  `dimenet_pp` (`pp: true`, the paper's own recommended, faster variant) —
+  both from the same `DimeNetSigmaModel` class, a single `pp` flag toggle.
+
+### SphereNet — `src/models/models_3d/spherenet.py`
+- Paper: Liu, Wang, Liu, Lin, Zhang, Oztekin & Ji, *"Spherical Message
+  Passing for 3D Molecular Graphs"*, ICLR 2022.
+  https://arxiv.org/abs/2102.05013
+- Official: https://github.com/divelab/DIG
+- **Explicit, documented simplification** (see the file's full docstring
+  for the exact reasoning): reuses DimeNet++'s (distance, angle) basis
+  unchanged, and adds an explicit torsion (dihedral) channel — a 4th atom
+  found per triplet (`src/data/geometry_3d.py::build_torsions`), embedded
+  with a small Fourier basis and used to multiplicatively gate the
+  (distance, angle) spherical basis — rather than reproducing the
+  official DIG repo's specific local-reference-frame torsion index
+  construction (which additionally requires `torch_sparse`/
+  `torch_scatter`). This is a reduced-fidelity SphereNet: it genuinely
+  gives the model a third (torsion) geometric channel distance+angle-only
+  architectures lack, but is not a byte-for-byte reproduction of the
+  official implementation's basis functions. Report it as such (e.g.
+  "SphereNet-style spherical message passing", not "SphereNet
+  (official)") in any write-up.
+
+### EGNN — `src/models/models_3d/egnn.py`
+- Paper: Satorras, Hoogeboom & Welling, *"E(n) Equivariant Graph Neural
+  Networks"*, ICML 2021. https://arxiv.org/abs/2102.09844
+- Official: https://github.com/vgsatorras/egnn
+- No PyG built-in layer exists — direct reimplementation of the paper's
+  Eqs. 3-6 (`E_GCL`), matched against the official repo's own QM9
+  property-prediction script (coordinate channel updated every layer,
+  as in the official pipeline, but discarded after the last layer — only
+  the scalar channel is read out).
+
+### TorchMD-Net — `src/models/models_3d/torchmdnet.py`
+- Paper: Tholke & De Fabritiis, *"TorchMD-NET: Equivariant Transformers
+  for Neural Network based Molecular Potentials"*, ICLR 2022.
+  https://arxiv.org/abs/2202.02541
+- Official: https://github.com/torchmd/torchmd-net
+- No PyG built-in layer exists — direct reimplementation of the paper's
+  Equivariant Transformer attention block (distance-filtered,
+  multi-head, attention-weighted PaiNN-style scalar/vector message),
+  reusing this repo's own PaiNN vector-channel utilities
+  (`VectorLinear`, cosine cutoff, `PaiNNMixing` update block) for the
+  parts the paper itself describes as "following PaiNN".
+
+### MACE — `src/models/models_3d/mace.py`
+- Paper: Batatia, Kovacs, Simm, Ortner & Csanyi, *"MACE: Higher Order
+  Equivariant Message Passing Neural Networks for Fast and Accurate Force
+  Fields"*, NeurIPS 2022. https://arxiv.org/abs/2206.07697
+- Official: https://github.com/ACEsuit/mace
+- Uses `e3nn` (https://e3nn.org, see `requirements-3d.txt`) for genuine
+  Clebsch-Gordan spherical-harmonics tensor products, rather than
+  reimplementing CG coefficients from scratch.
+- **Explicit, documented simplification**: implements the paper's 2-body
+  message ("A" function) plus ONE self-tensor-product product-basis step
+  ("B" function at correlation order nu=2, i.e. a genuine 3-body
+  equivariant feature) per layer. The official implementation supports
+  higher correlation order (nu up to 3) via a custom, numerically-tuned
+  `SymmetricContraction` module; this benchmark caps at nu=2 to keep the
+  implementation auditable with plain `e3nn.o3.FullyConnectedTensorProduct`
+  calls. Report it as "MACE (nu=2)" or "reduced-order MACE" in any
+  write-up, not as the paper's default (nu=3) configuration.
+- Equivariance of the vector/nu=2 channels and invariance of the final
+  scalar readout verified in `tests/test_equivariance_3d.py`.
+
+### Uni-Mol — `src/models/models_3d/unimol.py`
+- Paper: Zhou, Gao, Ding, Zheng, Xu, Wei, Zhang & Ke, *"Uni-Mol: A
+  Universal 3D Molecular Representation Learning Framework"*, ICLR 2023.
+  https://openreview.net/forum?id=6K2RM6wVqKu
+- Official: https://github.com/deepmodeling/Uni-Mol
+- Dense, all-pairs SE(3)-invariant Transformer with a Gaussian-kernel
+  pairwise-distance attention bias that is itself updated from the
+  previous layer's attention maps (paper Sec. 3.1) — the one architecture
+  in this benchmark that does NOT use the shared cutoff radius graph
+  (`torch_geometric.utils.to_dense_batch` instead; no `pyg-lib`/
+  `torch_cluster` needed).
+- **IMPORTANT, not a simplification but a scope limitation**: Uni-Mol's
+  headline results in the paper come from large-scale self-supervised
+  PRETRAINING (masked atom-type prediction + 3D coordinate denoising on
+  ~209M conformers) before task-specific fine-tuning. This benchmark has
+  no access to that pretraining corpus or the official checkpoint, and —
+  like every other model here — trains this ENCODER ARCHITECTURE from
+  scratch, directly on the sigma-profile task. Report it as "Uni-Mol
+  architecture, trained from scratch" / "Uni-Mol (no pretraining)" in any
+  write-up, not as a reproduction of the paper's pretrained numbers.
 
 These are used identically by every architecture and were reviewed but
 **not changed** (no architecture-dependent bug found in them):
@@ -211,11 +414,58 @@ These are used identically by every architecture and were reviewed but
   matched parameter count (±5%), not matched hidden size, so that
   differences in the table reflect architecture, not raw capacity.
 
+## 3.5. Shared infrastructure — 3D benchmark
+
+New files, all additive (see the header note at the top of this
+document):
+
+- `src/data/geometry_3d.py` — radius graph, DimeNet-style triplets,
+  SphereNet-style torsions, all in pure PyTorch (no `torch_cluster`/
+  `torch_sparse`/`pyg-lib`). Verified hand-checkably in
+  `tests/test_geometry_3d.py`.
+- `src/data/constants_3d.py` — shared cutoff/neighbour-cap (`CUTOFF`,
+  `MAX_NUM_NEIGHBORS`, see Bug #3 above) and the 6-dim, purely physical
+  (non-topological) node feature set used by every 3D architecture.
+- `src/data/features_3d.py` — builds per-molecule node features,
+  coordinates (from `coord_x/y/z` parquet columns, or a documented RDKit
+  ETKDGv3+MMFF94 conformer-generation fallback if absent), the shared
+  radius graph, and triplet/torsion indices. Verified in
+  `tests/test_features_3d.py`.
+- `src/data/dataset_3d.py` — `ChaosParquet3DDataset` + `Data3D` (a
+  `torch_geometric.data.Data` subclass with a corrected `__inc__` for
+  batching the triplet/torsion index tensors — see that class's
+  docstring and `tests/test_geometry_3d.py`'s dedicated batching test).
+- `src/models/models_3d/__init__.py` — `MODEL_REGISTRY_3D`; each import
+  wrapped individually so a missing OPTIONAL dependency (only `e3nn`, for
+  MACE) never breaks the other 8 architectures.
+- `src/train_3d.py` — training entrypoint, structurally identical to
+  `src/train.py` except for the dataset/featurizer and
+  `"mode": "3d_pure"` (see Bug #1: this is exactly the field whose
+  absence caused the original duplicated-table bug).
+- `requirements-3d.txt` — ADDITIONAL dependencies (`e3nn`, for MACE only;
+  `sympy`, for DimeNet/DimeNet++/SphereNet's basis functions), kept
+  separate from `requirements.txt` so the 2D benchmark's dependency
+  footprint is unchanged.
+- `run_benchmark_3d.sh` — mirrors `run_benchmark_2d.sh`.
+
+Every 3D architecture targets the SAME `target_params` (700,000, see
+`configs/3d/base.yaml`) as the 2D benchmark, verified in
+`tests/test_param_budget_3d.py` — so 2D and 3D architectures are
+comparable to each other, not just within each regime.
+
+---
+
 ## 4. What to check before trusting a training run
 Run, in order, before spending GPU time:
 ```bash
-python -m pytest tests/ -q
-python -m scripts.count_params
+# 2D:
+python -m pytest tests/ -q -k "not _3d"
+python -m scripts.count_params --configs-dir configs/2d
+# 3D (needs requirements-3d.txt; DimeNet/DimeNet++/SphereNet tests are
+# slow -- tens of seconds -- due to SphericalBasisLayer's sympy setup,
+# not a bug):
+python -m pytest tests/ -q -k "_3d"
+python -m scripts.count_params --configs-dir configs/3d
 ```
-Both are wired into `run_benchmark_2d.sh` already and will abort the job
-if they fail.
+Both `run_benchmark_2d.sh` and `run_benchmark_3d.sh` already run the
+relevant checks and abort the job if they fail.

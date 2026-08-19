@@ -1,0 +1,11 @@
+defaults: base.yaml
+
+# Requires e3nn -- see requirements-3d.txt and src/models/models_3d/mace.py
+# (reduced correlation-order nu=2 MACE; see that file's fidelity note).
+model:
+  name: mace
+  hidden: 40             # auto-tuned via scripts.count_params --auto-tune -> 685,111 params (-2.13%)
+  num_layers: 2
+  lmax_sh: 2
+  dropout: 0.05
+  n_params_target: 700000

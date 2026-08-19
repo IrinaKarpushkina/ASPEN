@@ -1,0 +1,20 @@
+defaults: base.yaml
+
+# num_radial/num_spherical/num_torsional kept at (near-)paper defaults,
+# NOT auto-tuned (they control the angular/torsional basis size, not raw
+# capacity) -- see src/models/models_3d/spherenet.py.
+model:
+  name: spherenet
+  hidden_channels: 118   # auto-tuned via scripts.count_params --auto-tune -> 717,848 params (+2.55%)
+  out_emb_channels: 118
+  num_blocks: 3
+  int_emb_size: 32
+  basis_emb_size: 8
+  num_spherical: 7
+  num_radial: 6
+  num_torsional: 4
+  num_before_skip: 1
+  num_after_skip: 2
+  num_output_layers: 2
+  dropout: 0.05
+  n_params_target: 700000

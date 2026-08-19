@@ -1,0 +1,8 @@
+defaults: base.yaml
+
+model:
+  name: egnn
+  hidden: 152            # auto-tuned via scripts.count_params --auto-tune -> 717,149 params (+2.45%)
+  num_layers: 4
+  dropout: 0.05
+  n_params_target: 700000

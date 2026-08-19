@@ -134,35 +134,97 @@ Note `--metrics-dir` has **no default** — this is deliberate (see
 `PROVENANCE.md` Bug #1). The script also refuses to mix result files from
 different `mode`s in one table unless you pass `--allow-mixed-mode`.
 
+## 7. The 3D benchmark
+
+### 7.1 Setup
+```bash
+pip install -r requirements.txt -r requirements-3d.txt
+```
+`requirements-3d.txt` adds `e3nn` (needed only by MACE — every other 3D
+model works without it, see `src/models/models_3d/__init__.py`) and
+`sympy` (used by DimeNet/DimeNet++/SphereNet's basis functions, usually
+already pulled in transitively by `torch_geometric`).
+
+### 7.2 Data
+Same parquet schema as the 2D benchmark (Section 2), **plus optional**
+`coord_x`/`coord_y`/`coord_z` columns (one 3D conformer's coordinates per
+atom). If present, they're used directly; if absent, one conformer per
+molecule is generated once with RDKit (ETKDGv3 + MMFF94) and cached — see
+`src/data/features_3d.py` docstring. Edit `configs/3d/base.yaml`'s
+`data:` block (note: use a **separate** `cache_dir` from the 2D one).
+
+### 7.3 Sanity-check before training
+```bash
+python -m pytest tests/ -q -k "_3d"          # DimeNet/DimeNet++/SphereNet tests are slow
+                                              # (tens of seconds, sympy basis-function setup
+                                              # — not a bug, see PROVENANCE.md §3.5)
+python -m scripts.count_params --configs-dir configs/3d
+```
+`tests/` includes, among others (all 3D-specific tests are suffixed `_3d`):
+- `test_equivariance_3d.py` — the central correctness check for this half
+  of the benchmark: every model's prediction must be unchanged when the
+  input molecule is rotated and/or translated.
+- `test_geometry_3d.py` — hand-checkable golden tests for the radius
+  graph / triplet / torsion construction, and for the batching-offset fix
+  (`Data3D.__inc__`) that makes DimeNet/DimeNet++/SphereNet's triplet
+  indices survive being batched with other molecules.
+- `test_forward_shapes_3d.py` — smoke test + batch-invariance check for
+  every 3D model (mirrors the 2D `test_forward_shapes.py`).
+- `test_param_budget_3d.py` — same ±5% budget check as the 2D benchmark.
+
+### 7.4 Train one model
+```bash
+python -m src.train_3d --config configs/3d/schnet.yaml --seed 0
+```
+Writes to the SAME `results/checkpoints/` / `results/metrics/`
+directories as the 2D benchmark by default (model names don't collide;
+each result JSON is tagged `"mode": "3d_pure"` vs `"2d_pure"`) — use
+`--output-dir` to keep them fully separate if you prefer.
+
+### 7.5 Run the full 3D benchmark
+```bash
+MODELS="schnet painn dimenet dimenet_pp spherenet egnn torchmdnet mace unimol" \
+SEEDS="0 1 2" bash run_benchmark_3d.sh
+```
+On SLURM: edit the `#SBATCH` header / conda-activation / `cd` lines in
+`run_benchmark_3d.sh`, then `sbatch run_benchmark_3d.sh`.
+
+### 7.6 Aggregate results
+```bash
+python -m scripts.aggregate_results \
+    --metrics-dir results/metrics \
+    --loss mse --sort emd_raw \
+    --csv results/comparison_table_3d.csv
+```
+If `results/metrics/` contains BOTH 2D and 3D runs, this will (correctly)
+refuse to mix them — pass `--allow-mixed-mode` only if you specifically
+want a combined 2D+3D table (they share the same parameter budget, so
+this is a legitimate thing to want; see `PROVENANCE.md` §3.5).
+
 ## Repository layout
 
 ```
-configs/            2D model configs (base.yaml + one per architecture)
-configs/3d/          <- empty, placeholder for a future 3D benchmark
-data/raw/            <- put your parquet files here
-data/cache/           on-disk cache of precomputed graphs (auto-created)
-models/               (currently unused; reserved for saved final models)
-results/checkpoints/  training checkpoints (*.pt)
-results/metrics/      per-run metrics (*.json)
-src/data/            featurizer + dataset
-src/models/           7 architectures + shared ResidualMLP head
-src/models/models_3d/ <- empty, placeholder for SchNet/PaiNN/etc.
-src/losses/          MSE loss
-src/train.py, evaluate.py, metrics.py, config.py
-scripts/              count_params.py, aggregate_results.py
-tests/                 unit + regression tests (run before every training job)
-PROVENANCE.md          full audit trail: papers, official repos, bugs fixed
+configs/2d/             2D model configs (base.yaml + one per architecture)
+configs/3d/             3D model configs (base.yaml + one per architecture)
+data/raw/               <- put your parquet files here
+data/cache/              on-disk cache of precomputed 2D graphs (auto-created)
+models/                  (currently unused; reserved for saved final models)
+results/checkpoints/     training checkpoints (*.pt)
+results/metrics/         per-run metrics (*.json; "mode": "2d_pure" or "3d_pure")
+src/data/               2D featurizer + dataset (features.py, dataset.py)
+src/data/*_3d.py         3D featurizer + dataset + geometry helpers (geometry_3d.py,
+                         constants_3d.py, features_3d.py, dataset_3d.py)
+src/models/models_2d/    7 2D architectures + shared ResidualMLP head
+src/models/models_3d/    9 3D architectures (SchNet, PaiNN, DimeNet, DimeNet++,
+                         SphereNet, EGNN, TorchMD-Net, MACE, Uni-Mol)
+src/losses/              MSE loss (shared by both)
+src/train.py             2D training entrypoint
+src/train_3d.py          3D training entrypoint
+src/evaluate.py, metrics.py, config.py    shared by both (architecture-agnostic)
+scripts/                 count_params.py, aggregate_results.py (shared by both)
+tests/                   unit + regression tests; 3D-specific ones suffixed `_3d`
+requirements.txt          2D + shared dependencies
+requirements-3d.txt       ADDITIONAL 3D-only dependencies (e3nn, sympy)
+PROVENANCE.md             full audit trail: papers, official repos, bugs fixed,
+                         2D §1-3, 3D §2.5/3.5
 ```
-
-## Adding the 3D benchmark later
-
-`configs/3d/` and `src/models/models_3d/` are placeholders on purpose.
-When you add e.g. SchNet:
-1. Read `PROVENANCE.md` §1 "Bug #3" first — it documents a specific
-   pitfall (radius-graph density) to avoid for GCN/GAT/GATv2's 3D variants.
-2. Keep the 2D and 3D featurizers in separate files (as they are now:
-   `src/data/features.py` is 2D-only) rather than a `mode=` flag inside
-   one shared function — that separation is what made Bug #2 possible to
-   find and fix cleanly here.
-3. Re-run `scripts/count_params.py --auto-tune` for the 3D configs; do not
-   assume the 2D `hidden` values transfer (input/edge dims differ).

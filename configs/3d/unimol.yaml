@@ -1,0 +1,14 @@
+defaults: base.yaml
+
+# NOTE (see src/models/models_3d/unimol.py docstring): this is the Uni-Mol
+# ENCODER ARCHITECTURE trained from scratch on this benchmark's task, not
+# a reproduction of the paper's pretrained-then-finetuned numbers (no
+# pretrained checkpoint is available in this pipeline).
+model:
+  name: unimol
+  hidden: 116            # auto-tuned via scripts.count_params --auto-tune -> 692,406 params (-1.08%)
+  num_layers: 4
+  num_heads: 4
+  num_kernels: 32
+  dropout: 0.05
+  n_params_target: 700000
