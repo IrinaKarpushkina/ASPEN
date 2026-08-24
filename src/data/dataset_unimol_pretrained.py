@@ -1,0 +1,392 @@
+"""
+dataset_unimol_pretrained.py - dataset for the SECOND, separate Uni-Mol
+experiment: real pretrained per-atom embeddings from `unimol_tools`
+(https://github.com/deepmodeling/unimol_tools, `pip install unimol-tools`),
+NOT a from-scratch, parameter-budget-matched architecture like every
+other entry in this benchmark.
+
+WHY THIS IS A SEPARATE FILE/EXPERIMENT (see PROVENANCE.md and
+src/models/models_3d/unimol_pretrained.py for the full rationale): the
+real pretrained Uni-Mol backbone has ~47M parameters (Table 6 of the
+paper) and was trained on 209M conformations -- there is no way to make
+that a fair, parameter-matched entry alongside this benchmark's other 9
+architectures, each capped at ~700k parameters trained from scratch on
+this dataset alone. Mixing it into the main comparison table would be
+comparing a foundation model against from-scratch baselines under a
+budget constraint the foundation model never had to respect. Report this
+experiment's numbers in a clearly separate table/section.
+
+WHAT THIS DOES: for every molecule, calls `unimol_tools.UniMolRepr` to
+get a (n_atoms, repr_dim) PER-ATOM representation from the real
+pretrained checkpoint (auto-downloaded from Hugging Face on first use),
+then caches it to disk (this is expensive -- a full forward pass through
+a real 15-layer, 512-dim transformer per molecule -- caching makes every
+subsequent run/seed/epoch free).
+
+CUSTOM COORDINATES, HONESTLY FLAGGED: `unimol_tools`'s underlying data
+pipeline accepts a `{'atoms': [...], 'coordinates': [...]}` custom dict
+(documented input format for `MolTrain`/`MolPredict`). This file tries
+that same dict format with THIS benchmark's own coordinates first (so
+the embeddings reflect the SAME geometry every other 3D model in this
+benchmark sees) via `_try_get_repr_with_coords`. If your installed
+`unimol_tools` version's `UniMolRepr.get_repr` does NOT accept that dict
+format, this raises `UniMolToolsAPIMismatch` rather than silently
+falling back to letting `unimol_tools` generate its OWN RDKit conformer
+from the SMILES alone. Run `scripts/check_unimol_tools_api.py` BEFORE
+running this on the full dataset.
+
+SPECIAL-TOKEN ROW IN atomic_reprs, EMPIRICALLY CONFIRMED INCONSISTENT
+(see diagnose_mol_10067.py output, chat history): the installed
+unimol_tools version does NOT reliably strip a trailing special-token
+row from `atomic_reprs` before returning it -- molecule 36785 (val
+split) came back with exactly len(elements) rows (no special token),
+while molecule 10067 (val split) came back with len(elements)+1 rows
+whose LAST row's `atomic_symbol` is literally '[SEP]' (EOS). An earlier
+version of this file guessed by shape arithmetic
+(`if atomic_repr.shape[0] == len(elements) + 1: strip row 0`), which is
+UNSAFE in both directions: it silently deleted a real atom's
+representation for molecules like 36785 that never had a special-token
+row to begin with, and (being hardcoded to row 0) would not even have
+caught molecule 10067's case (special row is LAST, not first).
+
+FIX: filter by CONTENT, not position/count. `unimol_tools` optionally
+returns `atomic_symbol` (confirmed present in the installed version) --
+a per-atom label list of exactly the same length as `atomic_reprs` for
+that molecule. Any row whose label is a known special token
+([CLS]/[SEP]/[PAD]/[MASK]/[BOS]/[EOS]/[UNK]) is dropped, regardless of
+its position, and regardless of whether such a row is present at all.
+This is robust to the row appearing at the start, the end, sometimes,
+or never. If `atomic_symbol` isn't available in your installed version
+(older unimol_tools without that return key), this file loudly asks you
+to investigate rather than silently guessing.
+"""
+from __future__ import annotations
+import hashlib
+import logging
+import os
+from typing import Optional
+
+import numpy as np
+import pandas as pd
+import torch
+from torch_geometric.data import Data, Dataset
+
+from .constants import ELEMENT_TO_Z
+
+logger = logging.getLogger(__name__)
+
+_SPECIAL_TOKENS = {"[CLS]", "[SEP]", "[PAD]", "[MASK]", "[BOS]", "[EOS]", "[UNK]"}
+
+
+class UniMolToolsAPIMismatch(RuntimeError):
+    """Raised when the installed unimol_tools version's UniMolRepr.get_repr
+    does not accept this benchmark's custom {'atoms','coordinates'} dict
+    format the way MolTrain/MolPredict are documented to. See this
+    module's docstring."""
+
+
+def _try_get_repr_with_coords(repr_model, atoms_list, coords_list, batch_size: int = 32):
+    """Attempts to get per-atom Uni-Mol representations USING our own
+    coordinates (not unimol_tools' own RDKit conformer generation).
+    Raises UniMolToolsAPIMismatch if the installed unimol_tools version's
+    UniMolRepr.get_repr doesn't accept this input format -- see module
+    docstring.
+
+    Returns a tuple (all_atomic, all_symbols):
+      - all_atomic:  list of (n_atoms_i_raw, repr_dim) np.float32 arrays,
+        where n_atoms_i_raw MAY include a trailing/leading special-token
+        row -- NOT yet filtered, see module docstring.
+      - all_symbols: list of per-atom symbol lists (same length as each
+        all_atomic[i]'s first dim), or None per-molecule if the installed
+        unimol_tools version didn't return 'atomic_symbol' at all.
+    """
+    all_atomic = []
+    all_symbols = []
+    for start in range(0, len(atoms_list), batch_size):
+        chunk_atoms = atoms_list[start:start + batch_size]
+        chunk_coords = coords_list[start:start + batch_size]
+        custom_data = {"atoms": chunk_atoms, "coordinates": chunk_coords}
+        try:
+            out = repr_model.get_repr(custom_data, return_atomic_reprs=True)
+        except TypeError as e:
+            raise UniMolToolsAPIMismatch(
+                f"UniMolRepr.get_repr(...) in your installed unimol_tools "
+                f"version does not accept the {{'atoms','coordinates'}} "
+                f"custom-dict format this benchmark needs (to reuse OUR "
+                f"3D coordinates, not unimol_tools' own RDKit-generated "
+                f"ones). Original error: {e}. Run "
+                f"scripts/check_unimol_tools_api.py to confirm, and check "
+                f"the installed unimol_tools version's UniMolRepr source "
+                f"for the exact accepted input format."
+            ) from e
+        atomic = out["atomic_reprs"]
+        symbols = out.get("atomic_symbol", [None] * len(atomic))
+        all_atomic.extend(atomic)
+        all_symbols.extend(symbols)
+    return all_atomic, all_symbols
+
+
+def _strip_special_tokens(atomic_repr: np.ndarray, symbol):
+    """Drops any row of atomic_repr whose corresponding entry in `symbol`
+    is a known special token (see module docstring for why this must be
+    done by CONTENT, not by position/count arithmetic). If `symbol` is
+    None (installed unimol_tools version didn't return atomic_symbol),
+    returns atomic_repr unchanged and symbol=None -- the caller's
+    downstream atom-count check will still catch a real mismatch, just
+    without being able to explain *why*.
+    """
+    if symbol is None:
+        return atomic_repr, None
+    keep_mask = np.array([s not in _SPECIAL_TOKENS for s in symbol])
+    if keep_mask.all():
+        return atomic_repr, symbol
+    filtered_symbol = [s for s, k in zip(symbol, keep_mask) if k]
+    return atomic_repr[keep_mask], filtered_symbol
+
+
+class UniMolPretrainedDataset(Dataset):
+    """
+    Args:
+        parquet_path:  same schema as ChaosParquet3DDataset (one row per
+            atom, `mol_id`, `element`, `smiles`, `sigma_*` columns, PLUS
+            required `coord_x`/`coord_y`/`coord_z` -- unlike the other 3D
+            dataset, this one does NOT support RDKit-fallback conformer
+            generation; if you want that, edit `use_own_coords=False`
+            below, understanding the caveat in this module's docstring.
+        cache_dir:     directory for the on-disk cache of computed
+            representations (can be large -- a few GB for ~50k molecules
+            at repr_dim=512, see module docstring).
+        model_name / model_size / remove_hs: passed straight through to
+            `unimol_tools.UniMolRepr`. IMPORTANT: `remove_hs=False` is
+            required to match every other featurizer in this benchmark
+            (which never strips hydrogens) -- do not change this unless
+            you also regenerate every OTHER model's cache with hydrogens
+            removed, or per-atom counts (and therefore alignment with
+            `sigma_*` targets) will not match.
+        use_own_coords: DEFAULT True. If True (recommended, see module
+            docstring), passes THIS benchmark's own coordinates to
+            unimol_tools instead of letting it generate its own RDKit
+            conformer -- ensures this experiment uses the exact same 3D
+            geometry as every other model in the benchmark.
+    """
+
+    def __init__(
+        self,
+        parquet_path: str,
+        cache_dir: Optional[str] = None,
+        force_recompute: bool = False,
+        model_name: str = "unimolv1",
+        model_size: str = "84m",
+        remove_hs: bool = False,
+        use_own_coords: bool = True,
+        repr_batch_size: int = 32,
+    ):
+        super().__init__()
+        self.parquet_path = parquet_path
+        self.model_name = model_name
+        self.model_size = model_size
+        self.remove_hs = remove_hs
+        self.use_own_coords = use_own_coords
+
+        cache_dir = cache_dir or os.path.join(os.path.dirname(parquet_path), "cache_unimol_pretrained")
+        os.makedirs(cache_dir, exist_ok=True)
+        cache_key = self._cache_key()
+        cache_path = os.path.join(cache_dir, f"{os.path.basename(parquet_path)}.{cache_key}.pt")
+
+        if os.path.exists(cache_path) and not force_recompute:
+            logger.info(f"Loading cached dataset [unimol_pretrained]: {cache_path}")
+            payload = torch.load(cache_path, weights_only=False)
+            self._data_list = payload["data_list"]
+            self.sigma_cols = payload["sigma_cols"]
+            self.mol_ids = payload["mol_ids"]
+            self.repr_dim = payload["repr_dim"]
+        else:
+            self._data_list, self.sigma_cols, self.mol_ids, self.repr_dim = \
+                self._build(parquet_path, repr_batch_size)
+            logger.info(f"Caching dataset [unimol_pretrained]: {cache_path}")
+            torch.save(
+                dict(data_list=self._data_list, sigma_cols=self.sigma_cols,
+                     mol_ids=self.mol_ids, repr_dim=self.repr_dim),
+                cache_path,
+            )
+        logger.info(
+            f"{os.path.basename(parquet_path)} [unimol_pretrained]: "
+            f"{len(self._data_list)} mols, repr_dim={self.repr_dim}"
+        )
+
+    def _cache_key(self) -> str:
+        # v2: bumped from v1 -- special-token filtering logic changed
+        # (content-based instead of shape-arithmetic-based), so any cache
+        # built by the old code must NOT be silently reused (it may
+        # contain per-atom representations shifted by one row for
+        # molecules that never had a special-token row to begin with).
+        # v3: bumped from v2 -- molecules whose elements fall outside the
+        # pretrained backbone's vocabulary are now SKIPPED (logged) instead
+        # of raising, so a v2 cache built before this change does not exist
+        # (v2 always raised on this case, so no v2 cache could have been
+        # produced from a dataset containing such molecules in the first
+        # place) -- bumped anyway for clarity/safety.
+        raw = (f"mode=unimol_pretrained_model={self.model_name}_{self.model_size}_"
+               f"remove_hs={self.remove_hs}_own_coords={self.use_own_coords}_v3")
+        return hashlib.md5(raw.encode()).hexdigest()[:10]
+
+    def _build(self, parquet_path: str, repr_batch_size: int):
+        logger.info(f"Building [unimol_pretrained] dataset from {parquet_path} (no cache found)")
+        try:
+            from unimol_tools import UniMolRepr
+        except ImportError as e:
+            raise ImportError(
+                "unimol_tools is not installed. Run: pip install unimol-tools "
+                "huggingface_hub  (see setup commands provided alongside this "
+                "file)."
+            ) from e
+
+        df = pd.read_parquet(parquet_path)
+        sigma_cols = sorted(
+            [c for c in df.columns if c.startswith("sigma_")],
+            key=lambda x: int(x.split("_")[1]),
+        )
+        assert len(sigma_cols) == 51, f"Expected 51 sigma_* columns, found {len(sigma_cols)}"
+
+        coord_cols = ("coord_x", "coord_y", "coord_z")
+        if self.use_own_coords and not all(c in df.columns for c in coord_cols):
+            raise ValueError(
+                "use_own_coords=True but coord_x/coord_y/coord_z are missing "
+                "from this parquet -- either add them, or explicitly set "
+                "use_own_coords=False (understanding this means unimol_tools "
+                "will generate its OWN RDKit conformer, different geometry "
+                "than every other model in the benchmark sees)."
+            )
+
+        mol_ids, atoms_list, coords_list, smiles_list, y_list = [], [], [], [], []
+        grouped = df.groupby("mol_id", sort=False)
+        for mol_id, mol_df in grouped:
+            mol_df = mol_df.sort_values("atom_index")
+            elements = mol_df["element"].tolist()
+            y = torch.nan_to_num(
+                torch.tensor(mol_df[sigma_cols].values, dtype=torch.float), nan=0.0,
+            )
+            mol_ids.append(mol_id)
+            atoms_list.append(elements)
+            y_list.append(y)
+            smiles_list.append(mol_df["smiles"].iloc[0])
+            if self.use_own_coords:
+                coords_list.append(mol_df[list(coord_cols)].to_numpy(dtype=np.float32))
+
+        repr_model = UniMolRepr(
+            data_type="molecule", remove_hs=self.remove_hs,
+            model_name=self.model_name, model_size=self.model_size,
+            batch_size=repr_batch_size,
+        )
+
+        if self.use_own_coords:
+            atomic_reprs, atomic_symbols = _try_get_repr_with_coords(
+                repr_model, atoms_list, coords_list, repr_batch_size
+            )
+        else:
+            out = repr_model.get_repr(smiles_list, return_atomic_reprs=True)
+            atomic_reprs = out["atomic_reprs"]
+            atomic_symbols = out.get("atomic_symbol", [None] * len(atomic_reprs))
+
+        data_list = []
+        repr_dim = None
+        n_special_stripped = 0
+        skipped_mol_ids = []
+        skipped_elements_counter = {}
+        for mol_id, elements, y, atomic_repr, symbol in zip(
+            mol_ids, atoms_list, y_list, atomic_reprs, atomic_symbols
+        ):
+            atomic_repr = np.asarray(atomic_repr, dtype=np.float32)
+
+            atomic_repr, filtered_symbol = _strip_special_tokens(atomic_repr, symbol)
+            if filtered_symbol is not None and symbol is not None and len(filtered_symbol) != len(symbol):
+                n_special_stripped += 1
+
+            if atomic_repr.shape[0] != len(elements):
+                # REVISION NOTE 3: empirically confirmed (check_element_coverage.py,
+                # molecule 13376: parquet has ['C','C','C','O','O','Ba','O','S',
+                # 'O','O','H','H','H','H'] = 14 atoms, unimol_tools returned 13
+                # rows with NO 'Ba' in atomic_symbol at all) that remaining
+                # mismatches after special-token filtering are NOT an alignment
+                # bug -- they are real atoms (rare/heavy elements: As, Ba, Be,
+                # Bi, Ga, Ge, In, Po, Sb, Se, Sr, Te, Xe -- see
+                # check_element_coverage.py output) that the pretrained Uni-Mol
+                # checkpoint's atom-type vocabulary does not cover (it was
+                # pretrained mostly on drug-like organic molecules), so
+                # unimol_tools silently drops that atom from its output rather
+                # than raising. There is no way to recover a representation for
+                # an atom type the backbone was never trained on -- these
+                # molecules are SKIPPED from this frozen-pretrained-backbone
+                # experiment (not from the main from-scratch benchmark, where
+                # every architecture handles arbitrary atomic numbers). This
+                # affects a small fraction of each split (~1%, confirmed via
+                # check_element_coverage.py: 77/7941 val, 410/36981 train,
+                # 39/7800 test) -- report this explicitly as a limitation
+                # ("frozen Uni-Mol backbone evaluated on the N/M molecules
+                # whose elements are within its pretraining vocabulary") in
+                # any writeup, rather than silently shrinking the effective
+                # test set without a note.
+                skipped_mol_ids.append(mol_id)
+                for e in elements:
+                    skipped_elements_counter[e] = skipped_elements_counter.get(e, 0) + 1
+                logger.warning(
+                    f"[unimol_pretrained] Skipping molecule {mol_id}: parquet has "
+                    f"{len(elements)} atoms {elements}, unimol_tools returned "
+                    f"{atomic_repr.shape[0]} after special-token filtering "
+                    f"(atomic_symbol={filtered_symbol}) -- likely an atom type "
+                    f"outside the pretrained backbone's vocabulary (see module "
+                    f"docstring, REVISION NOTE 3)."
+                )
+                continue
+
+            if repr_dim is None:
+                repr_dim = atomic_repr.shape[1]
+
+            z = torch.tensor([ELEMENT_TO_Z.get(e, 6) for e in elements], dtype=torch.long)
+            data = Data(
+                z=z, y=y,
+                unimol_repr=torch.tensor(atomic_repr, dtype=torch.float16),  # fp16 storage, see module docstring
+                num_nodes=len(elements),
+            )
+            data_list.append(data)
+
+        if n_special_stripped:
+            logger.info(
+                f"[unimol_pretrained] Stripped a trailing/leading special-token "
+                f"row (by content, e.g. '[SEP]') for {n_special_stripped}/"
+                f"{len(mol_ids)} molecules in this split. This is expected to "
+                f"vary per-molecule (empirically confirmed inconsistent in "
+                f"your installed unimol_tools version) -- not itself an error."
+            )
+
+        if skipped_mol_ids:
+            logger.warning(
+                f"[unimol_pretrained] SKIPPED {len(skipped_mol_ids)}/{len(mol_ids)} "
+                f"molecules in this split (elements likely outside the "
+                f"pretrained backbone's vocabulary): "
+                f"{sorted(skipped_elements_counter.items(), key=lambda kv: -kv[1])}. "
+                f"mol_ids: {skipped_mol_ids[:20]}"
+                f"{' ...' if len(skipped_mol_ids) > 20 else ''}. "
+                f"REPORT THIS as a limitation of the frozen-pretrained-Uni-Mol "
+                f"experiment specifically (not the main benchmark) -- see "
+                f"module docstring, REVISION NOTE 3."
+            )
+
+        return data_list, sigma_cols, mol_ids, repr_dim
+
+    def len(self):
+        return len(self._data_list)
+
+    def get(self, idx):
+        return self._data_list[idx]
+
+    def bin_weights_numpy(self):
+        """Same convention as ChaosParquet3DDataset/ChaosParquetDataset:
+        inverse-variance per-bin weights computed from this (training)
+        split, consumed by src/metrics.py::weighted_mae. Kept here rather
+        than imported, to avoid depending on either the 2D or 3D dataset
+        module for a one-line reduction."""
+        all_y = torch.cat([d.y for d in self._data_list], dim=0).numpy()
+        var = all_y.var(axis=0)
+        weights = 1.0 / (var + 1e-8)
+        return weights / weights.sum()

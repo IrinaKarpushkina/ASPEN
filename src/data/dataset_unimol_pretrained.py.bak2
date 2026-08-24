@@ -1,0 +1,317 @@
+"""
+dataset_unimol_pretrained.py - dataset for the SECOND, separate Uni-Mol
+experiment: real pretrained per-atom embeddings from `unimol_tools`
+(https://github.com/deepmodeling/unimol_tools, `pip install unimol-tools`),
+NOT a from-scratch, parameter-budget-matched architecture like every
+other entry in this benchmark.
+
+WHY THIS IS A SEPARATE FILE/EXPERIMENT (see PROVENANCE.md and
+src/models/models_3d/unimol_pretrained.py for the full rationale): the
+real pretrained Uni-Mol backbone has ~47M parameters (Table 6 of the
+paper) and was trained on 209M conformations -- there is no way to make
+that a fair, parameter-matched entry alongside this benchmark's other 9
+architectures, each capped at ~700k parameters trained from scratch on
+this dataset alone. Mixing it into the main comparison table would be
+comparing a foundation model against from-scratch baselines under a
+budget constraint the foundation model never had to respect. Report this
+experiment's numbers in a clearly separate table/section.
+
+WHAT THIS DOES: for every molecule, calls `unimol_tools.UniMolRepr` to
+get a (n_atoms, repr_dim) PER-ATOM representation from the real
+pretrained checkpoint (auto-downloaded from Hugging Face on first use --
+see the setup commands in this repo's chat history / README addendum),
+then caches it to disk (this is expensive -- a full forward pass through
+a real 15-layer, 512-dim transformer per molecule -- caching makes every
+subsequent run/seed/epoch free).
+
+CUSTOM COORDINATES, HONESTLY FLAGGED: `unimol_tools`'s underlying data
+pipeline (`unimol_tools/data/conformer.py`, confirmed via its own
+docstrings) accepts a `{'atoms': [...], 'coordinates': [...]}` custom
+dict (this is the documented input format for `MolTrain`/`MolPredict`).
+This file tries that same dict format with THIS benchmark's own
+coordinates first (so the embeddings reflect the SAME geometry every
+other 3D model in this benchmark sees) via `_try_get_repr_with_coords`.
+If your installed `unimol_tools` version's `UniMolRepr.get_repr` does NOT
+accept that dict format (API surface for `get_repr` specifically wasn't
+independently confirmed -- only `MolTrain`/`MolPredict` were), this
+raises `UniMolToolsAPIMismatch` with a clear message rather than silently
+falling back to letting `unimol_tools` generate its OWN RDKit conformer
+from the SMILES alone -- because that would silently mean this
+"pretrained Uni-Mol" experiment is evaluated on DIFFERENT 3D geometry
+than every other model in the benchmark, which would make any
+comparison meaningless without a very loud caveat. Run
+`scripts/check_unimol_tools_api.py` (see below) BEFORE running this on
+the full dataset, to find out which case you're in.
+"""
+from __future__ import annotations
+import hashlib
+import logging
+import os
+from typing import Optional
+
+import numpy as np
+import pandas as pd
+import torch
+from torch_geometric.data import Data, Dataset
+
+from .constants import ELEMENT_TO_Z
+
+logger = logging.getLogger(__name__)
+
+
+class UniMolToolsAPIMismatch(RuntimeError):
+    """Raised when the installed unimol_tools version's UniMolRepr.get_repr
+    does not accept this benchmark's custom {'atoms','coordinates'} dict
+    format the way MolTrain/MolPredict are documented to. See this
+    module's docstring."""
+
+
+def _try_get_repr_with_coords(repr_model, atoms_list, coords_list, batch_size: int = 32):
+    """Attempts to get per-atom Uni-Mol representations USING our own
+    coordinates (not unimol_tools' own RDKit conformer generation).
+    Raises UniMolToolsAPIMismatch if the installed unimol_tools version's
+    UniMolRepr.get_repr doesn't accept this input format -- see module
+    docstring. Returns a list of (n_atoms_i, repr_dim) np.float32 arrays.
+    """
+    all_atomic = []
+    for start in range(0, len(atoms_list), batch_size):
+        chunk_atoms = atoms_list[start:start + batch_size]
+        chunk_coords = coords_list[start:start + batch_size]
+        custom_data = {"atoms": chunk_atoms, "coordinates": chunk_coords}
+        try:
+            out = repr_model.get_repr(custom_data, return_atomic_reprs=True)
+        except TypeError as e:
+            raise UniMolToolsAPIMismatch(
+                f"UniMolRepr.get_repr(...) in your installed unimol_tools "
+                f"version does not accept the {{'atoms','coordinates'}} "
+                f"custom-dict format this benchmark needs (to reuse OUR "
+                f"3D coordinates, not unimol_tools' own RDKit-generated "
+                f"ones). Original error: {e}. Run "
+                f"scripts/check_unimol_tools_api.py to confirm, and check "
+                f"the installed unimol_tools version's UniMolRepr source "
+                f"for the exact accepted input format."
+            ) from e
+        atomic = out["atomic_reprs"]
+        all_atomic.extend(atomic)
+    return all_atomic
+
+
+class UniMolPretrainedDataset(Dataset):
+    """
+    Args:
+        parquet_path:  same schema as ChaosParquet3DDataset (one row per
+            atom, `mol_id`, `element`, `smiles`, `sigma_*` columns, PLUS
+            required `coord_x`/`coord_y`/`coord_z` -- unlike the other 3D
+            dataset, this one does NOT support RDKit-fallback conformer
+            generation; if you want that, edit `use_own_coords=False`
+            below, understanding the caveat in this module's docstring.
+        cache_dir:     directory for the on-disk cache of computed
+            representations (can be large -- a few GB for ~50k molecules
+            at repr_dim=512, see module docstring).
+        model_name / model_size / remove_hs: passed straight through to
+            `unimol_tools.UniMolRepr`. IMPORTANT: `remove_hs=False` is
+            required to match every other featurizer in this benchmark
+            (which never strips hydrogens) -- do not change this unless
+            you also regenerate every OTHER model's cache with hydrogens
+            removed, or per-atom counts (and therefore alignment with
+            `sigma_*` targets) will not match.
+        use_own_coords: DEFAULT True. If True (recommended, see module
+            docstring), passes THIS benchmark's own coordinates to
+            unimol_tools instead of letting it generate its own RDKit
+            conformer -- ensures this experiment uses the exact same 3D
+            geometry as every other model in the benchmark.
+    """
+
+    def __init__(
+        self,
+        parquet_path: str,
+        cache_dir: Optional[str] = None,
+        force_recompute: bool = False,
+        model_name: str = "unimolv1",
+        model_size: str = "84m",
+        remove_hs: bool = False,
+        use_own_coords: bool = True,
+        repr_batch_size: int = 32,
+    ):
+        super().__init__()
+        self.parquet_path = parquet_path
+        self.model_name = model_name
+        self.model_size = model_size
+        self.remove_hs = remove_hs
+        self.use_own_coords = use_own_coords
+
+        cache_dir = cache_dir or os.path.join(os.path.dirname(parquet_path), "cache_unimol_pretrained")
+        os.makedirs(cache_dir, exist_ok=True)
+        cache_key = self._cache_key()
+        cache_path = os.path.join(cache_dir, f"{os.path.basename(parquet_path)}.{cache_key}.pt")
+
+        if os.path.exists(cache_path) and not force_recompute:
+            logger.info(f"Loading cached dataset [unimol_pretrained]: {cache_path}")
+            payload = torch.load(cache_path, weights_only=False)
+            self._data_list = payload["data_list"]
+            self.sigma_cols = payload["sigma_cols"]
+            self.mol_ids = payload["mol_ids"]
+            self.repr_dim = payload["repr_dim"]
+        else:
+            self._data_list, self.sigma_cols, self.mol_ids, self.repr_dim = \
+                self._build(parquet_path, repr_batch_size)
+            logger.info(f"Caching dataset [unimol_pretrained]: {cache_path}")
+            torch.save(
+                dict(data_list=self._data_list, sigma_cols=self.sigma_cols,
+                     mol_ids=self.mol_ids, repr_dim=self.repr_dim),
+                cache_path,
+            )
+        logger.info(
+            f"{os.path.basename(parquet_path)} [unimol_pretrained]: "
+            f"{len(self._data_list)} mols, repr_dim={self.repr_dim}"
+        )
+
+    def _cache_key(self) -> str:
+        raw = (f"mode=unimol_pretrained_model={self.model_name}_{self.model_size}_"
+               f"remove_hs={self.remove_hs}_own_coords={self.use_own_coords}_v1")
+        return hashlib.md5(raw.encode()).hexdigest()[:10]
+
+    def _build(self, parquet_path: str, repr_batch_size: int):
+        logger.info(f"Building [unimol_pretrained] dataset from {parquet_path} (no cache found)")
+        try:
+            from unimol_tools import UniMolRepr
+        except ImportError as e:
+            raise ImportError(
+                "unimol_tools is not installed. Run: pip install unimol-tools "
+                "huggingface_hub  (see setup commands provided alongside this "
+                "file)."
+            ) from e
+
+        df = pd.read_parquet(parquet_path)
+        sigma_cols = sorted(
+            [c for c in df.columns if c.startswith("sigma_")],
+            key=lambda x: int(x.split("_")[1]),
+        )
+        assert len(sigma_cols) == 51, f"Expected 51 sigma_* columns, found {len(sigma_cols)}"
+
+        coord_cols = ("coord_x", "coord_y", "coord_z")
+        if self.use_own_coords and not all(c in df.columns for c in coord_cols):
+            raise ValueError(
+                "use_own_coords=True but coord_x/coord_y/coord_z are missing "
+                "from this parquet -- either add them, or explicitly set "
+                "use_own_coords=False (understanding this means unimol_tools "
+                "will generate its OWN RDKit conformer, different geometry "
+                "than every other model in the benchmark sees)."
+            )
+
+        mol_ids, atoms_list, coords_list, smiles_list, y_list = [], [], [], [], []
+        grouped = df.groupby("mol_id", sort=False)
+        for mol_id, mol_df in grouped:
+            mol_df = mol_df.sort_values("atom_index")
+            elements = mol_df["element"].tolist()
+            y = torch.nan_to_num(
+                torch.tensor(mol_df[sigma_cols].values, dtype=torch.float), nan=0.0,
+            )
+            mol_ids.append(mol_id)
+            atoms_list.append(elements)
+            y_list.append(y)
+            smiles_list.append(mol_df["smiles"].iloc[0])
+            if self.use_own_coords:
+                coords_list.append(mol_df[list(coord_cols)].to_numpy(dtype=np.float32))
+
+        repr_model = UniMolRepr(
+            data_type="molecule", remove_hs=self.remove_hs,
+            model_name=self.model_name, model_size=self.model_size,
+            batch_size=repr_batch_size,
+        )
+
+        if self.use_own_coords:
+            atomic_reprs = _try_get_repr_with_coords(repr_model, atoms_list, coords_list, repr_batch_size)
+        else:
+            out = repr_model.get_repr(smiles_list, return_atomic_reprs=True)
+            atomic_reprs = out["atomic_reprs"]
+
+        data_list = []
+        repr_dim = None
+        for mol_id, elements, y, atomic_repr in zip(mol_ids, atoms_list, y_list, atomic_reprs):
+#            atomic_repr = np.asarray(atomic_repr, dtype=np.float32)
+#
+#            # unimol_tools prepends a whole-molecule [CLS] representation as
+#            # row 0 (paper Sec. 2.2: "a special atom [CLS] ... is used to
+#            # represent the whole molecule/pocket", BERT-style convention) --
+#            # confirmed empirically via scripts/check_unimol_tools_api.py
+#            # (a 9-atom toy molecule came back with atomic_reprs.shape[0]==10).
+#            # Strip it before the real atom-count check below, rather than
+#            # silently keeping a row that doesn't correspond to any atom in
+#            # this benchmark's sigma_* targets.
+#            if atomic_repr.shape[0] == len(elements) + 1:
+#                atomic_repr = atomic_repr[1:]
+
+#            if atomic_repr.shape[0] != len(elements):
+#                raise ValueError(
+#                    f"Atom-count mismatch for molecule {mol_id}: this benchmark's "
+#                    f"parquet has {len(elements)} atoms, but unimol_tools returned "
+#                    f"{atomic_repr.shape[0]} atomic representations (after "
+#                    f"stripping a suspected leading [CLS] row, if shape was "
+#                    f"exactly +1). This usually means remove_hs doesn't match, "
+#                    f"or unimol_tools reordered/dropped atoms for this specific "
+#                    f"molecule -- do not proceed without resolving this, "
+#                    f"per-atom alignment with sigma_* targets would be silently "
+#                    f"wrong. Re-run scripts/check_unimol_tools_api.py with a "
+#                    f"molecule similar to this one to investigate."
+#                )
+            atomic_repr = np.asarray(atomic_repr, dtype=np.float32)
+            # REVISION NOTE: a previous version of this block manually
+            # stripped a "suspected leading [CLS] row" whenever
+            # atomic_repr.shape[0] == len(elements) + 1, based on a +1
+            # observed against an INDEPENDENTLY-computed (RDKit AddHs) atom
+            # count on a toy molecule -- not against this package's own
+            # atom count. The installed unimol_tools source itself
+            # (unimol_tools/models/unimol.py, UniMolModel.forward) already
+            # slices atomic_reprs as encoder_rep[i, 1:lengths[i]+1, :],
+            # where lengths[i] is the atom count AFTER filtering
+            # BOS(0)/EOS(1)/PAD(2) -- i.e. atomic_reprs already excludes
+            # any CLS/BOS/EOS/PAD row and comes back with EXACTLY
+            # len(elements) rows. The manual strip above therefore removed
+            # a REAL atom's representation whenever the package's count and
+            # this benchmark's parquet count legitimately agreed (confirmed
+            # on molecule 36785: 18 atoms in the parquet, unimol_tools
+            # correctly returned 18 rows, the strip turned that into a
+            # false 17-row mismatch). Removed -- use atomic_reprs as-is; a
+            # genuine mismatch is still caught below.
+            if atomic_repr.shape[0] != len(elements):
+                raise ValueError(
+                    f"Atom-count mismatch for molecule {mol_id}: this benchmark's "
+                    f"parquet has {len(elements)} atoms, but unimol_tools returned "
+                    f"{atomic_repr.shape[0]} atomic representations. This usually "
+                    f"means remove_hs doesn't match, or unimol_tools reordered/"
+                    f"dropped atoms for this specific molecule -- do not proceed "
+                    f"without resolving this, per-atom alignment with sigma_* "
+                    f"targets would be silently wrong."
+                )
+
+
+            if repr_dim is None:
+                repr_dim = atomic_repr.shape[1]
+
+            z = torch.tensor([ELEMENT_TO_Z.get(e, 6) for e in elements], dtype=torch.long)
+            data = Data(
+                z=z, y=y,
+                unimol_repr=torch.tensor(atomic_repr, dtype=torch.float16),  # fp16 storage, see module docstring
+                num_nodes=len(elements),
+            )
+            data_list.append(data)
+
+        return data_list, sigma_cols, mol_ids, repr_dim
+
+    def len(self):
+        return len(self._data_list)
+
+    def get(self, idx):
+        return self._data_list[idx]
+
+    def bin_weights_numpy(self):
+        """Same convention as ChaosParquet3DDataset/ChaosParquetDataset:
+        inverse-variance per-bin weights computed from this (training)
+        split, consumed by src/metrics.py::weighted_mae. Kept here rather
+        than imported, to avoid depending on either the 2D or 3D dataset
+        module for a one-line reduction."""
+        all_y = torch.cat([d.y for d in self._data_list], dim=0).numpy()
+        var = all_y.var(axis=0)
+        weights = 1.0 / (var + 1e-8)
+        return weights / weights.sum()

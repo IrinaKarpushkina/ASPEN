@@ -1,19 +1,24 @@
-# ASPEN2D — a clean, 2D-only GNN benchmark for sigma-profile prediction
+# ASPEN — a clean, methodologically-audited GNN benchmark for sigma-profile prediction (2D + 3D)
 
 This is a from-scratch, methodologically-audited rewrite of a previous
-sigma-profile GNN benchmark. It compares 7 message-passing architectures
-on **2D molecular graphs only** (built from SMILES/RDKit chemical bonds —
-no 3D coordinates anywhere in the model code). Every model is either a
+sigma-profile GNN benchmark. It compares **7 message-passing
+architectures on 2D molecular graphs** (built from SMILES/RDKit chemical
+bonds — no 3D coordinates anywhere in that half of the code) **and 9
+architectures on 3D molecular geometry** (radius-graph message passing
+and one dense geometric Transformer). Every model is either a
 `torch_geometric` layer or a direct reimplementation of its paper's
 equations; every design decision is written down in `PROVENANCE.md`,
 together with the bugs this rewrite fixes relative to the previous
 version.
 
-**3D architectures (SchNet, PaiNN, ...) are intentionally not
-implemented here** — see `configs/3d/` and `src/models/models_3d/`
-(currently empty placeholders) for where they will go later.
+This README covers the 2D benchmark first (Sections 1-6), then the 3D
+benchmark (Section 7). The two share almost all infrastructure
+(`src/evaluate.py`, `src/metrics.py`, `scripts/count_params.py`,
+`scripts/aggregate_results.py`) but use separate featurizers, datasets,
+model directories, configs, and training entrypoints — see
+`PROVENANCE.md` for why that separation is deliberate.
 
-## What's compared
+## What's compared — 2D
 
 | Model | Paper | Official code |
 |---|---|---|
@@ -30,6 +35,29 @@ All 7 are matched to ~700,000 parameters (±5%, see
 global-pooling block that compressed architecture differences in the
 previous benchmark — see `PROVENANCE.md` §1 "Bug #2" for why that
 mattered, and §2 for what each model does instead.
+
+## What's compared — 3D
+
+| Model | Paper | Official code |
+|---|---|---|
+| SchNet | Schutt et al., NeurIPS 2017 | github.com/atomistic-machine-learning/SchNet |
+| PaiNN | Schutt et al., ICML 2021 | github.com/atomistic-machine-learning/schnetpack |
+| DimeNet | Klicpera et al., ICLR 2020 | github.com/gasteigerjo/dimenet |
+| DimeNet++ | Klicpera et al., NeurIPS-W 2020 | github.com/gasteigerjo/dimenet |
+| SphereNet | Liu et al., ICLR 2022 | github.com/divelab/DIG |
+| EGNN | Satorras et al., ICML 2021 | github.com/vgsatorras/egnn |
+| TorchMD-Net | Tholke & De Fabritiis, ICLR 2022 | github.com/torchmd/torchmd-net |
+| MACE | Batatia et al., NeurIPS 2022 | github.com/ACEsuit/mace |
+| Uni-Mol | Zhou et al., ICLR 2023 | github.com/deepmodeling/Uni-Mol |
+
+All 9 are matched to the SAME ~700,000-parameter budget as the 2D models
+(±5%, see `results/param_budget_table_3d.csv`), so 2D and 3D
+architectures are comparable to each other too, not just within each
+regime. **SphereNet and MACE are explicitly-documented, reduced-fidelity
+reimplementations** (see `PROVENANCE.md` §2.5) — read that before citing
+either as a byte-for-byte reproduction of its paper. **Uni-Mol is trained
+from scratch here** (no pretrained checkpoint is used or available in
+this pipeline — see `PROVENANCE.md` §2.5, "Uni-Mol").
 
 ## 1. Setup
 
@@ -201,11 +229,39 @@ refuse to mix them — pass `--allow-mixed-mode` only if you specifically
 want a combined 2D+3D table (they share the same parameter budget, so
 this is a legitimate thing to want; see `PROVENANCE.md` §3.5).
 
+### 7.7 Second experiment: real pretrained Uni-Mol (separate from the main benchmark)
+
+Deliberately NOT part of the 9-architecture, 700k-parameter comparison
+table above — this uses the real Uni-Mol checkpoint (~47M pretrained
+parameters, trained on 209M conformations) via the `unimol_tools` pip
+package, frozen, with only a small head trained on top. See
+`PROVENANCE.md` §2.5 "Uni-Mol" for why this can't be budget-matched
+against the rest of the benchmark, and report its results in a separate
+table/section.
+
+```bash
+pip install -r requirements-unimol-pretrained.txt
+
+# Run this FIRST -- confirms your unimol_tools version's API and that you
+# have network access to download the pretrained checkpoint from
+# Hugging Face (huggingface.co) before trying it on the full dataset:
+python -m scripts.check_unimol_tools_api
+
+python -m src.train_unimol_pretrained \
+    --config configs/unimol_pretrained/unimol_pretrained.yaml --seed 0
+```
+Writes to `results/checkpoints/unimol_pretrained_seed<seed>_mse.pt` /
+`results/metrics/unimol_pretrained_seed<seed>_mse.json` (tagged
+`"mode": "unimol_pretrained"`, distinct from `"2d_pure"`/`"3d_pure"`, so
+`scripts/aggregate_results.py`'s mixed-mode guard keeps it out of the
+main table by default).
+
 ## Repository layout
 
 ```
 configs/2d/             2D model configs (base.yaml + one per architecture)
 configs/3d/             3D model configs (base.yaml + one per architecture)
+configs/unimol_pretrained/  config for the SEPARATE pretrained-Uni-Mol experiment (§7.7)
 data/raw/               <- put your parquet files here
 data/cache/              on-disk cache of precomputed 2D graphs (auto-created)
 models/                  (currently unused; reserved for saved final models)
@@ -225,6 +281,7 @@ scripts/                 count_params.py, aggregate_results.py (shared by both)
 tests/                   unit + regression tests; 3D-specific ones suffixed `_3d`
 requirements.txt          2D + shared dependencies
 requirements-3d.txt       ADDITIONAL 3D-only dependencies (e3nn, sympy)
+requirements-unimol-pretrained.txt  ADDITIONAL deps for §7.7 only (unimol_tools, huggingface_hub)
 PROVENANCE.md             full audit trail: papers, official repos, bugs fixed,
                          2D §1-3, 3D §2.5/3.5
 ```

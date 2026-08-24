@@ -1,0 +1,45 @@
+# unimol_pretrained.yaml -- SEPARATE experiment, deliberately kept OUT of
+# configs/3d/ so scripts/count_params.py --configs-dir configs/3d and
+# tests/test_param_budget_3d.py never pick this up and (misleadingly)
+# check it against the 700k shared budget -- the real parameter count for
+# this experiment includes a ~47M-parameter FROZEN pretrained backbone
+# (not counted below; only the trainable head is), which is not
+# comparable to the other 9 architectures by construction. See
+# src/models/models_3d/unimol_pretrained.py docstring.
+#
+# EDIT before running: paths below, same convention as configs/3d/base.yaml.
+
+data:
+  train_path: /mnt/tank/scratch/ikarpushkina/sigma/ASPEN/data/train_test_val_df/chaos_atomic_train_with_coordinates.parquet
+  val_path:   /mnt/tank/scratch/ikarpushkina/sigma/ASPEN/data/train_test_val_df/chaos_atomic_val_with_coordinates.parquet
+  test_path:  /mnt/tank/scratch/ikarpushkina/sigma/ASPEN/data/train_test_val_df/chaos_atomic_test_with_coordinates.parquet
+  cache_dir:  /mnt/tank/scratch/ikarpushkina/sigma/ASPEN/data/train_test_val_df/cache_unimol_pretrained
+
+unimol_tools:
+  model_name: unimolv1     # or unimolv2 (see model_size below)
+  model_size: 84m          # only used when model_name: unimolv2
+  remove_hs: false         # MUST stay false -- see dataset docstring
+  use_own_coords: true     # use THIS benchmark's coordinates, not unimol_tools' own RDKit conformer
+  repr_batch_size: 32
+
+model:
+  name: unimol_pretrained
+  repr_dim: 512             # unimolv1 default; CHECK the logged 'repr_dim=' when you first
+                            # build the dataset and fix this if it's different (e.g. for unimolv2)
+  hidden: 128
+  num_head_layers: 2
+  dropout: 0.1
+
+training:
+  batch_size: 32
+  grad_accum_steps: 1
+  num_workers: 0            # unimol_repr is already precomputed/cached; no featurization cost per batch
+  lr: 1.0e-3
+  weight_decay: 1.0e-5
+  max_epochs: 100
+  patience: 15
+  scheduler_T0: 15
+  scheduler_Tmult: 2
+  eta_min: 1.0e-6
+  max_grad_norm: 1.0
+  use_amp: true

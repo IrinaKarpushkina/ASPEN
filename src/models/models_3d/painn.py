@@ -41,13 +41,19 @@ Update block (paper Eqs. 9-13), no message passing, purely per-atom:
                                                   over the 3 spatial dims
                                                   -> rotation-invariant)
 
-Radial basis / cutoff: PaiNN's own paper (Sec. 4.1) uses the same
-Gaussian-RBF + smooth cosine cutoff SchNet uses; this benchmark reuses
-`torch_geometric.nn.models.schnet.GaussianSmearing` for exactly that
-reason (same distance-embedding "budget", `constants_3d.N_RBF`, is given
-to SchNet and PaiNN, so the comparison isolates the *update rule*, not the
-radial basis).
+Radial basis / cutoff: PaiNN's own paper (Sec. 4.1) instead uses a
+Bessel/sinc radial basis, sin(n*pi*d/r_cut)/d for 1<=n<=20, following
+Klicpera et al. (2020) -- the same family DimeNet uses -- not a Gaussian
+one. This benchmark deliberately substitutes SchNet's Gaussian smearing
+(`torch_geometric.nn.models.schnet.GaussianSmearing`) here instead, so
+that SchNet and PaiNN are given the exact same distance-embedding
+"budget" (`constants_3d.N_RBF`) and the comparison isolates the
+*update rule* (continuous-filter convolution vs. equivariant
+message/update) rather than the radial-basis choice. The smooth cosine
+cutoff, in contrast, does match the paper (and the official SchNetPack
+`CosineCutoff`) exactly.
 """
+
 import torch
 import torch.nn as nn
 import torch.nn.functional as F

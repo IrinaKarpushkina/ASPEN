@@ -373,21 +373,68 @@ one-paragraph summary of what, if anything, deviates from the paper.
   Universal 3D Molecular Representation Learning Framework"*, ICLR 2023.
   https://openreview.net/forum?id=6K2RM6wVqKu
 - Official: https://github.com/deepmodeling/Uni-Mol
-- Dense, all-pairs SE(3)-invariant Transformer with a Gaussian-kernel
-  pairwise-distance attention bias that is itself updated from the
-  previous layer's attention maps (paper Sec. 3.1) — the one architecture
-  in this benchmark that does NOT use the shared cutoff radius graph
-  (`torch_geometric.utils.to_dense_batch` instead; no `pyg-lib`/
-  `torch_cluster` needed).
+- Dense, all-pairs SE(3)-invariant Transformer maintaining an atom-level
+  and a pair-level representation that communicate every layer (paper
+  Eq. 1-2) — the one architecture in this benchmark that does NOT use the
+  shared cutoff radius graph (`torch_geometric.utils.to_dense_batch`
+  instead; no `pyg-lib`/`torch_cluster` needed).
+- **REVISED for closer fidelity** after the user supplied the paper text
+  directly (the first version of this file was written from general
+  recollection of the architecture, not a line-by-line equation check).
+  Two concrete fixes, both in `unimol.py`:
+  1. Pair-representation update now accumulates the RAW pre-softmax
+     `QK^T/sqrt(d)` score per layer (paper Eq. 1), not the post-softmax
+     attention probabilities the first version used — these are different
+     quantities; the raw score keeps sign/unbounded magnitude information
+     the softmax-normalized version discards.
+  2. Distance encoding is now a pair-TYPE-aware Gaussian kernel (GKPT:
+     an affine transform of the raw distance, with (mul, bias) looked up
+     per atom-type PAIR, applied before a shared Gaussian kernel bank —
+     paper Sec. 2.1 + Appendix D.1's own ablation, which found this
+     outperforms a plain, non-pair-type-aware kernel), replacing the
+     first version's plain Gaussian kernel.
+  What still differs from the paper's own configuration, and why (scope/
+  budget choices, not correctness bugs — see `unimol.py`'s docstring for
+  the full list): depth/width (15 layers/512-dim/64-heads in the paper's
+  47M-parameter backbone vs. this benchmark's ~700k-parameter shared
+  budget), no [CLS] token (not needed for this benchmark's per-atom, not
+  per-molecule, task), no SE(3)-equivariant coordinate-prediction head
+  (only used for the paper's own PRETRAINING task, never exercised here).
 - **IMPORTANT, not a simplification but a scope limitation**: Uni-Mol's
   headline results in the paper come from large-scale self-supervised
   PRETRAINING (masked atom-type prediction + 3D coordinate denoising on
-  ~209M conformers) before task-specific fine-tuning. This benchmark has
-  no access to that pretraining corpus or the official checkpoint, and —
-  like every other model here — trains this ENCODER ARCHITECTURE from
-  scratch, directly on the sigma-profile task. Report it as "Uni-Mol
-  architecture, trained from scratch" / "Uni-Mol (no pretraining)" in any
-  write-up, not as a reproduction of the paper's pretrained numbers.
+  ~209M conformers) before task-specific fine-tuning. This benchmark
+  entry has no access to that pretraining corpus or the official
+  checkpoint, and — like every other model here — trains this ENCODER
+  ARCHITECTURE from scratch, directly on the sigma-profile task. Report
+  it as "Uni-Mol architecture, trained from scratch" / "Uni-Mol (no
+  pretraining)" in any write-up, not as a reproduction of the paper's
+  pretrained numbers.
+- **A SECOND, separate experiment DOES use the real pretrained
+  checkpoint** — via the `unimol_tools` pip package (a lightweight,
+  fairseq/Uni-Core-free wrapper released by DeepModeling in 2024) rather
+  than the original heavier Uni-Core/LMDB pipeline. See
+  `src/models/models_3d/unimol_pretrained.py`,
+  `src/data/dataset_unimol_pretrained.py`,
+  `src/train_unimol_pretrained.py`, and
+  `configs/unimol_pretrained/unimol_pretrained.yaml`. This is
+  deliberately kept OUT of the main 9-architecture, 700k-parameter
+  comparison table (the real pretrained backbone has ~47M parameters —
+  not a budget-matched entry by construction) and reports as a frozen-
+  feature-extraction baseline in its own separate table/section instead.
+  Requires `requirements-unimol-pretrained.txt`; run
+  `python -m scripts.check_unimol_tools_api` first to confirm your
+  installed `unimol_tools` version's API and network access to Hugging
+  Face before running this on the full dataset.
+- **Confirmed finding (via `check_unimol_tools_api.py` on a real toy
+  molecule): `unimol_tools`'s `atomic_reprs` includes a PREPENDED
+  whole-molecule [CLS] representation** (paper Sec. 2.2: "a special atom
+  [CLS] ... is used to represent the whole molecule/pocket", BERT-style
+  convention) — a 9-atom test molecule returned 10 rows. Verified by
+  comparing row 0 against the separately-returned `cls_repr`.
+  `dataset_unimol_pretrained.py` now strips this leading row (when the
+  count is exactly `len(atoms)+1`) before checking per-atom alignment
+  with `sigma_*` targets, instead of hard-failing on every molecule.
 
 These are used identically by every architecture and were reviewed but
 **not changed** (no architecture-dependent bug found in them):
@@ -469,3 +516,12 @@ python -m scripts.count_params --configs-dir configs/3d
 ```
 Both `run_benchmark_2d.sh` and `run_benchmark_3d.sh` already run the
 relevant checks and abort the job if they fail.
+
+## Uni-Mol pretrained (frozen backbone) — atom-vocabulary limitation
+26/7941 (val), TBD/36981 (train), TBD/7800 (test) molecules were excluded
+from the frozen-pretrained-Uni-Mol experiment: unimol_tools' mol_pre_all_h_220816.pt
+checkpoint silently drops atoms whose element isn't in its pretraining
+atom-type vocabulary (confirmed: Ba, Sb, Ge, Ga, Te, Be, In, Bi -- rare/
+heavy elements not typical in drug-like organic pretraining data). This
+does NOT affect the main from-scratch benchmark (all 9 architectures
+there handle arbitrary atomic numbers).

@@ -1,0 +1,14 @@
+# requirements-unimol-pretrained.txt - ADDITIONAL deps for the SECOND,
+# separate Uni-Mol experiment (real pretrained checkpoint via
+# unimol_tools). Kept separate from requirements-3d.txt on purpose: the
+# main 9-architecture, 700k-param benchmark does NOT need this at all.
+#
+# pip install -r requirements-unimol-pretrained.txt
+
+unimol-tools>=0.1.0     # pip package: https://pypi.org/project/unimol-tools/
+                        # (as of unimol_tools>=0.1.0 / mid-2024, this no
+                        # longer depends on Uni-Core/fairseq or LMDB --
+                        # confirmed via its PyPI changelog)
+huggingface_hub          # needed for UniMolRepr to auto-download the
+                        # pretrained checkpoint from huggingface.co on
+                        # first use (dptech/Uni-Mol-Models repo)

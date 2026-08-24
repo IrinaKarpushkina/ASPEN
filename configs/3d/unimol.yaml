@@ -4,9 +4,18 @@ defaults: base.yaml
 # ENCODER ARCHITECTURE trained from scratch on this benchmark's task, not
 # a reproduction of the paper's pretrained-then-finetuned numbers (no
 # pretrained checkpoint is available in this pipeline).
+#
+# NOTE (2nd revision): unimol.py was rewritten for closer fidelity to the
+# paper's Eq. 1/Eq. 2 and its pair-type-aware Gaussian kernel (GKPT),
+# which adds a small (MAX_Z+1)^2-sized embedding table (~15k params with
+# MAX_Z=86) not present in the first version. The `hidden` value below
+# was NOT re-verified against this exact revision (no GPU/torch
+# environment was available when this note was written) -- run:
+#   python -m scripts.count_params --configs-dir configs/3d --auto-tune
+# and adjust `hidden` below if the printed diff is outside +/-5%.
 model:
   name: unimol
-  hidden: 116            # auto-tuned via scripts.count_params --auto-tune -> 692,406 params (-1.08%)
+  hidden: 116            # PROVISIONAL -- re-verify after the GKPT rewrite (see note above)
   num_layers: 4
   num_heads: 4
   num_kernels: 32
