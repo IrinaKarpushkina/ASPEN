@@ -3,63 +3,60 @@ spherenet.py — SphereNet for per-atom sigma-profile prediction.
 
 Paper:    Liu, Wang, Liu, Lin, Zhang, Oztekin & Ji, "Spherical Message
           Passing for 3D Molecular Graphs", ICLR 2022.
-          https://openreview.net/forum?id=givsRXsOt9r (arXiv:
-          https://arxiv.org/abs/2102.05013 as supplied by the user)
+          https://openreview.net/forum?id=givsRXsOt9r
 Official: https://github.com/divelab/DIG
           (`dig/threedgraph/method/spherenet/spherenet.py`,
-          `spherenet_utils.py::xyz_to_dat`)
+          `dig/threedgraph/method/spherenet/features.py`,
+          `dig/threedgraph/utils/geometric_computing.py::xyz_to_dat`)
 
-SphereNet's central idea, beyond DimeNet's (distance, angle): every
-message additionally carries a TORSION (dihedral) angle, computed from a
-4th atom, giving spherical message passing its full local-frame
-"distance + angle + torsion" description of 3D structure (Sec. 3 of the
-paper) — this is what lets it in principle distinguish local
-3D arrangements (e.g. chirality-adjacent environments) that (distance,
-angle)-only architectures like DimeNet cannot.
+REVISION NOTE: an earlier version of this file avoided `torch_sparse`/
+`torch_scatter` (not otherwise needed by this benchmark) by (a)
+approximating the official torsion angle with a different geometric
+quantity (a 4th atom bonded to k, rather than the official's "second
+neighbour of the middle atom j, minimum angle over all such neighbours"
+definition) and (b) embedding it with a hand-rolled Fourier basis
+instead of the official's real-spherical-harmonic/Bessel product basis.
+Both are now replaced with verbatim ports of the official code
+(`src/data/geometry_spherenet.py::xyz_to_dat`,
+`src/data/spherenet_features.py::{dist_emb,angle_emb,torsion_emb}`),
+computed at forward-time directly from this benchmark's shared
+edge_index/pos (not from the dataset's precomputed
+`tri_idx_*`/`tor_idx_l`/`tor_has_l` fields, which every OTHER
+DimeNet-family architecture in this benchmark still uses unchanged).
+`torch_scatter`/`torch_sparse` are now benchmark dependencies for this
+architecture only (see requirements-3d.txt).
 
-FIDELITY NOTE (documented explicitly, in the same spirit as this repo's
-other citation-honest simplifications — see PROVENANCE.md): the official
-DIG implementation builds its torsion index and 2D "torsion basis" via a
-specific local reference-frame convention (`xyz_to_dat`) that additionally
-depends on `torch_sparse`/`torch_scatter`, extensions this repository does
-not depend on (see requirements-3d.txt and `src/data/geometry_3d.py`
-module docstring). This implementation instead:
+The interaction block below now mirrors the official `update_e` exactly:
+distance, angle, and torsion bases are projected and multiplied together
+directly (no sigmoid gate, no graceful "angle-only" fallback for
+triplets lacking a further neighbour -- the official code has neither;
+see `geometry_spherenet.xyz_to_dat`'s docstring for what happens to such
+triplets under the official torsion definition).
 
-  1. Reuses DimeNet++'s (distance, angle) triplet machinery UNCHANGED
-     (same `BesselBasisLayer`/`SphericalBasisLayer`/`InteractionPPBlock`-
-     style down-projection, see `models_3d/dimenet.py`), so the
-     distance+angle channel is identical in spirit to DimeNet++'s.
-  2. Adds an explicit TORSION channel: for each (k, j, i) triplet, a 4th
-     atom l (bonded to k, see `geometry_3d.build_torsions`) gives a proper
-     dihedral angle tau_{lkji} (`geometry_3d.compute_torsion`), embedded
-     with a small Fourier basis (cos(n*tau), sin(n*tau) for
-     n=0..num_torsional-1) — the standard way to embed a periodic (2*pi)
-     scalar, used e.g. by SchNetPack's `torsion` featurizers and by
-     several later spherical-harmonics-free re-implementations of
-     SphereNet-style dihedral terms.
-  3. The torsion embedding GATES the (distance, angle) spherical basis
-     multiplicatively (`combined = sbf * torsion_gate`) before the same
-     down-project / bilinear aggregation DimeNet++ uses — mirroring the
-     official implementation's own combined (dist, angle, torsion) basis
-     product, just built from an explicit Fourier torsion embedding
-     instead of the official code's specific local-frame spherical
-     harmonics. When no 4th atom exists for a triplet (`has_l=False`,
-     e.g. a terminal/degree-1 atom), the torsion gate degrades gracefully
-     to the identity (angle-only, i.e. exactly DimeNet++'s message for
-     that triplet) rather than a fabricated value.
-
-Everything else (edge embedding via our own atom features, atom-wise
-readout via `OutputPPBlock`, stopping before molecule-level pooling) is
-identical to `models_3d/dimenet.py` — see that file's docstring for the
-rationale, which applies here unchanged.
+WHAT STILL DIFFERS FROM THE OFFICIAL ARCHITECTURE, AND WHY (scope/
+integration choices, not correctness gaps in the ported math):
+  - Atom input embedding: official SphereNet embeds raw atomic number
+    via a single `nn.Embedding(95, hidden_channels)` (`init.forward`).
+    This benchmark instead uses its own shared atom-feature convention
+    (`input_proj` over engineered features + a separate Z-embedding),
+    identical to every other architecture here, so that all 9
+    architectures see the same node-level information budget.
+  - Output/readout: this benchmark reuses `torch_geometric.nn.models.
+    dimenet.OutputPPBlock` (as established by `models_3d/dimenet.py`)
+    rather than the official SphereNet's own `update_v` module. The two
+    are structurally analogous (up-project -> stack of hidden
+    layers+activation -> final linear) but not the same code; this
+    predates the present revision and was not in scope for it.
+  - Per-atom, not per-molecule: this benchmark's task is atom-resolved
+    regression, so there is no final `update_u` (molecule-level) pooling
+    step -- the per-atom `OutputPPBlock` output is summed across
+    interaction blocks and used directly, as in `models_3d/dimenet.py`.
 """
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
 from torch_geometric.data import Data
-from torch_geometric.nn.models.dimenet import (
-    BesselBasisLayer, SphericalBasisLayer, ResidualLayer, OutputPPBlock,
-)
+from torch_geometric.nn.models.dimenet import OutputPPBlock, ResidualLayer
 from torch_geometric.nn.resolver import activation_resolver
 from torch_geometric.utils import scatter
 
@@ -67,43 +64,31 @@ from ..layers import ResidualMLP
 from ...data.constants import MAX_Z
 from ...data.constants_3d import CUTOFF
 from ...data.features_3d import node_feat_dim_3d
-from ...data.geometry_3d import compute_torsion
+from ...data.geometry_spherenet import xyz_to_dat
+from ...data.spherenet_features import dist_emb, angle_emb, torsion_emb
 from .dimenet import _EdgeEmbeddingBlock
 
 
-class TorsionBasisLayer(nn.Module):
-    """Fourier embedding of a periodic dihedral angle tau in [-pi, pi]:
-    [cos(0*tau)=1, cos(tau), sin(tau), cos(2*tau), sin(2*tau), ...]."""
-
-    def __init__(self, num_torsional: int):
-        super().__init__()
-        self.num_torsional = num_torsional
-        freqs = torch.arange(0, num_torsional, dtype=torch.float)
-        self.register_buffer("freqs", freqs)
-
-    def forward(self, tau: torch.Tensor) -> torch.Tensor:
-        angles = tau.unsqueeze(-1) * self.freqs.unsqueeze(0)  # (E, K)
-        return torch.cat([torch.cos(angles), torch.sin(angles)], dim=-1)  # (E, 2K)
-
-
 class SphereInteractionBlock(nn.Module):
-    """DimeNet++-style InteractionPPBlock, with the (distance, angle)
-    spherical basis additionally gated by a torsion Fourier embedding
-    (see module docstring)."""
+    """Verbatim structural port of the official `update_e` (distance,
+    angle, torsion bases projected and multiplied directly, no gating)."""
 
-    def __init__(self, hidden_channels: int, int_emb_size: int, basis_emb_size: int,
-                 num_spherical: int, num_radial: int, num_torsional: int,
+    def __init__(self, hidden_channels: int, int_emb_size: int,
+                 basis_emb_size_dist: int, basis_emb_size_angle: int,
+                 basis_emb_size_torsion: int, num_spherical: int, num_radial: int,
                  num_before_skip: int, num_after_skip: int, act):
         super().__init__()
         self.act = act
 
-        self.lin_rbf1 = nn.Linear(num_radial, basis_emb_size, bias=False)
-        self.lin_rbf2 = nn.Linear(basis_emb_size, hidden_channels, bias=False)
+        self.lin_rbf1 = nn.Linear(num_radial, basis_emb_size_dist, bias=False)
+        self.lin_rbf2 = nn.Linear(basis_emb_size_dist, hidden_channels, bias=False)
 
-        self.lin_sbf1 = nn.Linear(num_spherical * num_radial, basis_emb_size, bias=False)
-        self.lin_sbf2 = nn.Linear(basis_emb_size, int_emb_size, bias=False)
+        self.lin_sbf1 = nn.Linear(num_spherical * num_radial, basis_emb_size_angle, bias=False)
+        self.lin_sbf2 = nn.Linear(basis_emb_size_angle, int_emb_size, bias=False)
 
-        self.lin_tbf = nn.Linear(2 * num_torsional, int_emb_size)  # torsion gate
+        self.lin_t1 = nn.Linear(num_spherical * num_spherical * num_radial,
+                                basis_emb_size_torsion, bias=False)
+        self.lin_t2 = nn.Linear(basis_emb_size_torsion, int_emb_size, bias=False)
 
         self.lin_kj = nn.Linear(hidden_channels, hidden_channels)
         self.lin_ji = nn.Linear(hidden_channels, hidden_channels)
@@ -117,7 +102,7 @@ class SphereInteractionBlock(nn.Module):
         self.layers_after_skip = nn.ModuleList(
             [ResidualLayer(hidden_channels, act) for _ in range(num_after_skip)])
 
-    def forward(self, x, rbf, sbf, tbf, has_l, idx_kj, idx_ji):
+    def forward(self, x, rbf, sbf, tbf, idx_kj, idx_ji):
         x_ji = self.act(self.lin_ji(x))
         x_kj = self.act(self.lin_kj(x))
 
@@ -125,14 +110,12 @@ class SphereInteractionBlock(nn.Module):
         x_kj = x_kj * rbf
         x_kj = self.act(self.lin_down(x_kj))
 
-        sbf_emb = self.lin_sbf2(self.lin_sbf1(sbf))                   # (n_triplets, int_emb)
-        torsion_gate = torch.sigmoid(self.lin_tbf(tbf))               # (n_triplets, int_emb), in (0,1)
-        # graceful fallback to angle-only when no 4th atom exists for a triplet:
-        torsion_gate = torch.where(has_l.unsqueeze(-1), torsion_gate,
-                                   torch.ones_like(torsion_gate))
-        combined = sbf_emb * torsion_gate
+        sbf = self.lin_sbf2(self.lin_sbf1(sbf))
+        x_kj = x_kj[idx_kj] * sbf
 
-        x_kj = x_kj[idx_kj] * combined
+        t = self.lin_t2(self.lin_t1(tbf))
+        x_kj = x_kj * t
+
         x_kj = scatter(x_kj, idx_ji, dim=0, dim_size=x.size(0), reduce="sum")
         x_kj = self.act(self.lin_up(x_kj))
 
@@ -152,10 +135,11 @@ class SphereNetSigmaModel(nn.Module):
         out_emb_channels: int = 128,
         num_blocks: int = 3,
         int_emb_size: int = 32,
-        basis_emb_size: int = 8,
+        basis_emb_size_dist: int = 8,
+        basis_emb_size_angle: int = 8,
+        basis_emb_size_torsion: int = 8,
         num_spherical: int = 7,
         num_radial: int = 6,
-        num_torsional: int = 4,
         cutoff: float = CUTOFF,
         envelope_exponent: int = 5,
         num_before_skip: int = 1,
@@ -172,9 +156,18 @@ class SphereNetSigmaModel(nn.Module):
         self.z_embed = nn.Embedding(MAX_Z + 1, hidden_channels // 4)
         self.input_proj = nn.Linear(n_feat + hidden_channels // 4, hidden_channels)
 
+        self.dist_emb = dist_emb(num_radial, cutoff, envelope_exponent)
+        self.angle_emb = angle_emb(num_spherical, num_radial, cutoff, envelope_exponent)
+        self.torsion_emb = torsion_emb(num_spherical, num_radial, cutoff, envelope_exponent)
+
+        # separate BesselBasisLayer-equivalent (`dist_emb` above) feeds the
+        # interaction blocks' (angle, torsion) bases; the atom-embedding /
+        # output-block radial features reuse the same PyG BesselBasisLayer
+        # convention `models_3d/dimenet.py` uses (num_radial-dim rbf,
+        # envelope built in), for consistency with this benchmark's other
+        # DimeNet-family models.
+        from torch_geometric.nn.models.dimenet import BesselBasisLayer
         self.rbf = BesselBasisLayer(num_radial, cutoff, envelope_exponent)
-        self.sbf = SphericalBasisLayer(num_spherical, num_radial, cutoff, envelope_exponent)
-        self.tbf = TorsionBasisLayer(num_torsional)
         self.emb = _EdgeEmbeddingBlock(num_radial, hidden_channels, act)
 
         self.output_blocks = nn.ModuleList([
@@ -183,8 +176,9 @@ class SphereNetSigmaModel(nn.Module):
             for _ in range(num_blocks + 1)
         ])
         self.interaction_blocks = nn.ModuleList([
-            SphereInteractionBlock(hidden_channels, int_emb_size, basis_emb_size,
-                                   num_spherical, num_radial, num_torsional,
+            SphereInteractionBlock(hidden_channels, int_emb_size,
+                                   basis_emb_size_dist, basis_emb_size_angle,
+                                   basis_emb_size_torsion, num_spherical, num_radial,
                                    num_before_skip, num_after_skip, act)
             for _ in range(num_blocks)
         ])
@@ -194,46 +188,25 @@ class SphereNetSigmaModel(nn.Module):
 
     def forward(self, data: Data) -> torch.Tensor:
         pos, z = data.pos, data.z
-        i, j = data.edge_index[1], data.edge_index[0]
-        idx_i, idx_j, idx_k = data.tri_idx_i, data.tri_idx_j, data.tri_idx_k
-        idx_kj, idx_ji = data.tri_idx_kj, data.tri_idx_ji
-        idx_l, has_l = data.tor_idx_l, data.tor_has_l
-        # Stored as int32 on disk to shrink the cache (see PROVENANCE.md
-        # Bug #7); cast to int64 here because torch_geometric's `scatter`
-        # (and, on some torch_geometric versions, advanced indexing on
-        # CUDA) requires int64 index tensors.
-        idx_i, idx_j, idx_k = idx_i.long(), idx_j.long(), idx_k.long()
-        idx_kj, idx_ji = idx_kj.long(), idx_ji.long()
-        idx_l = idx_l.long()
+        num_nodes = pos.size(0)
+
+        dist, angle, torsion, i, j, idx_kj, idx_ji = xyz_to_dat(
+            pos, data.edge_index, num_nodes, use_torsion=True
+        )
 
         z_emb = self.z_embed(z.clamp(max=MAX_Z))
         h_atom = self.input_proj(torch.cat([data.x, z_emb], dim=-1))
 
-        dist = data.edge_weight
-
-        # (distance, angle) channel: DimeNet++ convention.
-        pos_jk = pos[idx_j] - pos[idx_k]
-        pos_ij = pos[idx_i] - pos[idx_j]
-        a = (pos_ij * pos_jk).sum(dim=-1)
-        b = torch.cross(pos_ij, pos_jk, dim=-1).norm(dim=-1)
-        angle = torch.atan2(b, a)
-
-        # torsion channel: proper dihedral l-k-j-i (0 where has_l is False;
-        # masked out via the sigmoid gate falling back to 1 in that case).
-        torsion = compute_torsion(pos, idx_l, idx_k, idx_j, idx_i)
-        torsion = torch.where(has_l, torsion, torch.zeros_like(torsion))
-
         rbf = self.rbf(dist)
-        sbf = self.sbf(dist, angle, idx_kj)
-        tbf = self.tbf(torsion)
+        sbf = self.angle_emb(dist, angle, idx_kj)
+        tbf = self.torsion_emb(dist, angle, torsion, idx_kj)
 
         x = self.emb(h_atom, rbf, i, j)
-        P = self.output_blocks[0](x, rbf, i, num_nodes=pos.size(0))
+        P = self.output_blocks[0](x, rbf, i, num_nodes=num_nodes)
 
         for interaction_block, output_block in zip(self.interaction_blocks, self.output_blocks[1:]):
-            x = interaction_block(x, rbf, sbf, tbf, has_l, idx_kj, idx_ji)
+            x = interaction_block(x, rbf, sbf, tbf, idx_kj, idx_ji)
             x = self.dropout(x)
-            P = P + output_block(x, rbf, i, num_nodes=pos.size(0))
+            P = P + output_block(x, rbf, i, num_nodes=num_nodes)
 
         return F.softplus(self.readout(P))
-

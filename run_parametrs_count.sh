@@ -1,5 +1,5 @@
 #!/bin/bash
-#SBATCH --job-name=sigma_benchmark_3d
+#SBATCH --job-name=param_count
 #SBATCH --partition=aichem
 #SBATCH --nodelist=aihub
 #SBATCH --nodes=1
@@ -7,8 +7,8 @@
 #SBATCH --gres=gpu:1
 #SBATCH --mem=64G
 #SBATCH --time=24:00:00
-#SBATCH --output=logs/benchmark_3d_%j.out
-#SBATCH --error=logs/benchmark_3d_%j.err
+#SBATCH --output=logs/param_test_mace_spherenet_%j.out
+#SBATCH --error=logs/param_test_mace_spherenet_%j.err
 
 # ─────────────────────────────────────────────────────────────────────────────
 # 3D-only benchmark: geometric graph built from 3D coordinates (radius graph
@@ -31,14 +31,10 @@ conda activate sigma
 
 cd /mnt/tank/scratch/ikarpushkina/sigma/ASPEN2D/ASPEN
 
-python -m scripts.count_params --configs-dir configs/3d --auto-tune
+#python -m scripts.count_params --configs-dir configs/3d --auto-tune
+
+#python tune_expensive_models.py --model mace
+
+python -m scripts.count_params --configs-dir configs/3d
 
 python -m pytest tests/test_param_budget_3d.py tests/test_forward_shapes_3d.py -v
-
-python -m pytest tests/ -q -k "unimol and not pretrained"
-
-
-python -m pytest tests/test_unimol_pretrained_smoke.py -q
-
-
-python -m scripts.check_unimol_tools_api

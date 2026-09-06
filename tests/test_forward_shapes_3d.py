@@ -14,12 +14,29 @@ and spherical-harmonic basis functions) that takes several seconds per
 instantiation regardless of `hidden_channels`; this is a test-speed
 concern only; production configs (`configs/3d/*.yaml`) use the papers'
 own defaults (`num_spherical=7`, `num_radial=6`).
+
+REVISION NOTE: toy molecules used to sample atomic numbers uniformly
+from Z in [1, 10) (`torch.randint(1, 10, ...)`), which can produce
+elements (e.g. He, Li) outside this dataset's real element vocabulary
+(`models_3d.mace.ELEMENTS_PRESENT`, 25 elements). MACE's
+`EquivariantProductBasisBlock` requires atom-type one-hot indices
+(`z_to_index`, built from that real vocabulary), so a toy Z not in the
+vocabulary raised `RuntimeError: Class values must be non-negative`
+(from `F.one_hot` on a -1 "not found" index) -- not a bug in the model,
+but a test fixture generating chemically-arbitrary atoms MACE was never
+meant to handle. Fixed: toy `z` is now sampled from
+`models_3d.mace.ELEMENTS_PRESENT` (mapped to real atomic numbers via
+`constants.ELEMENT_TO_Z`), so every toy molecule is restricted to
+elements that actually occur in this benchmark's dataset -- meaningful
+for every architecture, not just MACE.
 """
 import torch
 from torch_geometric.data import Data, Batch
 
 from src.models import MODEL_REGISTRY_3D
+from src.data.constants import ELEMENT_TO_Z
 from src.data.constants_3d import N_NODE_FEAT_3D
+from src.models.models_3d.mace import ELEMENTS_PRESENT
 
 _MODEL_KWARGS = {
     "schnet": dict(hidden_channels=32, num_filters=32, num_interactions=2),
@@ -28,12 +45,18 @@ _MODEL_KWARGS = {
     "dimenet_pp": dict(hidden_channels=32, out_emb_channels=32, num_blocks=2,
                        num_radial=4, num_spherical=3, pp=True),
     "spherenet": dict(hidden_channels=32, out_emb_channels=32, num_blocks=2,
-                      num_radial=4, num_spherical=3, num_torsional=2),
+                      num_radial=4, num_spherical=3),
     "egnn": dict(hidden=32, num_layers=2),
     "torchmdnet": dict(hidden=32, num_layers=2, num_heads=4, num_rbf=8),
     "unimol": dict(hidden=32, num_layers=2, num_heads=4, num_kernels=8),
     "mace": dict(hidden=16, num_layers=2, num_rbf=8),
 }
+
+# Restrict toy atomic numbers to this dataset's real element vocabulary
+# (see REVISION NOTE above) -- required by MACE, and meaningful for every
+# other architecture too (no model in this benchmark needs to handle
+# elements that never actually occur in the data).
+_PRESENT_Z = torch.tensor(sorted(ELEMENT_TO_Z[e] for e in ELEMENTS_PRESENT))
 
 
 def _toy_molecule(n: int, seed: int) -> Data:
@@ -51,7 +74,8 @@ def _toy_molecule(n: int, seed: int) -> Data:
         pos[k] = pos[k - 1] + step
     pos += 0.05 * torch.randn(n, 3, generator=g)
 
-    z = torch.randint(1, 10, (n,), generator=g)
+    z_idx = torch.randint(0, len(_PRESENT_Z), (n,), generator=g)
+    z = _PRESENT_Z[z_idx]
     x = torch.rand(n, N_NODE_FEAT_3D, generator=g)
 
     from src.data.geometry_3d import radius_graph_single, build_triplets, build_torsions

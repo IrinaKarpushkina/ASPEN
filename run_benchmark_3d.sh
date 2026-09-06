@@ -1,14 +1,14 @@
 #!/bin/bash
 #SBATCH --job-name=sigma_benchmark_3d
 #SBATCH --partition=aichem
-#SBATCH --nodelist=aihub
+#SBATCH --nodelist=aichem
 #SBATCH --nodes=1
 #SBATCH --ntasks-per-node=4
 #SBATCH --gres=gpu:1
-#SBATCH --mem=64G
-#SBATCH --time=168:00:00
-#SBATCH --output=logs/benchmark_3d_%j.out
-#SBATCH --error=logs/benchmark_3d_%j.err
+#SBATCH --mem=32G
+#SBATCH --time=72:00:00
+#SBATCH --output=logs/spherenet_%j.out
+#SBATCH --error=logs/spherenet_%j.err
 
 # ─────────────────────────────────────────────────────────────────────────────
 # 3D-only benchmark: geometric graph built from 3D coordinates (radius graph
@@ -39,7 +39,7 @@ nvidia-smi || true
 
 #MODELS="${MODELS:-schnet}"
 #MODELS="${MODELS:-schnet painn dimenet dimenet_pp spherenet egnn torchmdnet mace unimol}"
-MODELS="dimenet dimenet_pp spherenet unimol"
+MODELS="spherenet"
 SEEDS="${SEEDS:-0 1 2}"
 
 echo "Models: $MODELS"
@@ -59,7 +59,7 @@ for model in $MODELS; do
     fi
 
     for seed in $SEEDS; do
-        result_file="results/metrics/${model}_seed${seed}_mse.json"
+        result_file="results/metrics/metrics_3d/${model}_seed${seed}_mse.json"
         if [ -f "$result_file" ]; then
             echo "SKIP: $result_file already exists"
             continue
@@ -89,7 +89,7 @@ echo "Aggregating results..."
 # the 2D and 3D benchmarks with different --output-dir values, if you want
 # them aggregated separately by default.
 python -m scripts.aggregate_results \
-    --metrics-dir results/metrics \
+    --metrics-dir results/metrics/metrics_3d \
     --loss mse \
     --sort emd_raw \
     --csv results/comparison_table_3d.csv

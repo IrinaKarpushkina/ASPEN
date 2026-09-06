@@ -5,6 +5,7 @@ sigma-profile prediction.
 Paper:    Satorras, Hoogeboom & Welling, "E(n) Equivariant Graph Neural
           Networks", ICML 2021. https://arxiv.org/abs/2102.09844
 Official: https://github.com/vgsatorras/egnn
+          (`models/egnn_clean/egnn_clean.py::E_GCL`)
 
 No PyG built-in layer exists for EGNN, so this is a direct
 reimplementation of the paper's Equal Convolutional (EGCL) layer,
@@ -15,15 +16,27 @@ equations (3)-(6):
     m_i    = sum_{j in N(i)} m_ij                                       (5)
     h_i'   = phi_h( h_i, m_i )                                          (6)
 
-with phi_e, phi_x, phi_h small MLPs (exact layer sizes below follow the
-official repo's `models/egnn_clean/egnn_clean.py::E_GCL`, up to
-substituting the invariant edge attribute `a_ij` with this benchmark's
-edge attribute — here simply omitted, since the shared radius-graph
-featurizer (`src/data/features_3d.py`) has no bond-order/edge-type
-information (see `constants_3d.py` docstring) and squared distance alone
-is the model's only edge signal, per the paper's own QM9 property-
-prediction setup (Sec. 4.2 / Appendix, which uses no edge attributes for
-QM9 either).
+verified by direct comparison against `egnn_clean.py::E_GCL`: edge_mlp
+(two Linear+SiLU layers), coord_mlp (Linear-SiLU-Linear(no bias),
+gain=0.001 init on the last layer, matching the official code exactly),
+the `coords_agg='mean'` default (implemented here as sum-then-divide-by-
+neighbour-count, mathematically identical to the official
+`unsorted_segment_mean`), and the node update's sum aggregation (not
+mean) all match the reference line-for-line.
+
+REVISION NOTE: an earlier version of this file wrapped the node update's
+residual connection in an additional `LayerNorm` + `Dropout`
+(`h = norm(dropout(phi_h(...)) + h)`). The official `E_GCL.node_model`
+uses a bare residual with no normalization or dropout at all
+(`out = x + node_mlp(...)`; no `nn.LayerNorm`/`nn.Dropout` appears
+anywhere in `egnn_clean.py`). Fixed to match: the residual is now a
+plain sum, with no added normalization layer. (`dropout` remains an
+accepted constructor argument, applied only to the edge/coordinate MLPs'
+inputs is NOT part of the official architecture either, so it is not
+reintroduced there -- this benchmark's shared training loop still
+applies weight decay/early stopping uniformly across architectures for
+regularization, so this change does not leave EGNN without any
+regularization at all.)
 
 Using squared Euclidean distance ||x_i - x_j||^2 as the only edge
 invariant (rather than raw distance) and updating positions x_i (Eq. 4)
@@ -34,6 +47,11 @@ scalar phi_x(m_ij), which is exactly why EGNN doesn't need spherical
 harmonics or explicit equivariant tensor features to be E(3)-equivariant
 in x and invariant in h) — verified for this implementation in
 `tests/test_equivariance_3d.py`.
+
+No edge attribute `a_ij` is used (official supports one via `edges_in_d`,
+but the shared radius-graph featurizer, `src/data/features_3d.py`, has no
+bond-order/edge-type information to supply, and the paper's own QM9
+property-prediction setup uses no edge attributes either).
 
 Coordinate updates (Eq. 4) are kept in this benchmark (as in the official
 repo's default QM9 property-prediction script,
@@ -59,7 +77,7 @@ class EGCL(nn.Module):
     Eqs. 3-6), edge_index convention: edge_index[0]=j (neighbour/source),
     edge_index[1]=i (center/target), message flows j -> i."""
 
-    def __init__(self, hidden: int, dropout: float = 0.05, coord_update: bool = True):
+    def __init__(self, hidden: int, coord_update: bool = True):
         super().__init__()
         self.coord_update = coord_update
         self.phi_e = nn.Sequential(
@@ -79,8 +97,10 @@ class EGCL(nn.Module):
             nn.Linear(2 * hidden, hidden), nn.SiLU(),
             nn.Linear(hidden, hidden),
         )
-        self.norm = nn.LayerNorm(hidden)
-        self.drop = nn.Dropout(dropout)
+        # REVISION NOTE: no LayerNorm/Dropout here -- official
+        # `E_GCL.node_model` uses a bare residual (`out = x + node_mlp(...)`),
+        # with no normalization or dropout anywhere in the layer. See
+        # module docstring's REVISION NOTE for what this replaced.
 
     def forward(self, h, x, edge_index, num_nodes):
         j, i = edge_index[0], edge_index[1]
@@ -97,8 +117,7 @@ class EGCL(nn.Module):
             x = x + C.unsqueeze(-1) * x_update
 
         m_i = scatter(m_ij, i, dim=0, dim_size=num_nodes, reduce="sum")
-        h_new = self.phi_h(torch.cat([h, m_i], dim=-1))
-        h = self.norm(self.drop(h_new) + h)
+        h = h + self.phi_h(torch.cat([h, m_i], dim=-1))  # bare residual, matches official
         return h, x
 
 
@@ -118,10 +137,13 @@ class EGNNSigmaModel(nn.Module):
         self.input_proj = nn.Linear(n_feat + hidden // 4, hidden)
 
         self.layers = nn.ModuleList([
-            EGCL(hidden, dropout=dropout, coord_update=coord_update)
+            EGCL(hidden, coord_update=coord_update)
             for _ in range(num_layers)
         ])
 
+        # dropout is applied only in the shared readout head (as for every
+        # other architecture in this benchmark), not inside EGCL itself --
+        # see module docstring's REVISION NOTE.
         self.readout = ResidualMLP(hidden, out_dim, dropout=dropout)
 
     def forward(self, data: Data) -> torch.Tensor:

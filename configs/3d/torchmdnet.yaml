@@ -2,7 +2,7 @@ defaults: base.yaml
 
 model:
   name: torchmdnet
-  hidden: 104            # auto-tuned via scripts.count_params --auto-tune -> 714,505 params (+2.07%)
+  hidden: 112
   num_layers: 4
   num_heads: 8
   dropout: 0.05
