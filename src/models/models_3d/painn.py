@@ -52,6 +52,24 @@ that SchNet and PaiNN are given the exact same distance-embedding
 message/update) rather than the radial-basis choice. The smooth cosine
 cutoff, in contrast, does match the paper (and the official SchNetPack
 `CosineCutoff`) exactly.
+
+KNOWN FIDELITY GAP (found on post-hoc review against the official
+SchNetPack implementation, NOT fixed in the runs this benchmark reports
+— see PROVENANCE.md): the official `PaiNNMixing` computes the vector
+norm with a numerical-stability epsilon, `sqrt(sum(mu_V**2) + 1e-8)`
+(`schnetpack/representation/painn.py::PaiNNMixing.forward`). This
+implementation instead uses a plain `torch.norm(dim=-1)`, with no
+epsilon. Since the vector channel `v` is initialised to all zeros at
+the start of the network, the very first PaiNNMixing call in every
+forward pass computes `norm()` of an exact zero vector: the value is
+correct (0), but the gradient of `torch.norm` at exactly zero is
+undefined/NaN in PyTorch. In practice this did not visibly break the
+reported training runs (no NaN losses observed), likely because by the
+time gradients flow back through this op enough interaction blocks have
+already added a nonzero component to v — but this is not guaranteed in
+general and should be treated as a latent numerical fragility, not a
+verified-safe design choice. NOT corrected in the code backing this
+benchmark's reported results; would need re-training to fix.
 """
 
 import torch

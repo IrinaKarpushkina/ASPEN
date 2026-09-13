@@ -5,10 +5,10 @@
 #SBATCH --nodes=1
 #SBATCH --ntasks-per-node=4
 #SBATCH --gres=gpu:1
-#SBATCH --mem=32G
-#SBATCH --time=72:00:00
-#SBATCH --output=logs/spherenet_%j.out
-#SBATCH --error=logs/spherenet_%j.err
+#SBATCH --mem=64G
+#SBATCH --time=172:00:00
+#SBATCH --output=logs/add_seed_%j.out
+#SBATCH --error=logs/add_seed_%j.err
 
 # ─────────────────────────────────────────────────────────────────────────────
 # 3D-only benchmark: geometric graph built from 3D coordinates (radius graph
@@ -38,9 +38,10 @@ echo "Node: $(hostname)"
 nvidia-smi || true
 
 #MODELS="${MODELS:-schnet}"
-#MODELS="${MODELS:-schnet painn dimenet dimenet_pp spherenet egnn torchmdnet mace unimol}"
-MODELS="spherenet"
-SEEDS="${SEEDS:-0 1 2}"
+MODELS="${MODELS:-schnet painn dimenet dimenet_pp spherenet egnn torchmdnet mace unimol}"
+#SEEDS="${SEEDS:-0 1 2}"
+SEEDS="${SEEDS:-3 4 5}"
+
 
 echo "Models: $MODELS"
 echo "Seeds:  $SEEDS"

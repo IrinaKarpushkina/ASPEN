@@ -307,24 +307,39 @@ one-paragraph summary of what, if anything, deviates from the paper.
   both from the same `DimeNetSigmaModel` class, a single `pp` flag toggle.
 
 ### SphereNet — `src/models/models_3d/spherenet.py`
-- Paper: Liu, Wang, Liu, Lin, Zhang, Oztekin & Ji, *"Spherical Message
-  Passing for 3D Molecular Graphs"*, ICLR 2022.
+- Paper: Liu, Wang, Liu, Lin, Zhang, Oztekin & Ji, "Spherical Message
+  Passing for 3D Molecular Graphs", ICLR 2022.
   https://arxiv.org/abs/2102.05013
 - Official: https://github.com/divelab/DIG
-- **Explicit, documented simplification** (see the file's full docstring
-  for the exact reasoning): reuses DimeNet++'s (distance, angle) basis
-  unchanged, and adds an explicit torsion (dihedral) channel — a 4th atom
-  found per triplet (`src/data/geometry_3d.py::build_torsions`), embedded
-  with a small Fourier basis and used to multiplicatively gate the
-  (distance, angle) spherical basis — rather than reproducing the
-  official DIG repo's specific local-reference-frame torsion index
-  construction (which additionally requires `torch_sparse`/
-  `torch_scatter`). This is a reduced-fidelity SphereNet: it genuinely
-  gives the model a third (torsion) geometric channel distance+angle-only
-  architectures lack, but is not a byte-for-byte reproduction of the
-  official implementation's basis functions. Report it as such (e.g.
-  "SphereNet-style spherical message passing", not "SphereNet
-  (official)") in any write-up.
+- STATUS UPDATE (supersedes this section's earlier text, which described
+  an older revision of this file): the geometry preprocessing
+  (`src/data/geometry_spherenet.py::xyz_to_dat`, including the official
+  torsion-angle definition via a second neighbour of the middle atom and
+  its `scatter(reduce='min')` canonicalisation) and the basis functions
+  (`src/data/spherenet_features.py::dist_emb/angle_emb/torsion_emb`) are
+  now VERBATIM ports of the official DIG source
+  (`dig/threedgraph/utils/geometric_computing.py`,
+  `dig/threedgraph/method/spherenet/features.py`), confirmed by direct
+  line-by-line comparison against the official repository. The
+  interaction block (`SphereInteractionBlock`) likewise mirrors the
+  official `update_e` exactly (distance/angle/torsion bases projected
+  and multiplied, no gating, no fallback for triplets lacking a further
+  neighbour). `torch_scatter`/`torch_sparse` are now dependencies for
+  this architecture specifically (see requirements-3d.txt).
+- The ONE remaining, deliberate difference from the official
+  architecture: the atom-level readout reuses
+  `torch_geometric.nn.models.dimenet.OutputPPBlock` (the same block used
+  by `models_3d/dimenet.py`) rather than the official SphereNet's own
+  `update_v` module. The two are structurally analogous (up-project →
+  hidden layers + activation → final linear) but not the same code; this
+  is a scope/integration choice for consistency with this benchmark's
+  other DimeNet-family models, not a fidelity gap in the geometric
+  message-passing core.
+- Given the above, this may be reported as "SphereNet" without the
+  earlier "reduced-fidelity"/"SphereNet-style" caveat, EXCEPT for the
+  readout-block difference noted above, which should still be mentioned
+  if citing this as a byte-for-byte reproduction of the official
+  architecture end-to-end.
 
 ### EGNN — `src/models/models_3d/egnn.py`
 - Paper: Satorras, Hoogeboom & Welling, *"E(n) Equivariant Graph Neural

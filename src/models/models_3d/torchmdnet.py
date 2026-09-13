@@ -41,6 +41,23 @@ diverging from the reference:
      attention layer -- a different (not wrong per se, but not what the
      paper/official code does) parametrization. Replaced with the exact
      fused structure above; `PaiNNMixing` is no longer used here.
+  3. KNOWN FIDELITY GAP (found on post-hoc review, NOT fixed in the runs
+     this benchmark reports — see PROVENANCE.md): the official
+     `EquivariantMultiHeadAttention.forward` applies the layer's own
+     activation function to both the key-distance and value-distance
+     filter projections before use: `dk = self.act(self.dk_proj(f_ij))`,
+     `dv = self.act(self.dv_proj(f_ij))`
+     (`torchmd-net/torchmdnet/models/torchmd_et.py`). This
+     implementation's `EquivariantAttention.forward` uses the raw linear
+     output of `dk_proj`/`dv_proj` directly, with no activation applied.
+     Net effect: the distance-to-filter mapping in this implementation is
+     purely linear (in `rbf`) where the official one is a nonlinear
+     (SiLU-gated, given the benchmark's shared activation) function of
+     distance. This changes the expressivity of the geometric gating
+     term but not the overall architecture family. NOT corrected in the
+     code backing this benchmark's reported results; would need
+     re-training to fix.
+
 
 Additionally, the official default configuration (`neighbor_embedding=
 True`) applies an initial `NeighborEmbedding` step (paper Eq. 3) before

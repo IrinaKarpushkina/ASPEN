@@ -53,9 +53,7 @@ mattered, and §2 for what each model does instead.
 All 9 are matched to the SAME ~700,000-parameter budget as the 2D models
 (±5%, see `results/param_budget_table_3d.csv`), so 2D and 3D
 architectures are comparable to each other too, not just within each
-regime. **SphereNet and MACE are explicitly-documented, reduced-fidelity
-reimplementations** (see `PROVENANCE.md` §2.5) — read that before citing
-either as a byte-for-byte reproduction of its paper. **Uni-Mol is trained
+regime. **Uni-Mol is trained
 from scratch here** (no pretrained checkpoint is used or available in
 this pipeline — see `PROVENANCE.md` §2.5, "Uni-Mol").
 
