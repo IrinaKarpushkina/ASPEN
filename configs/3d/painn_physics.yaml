@@ -1,0 +1,17 @@
+defaults: base.yaml
+features: enhanced
+model:
+  name: painn_physics
+  input_dim: 22
+  hidden: 192
+  num_layers: 4
+  dropout: 0.05
+loss:
+  name: physics
+  w_profile: 1.0
+  w_area: 0.25
+  w_charge: 0.25
+  w_moments: 0.10
+  w_smooth: 0.05
+  w_wasserstein: 0.25
+  w_polar: 0.50

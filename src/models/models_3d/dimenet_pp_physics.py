@@ -1,0 +1,1 @@
+from .dimenet_pp_physics_common import DimeNetPPEnhancedPhysics as DimeNetPPPhysics

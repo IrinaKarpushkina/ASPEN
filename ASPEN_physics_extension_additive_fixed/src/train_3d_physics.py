@@ -1,0 +1,263 @@
+"""Training entrypoint for experiments A-F.
+
+This is deliberately separate from ``src/train_3d.py``.  The original
+benchmark and its reported baseline are not modified.  The same dataset,
+split, batch protocol, optimizer, scheduler, checkpoint metric, and
+``evaluate()`` implementation are reused.
+"""
+from __future__ import annotations
+
+import argparse
+import json
+import logging
+import os
+import random
+import time
+
+import numpy as np
+import torch
+from torch_geometric.loader import DataLoader
+
+from .config import load_config
+from .data.dataset_3d import ChaosParquet3DDataset
+from .data.dataset_3d_enhanced import EnhancedChaosParquet3DDataset
+from .evaluate import CHECKPOINT_METRIC, evaluate
+from .losses import MSELoss
+from .physics_extension import (
+    DimeNetPPEnhanced,
+    DimeNetPPPhysics,
+    DimeNetPPGlobalPhysics,
+    DimeNetPPDeltaPhysics,
+    PaiNNPhysics,
+)
+from .physics_extension.physics import PhysicsSigmaLoss
+
+logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s")
+logger = logging.getLogger(__name__)
+
+_MODELS_NEEDING_TRIPLETS = {"dimenet_pp_enhanced", "dimenet_pp_physics", "dimenet_pp_enhanced_physics", "dimenet_pp_global", "dimenet_pp_delta"}
+
+
+def set_seed(seed: int):
+    random.seed(seed)
+    np.random.seed(seed)
+    torch.manual_seed(seed)
+    torch.cuda.manual_seed_all(seed)
+
+
+def build_model(cfg: dict):
+    name = cfg["model"]["name"]
+    mc = dict(cfg["model"])
+    mc.pop("name", None)
+    mc.pop("n_params_target", None)
+    registry = {
+        "dimenet_pp_enhanced": DimeNetPPEnhanced,
+        "dimenet_pp_physics": DimeNetPPPhysics,
+        "dimenet_pp_enhanced_physics": DimeNetPPPhysics,
+        "dimenet_pp_global": DimeNetPPGlobalPhysics,
+        "dimenet_pp_delta": DimeNetPPDeltaPhysics,
+        "painn_physics": PaiNNPhysics,
+    }
+    if name not in registry:
+        raise ValueError(f"Unknown physics experiment model: {name}")
+    return registry[name](**mc), name
+
+
+def train_profile_scale(dataset) -> float:
+    """Mean target squared magnitude over TRAIN only."""
+    total = 0.0
+    count = 0
+    for d in dataset._data_list:
+        y = d.y.float()
+        total += float(y.square().sum().item())
+        count += int(y.numel())
+    return max(total / max(count, 1), 1e-12)
+
+
+def main():
+    ap = argparse.ArgumentParser()
+    ap.add_argument("--config", required=True)
+    ap.add_argument("--seed", type=int, default=0)
+    ap.add_argument("--output-dir", default="results/physics")
+    ap.add_argument("--force-recompute-cache", action="store_true")
+    ap.add_argument("--smoke", action="store_true", help="Run one training epoch only.")
+    args = ap.parse_args()
+
+    cfg = load_config(args.config)
+    set_seed(args.seed)
+    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+    logger.info("Device: %s", device)
+
+    dc = cfg["data"]
+    tc = dict(cfg["training"])
+    name = cfg["model"]["name"]
+    features = cfg.get("features", "base")
+    if features not in {"base", "enhanced"}:
+        raise ValueError(f"features must be 'base' or 'enhanced', got {features}")
+
+    ds_cls = EnhancedChaosParquet3DDataset if features == "enhanced" else ChaosParquet3DDataset
+    ds_kwargs = dict(
+        cache_dir=dc.get("cache_dir"),
+        force_recompute=args.force_recompute_cache,
+        compute_triplets=name in _MODELS_NEEDING_TRIPLETS,
+        require_provided_coords=True,
+    )
+    train_ds = ds_cls(dc["train_path"], **ds_kwargs)
+    val_ds = ds_cls(dc["val_path"], **ds_kwargs)
+    test_ds = ds_cls(dc["test_path"], **ds_kwargs)
+
+    bs = tc.get("batch_size", 24)
+    nw = tc.get("num_workers", 4)
+    train_loader = DataLoader(train_ds, batch_size=bs, shuffle=True, num_workers=nw, pin_memory=True)
+    val_loader = DataLoader(val_ds, batch_size=bs, shuffle=False, num_workers=nw, pin_memory=True)
+    test_loader = DataLoader(test_ds, batch_size=bs, shuffle=False, num_workers=nw, pin_memory=True)
+
+    model, model_name = build_model(cfg)
+    model = model.to(device)
+    n_params = sum(p.numel() for p in model.parameters() if p.requires_grad)
+    target = cfg["model"].get("n_params_target", cfg.get("target_params"))
+    if target:
+        logger.info("%s: %d params; target=%d; diff=%.2f%%", model_name, n_params, target, abs(n_params-target)/target*100)
+    else:
+        logger.info("%s: %d params", model_name, n_params)
+
+    bin_weights_np = train_ds.bin_weights_numpy()
+    bin_weights = torch.tensor(bin_weights_np, dtype=torch.float32, device=device)
+    loss_cfg = cfg.get("loss", {})
+    loss_name = loss_cfg.get("name", "physics")
+    if loss_name == "mse":
+        criterion = MSELoss()
+    elif loss_name == "physics":
+        profile_scale = train_profile_scale(train_ds)
+        logger.info("TRAIN-only profile MSE scale: %.8g", profile_scale)
+        criterion = PhysicsSigmaLoss(
+            bin_weights=bin_weights,
+            profile_scale=profile_scale,
+            w_profile=loss_cfg.get("w_profile", 1.0),
+            w_area=loss_cfg.get("w_area", 0.25),
+            w_charge=loss_cfg.get("w_charge", 0.25),
+            w_moments=loss_cfg.get("w_moments", 0.10),
+            w_smooth=loss_cfg.get("w_smooth", 0.05),
+            w_wasserstein=loss_cfg.get("w_wasserstein", 0.25),
+            w_polar=loss_cfg.get("w_polar", 0.50),
+        ).to(device)
+    else:
+        raise ValueError(f"Unknown loss: {loss_name}")
+
+    # One diagnostic forward before training. This catches shape/device/numerical
+    # problems before spending hours on a full run.
+    first_batch = next(iter(DataLoader(train_ds, batch_size=min(bs, 4), shuffle=False, num_workers=0)))
+    first_batch = first_batch.to(device)
+    with torch.no_grad():
+        with torch.autocast(device_type="cuda", enabled=(device.type == "cuda" and tc.get("use_amp", True))):
+            first_pred = model(first_batch)
+    if first_pred.shape != first_batch.y.shape:
+        raise RuntimeError(f"Prediction shape {tuple(first_pred.shape)} != target shape {tuple(first_batch.y.shape)}")
+    if not torch.isfinite(first_pred).all():
+        raise RuntimeError("Non-finite values in initial model prediction")
+    logger.info("Initial forward OK: pred=%s min=%.6g max=%.6g", tuple(first_pred.shape), float(first_pred.min()), float(first_pred.max()))
+    if isinstance(criterion, PhysicsSigmaLoss):
+        with torch.no_grad():
+            components = criterion.components(first_pred.float(), first_batch.y.float())
+        logger.info("Initial physics loss components: %s", {k: float(v) for k, v in components.items()})
+
+    optimizer = torch.optim.AdamW(model.parameters(), lr=tc["lr"], weight_decay=tc["weight_decay"])
+    scheduler = torch.optim.lr_scheduler.CosineAnnealingWarmRestarts(
+        optimizer,
+        T_0=tc.get("scheduler_T0", 20),
+        T_mult=tc.get("scheduler_Tmult", 2),
+        eta_min=tc.get("eta_min", 1e-6),
+    )
+    use_amp = bool(tc.get("use_amp", True) and device.type == "cuda")
+    scaler = torch.amp.GradScaler("cuda", enabled=use_amp)
+    accum = int(tc.get("grad_accum_steps", 1))
+    max_epochs = 1 if args.smoke else int(tc["max_epochs"])
+    patience_limit = 1 if args.smoke else int(tc["patience"])
+
+    ckpt_dir = os.path.join(args.output_dir, "checkpoints")
+    metrics_dir = os.path.join(args.output_dir, "metrics")
+    os.makedirs(ckpt_dir, exist_ok=True)
+    os.makedirs(metrics_dir, exist_ok=True)
+    run_id = f"{name}_seed{args.seed}_{loss_name}"
+    ckpt_path = os.path.join(ckpt_dir, run_id + ".pt")
+
+    best = float("inf")
+    patience = 0
+    history = []
+
+    for epoch in range(max_epochs):
+        model.train()
+        train_loss = 0.0
+        n_batches = 0
+        optimizer.zero_grad(set_to_none=True)
+        t0 = time.time()
+
+        for step, data in enumerate(train_loader):
+            data = data.to(device, non_blocking=True)
+            with torch.autocast(device_type="cuda", enabled=use_amp):
+                loss = criterion(model(data), data.y) / accum
+            if not torch.isfinite(loss):
+                raise FloatingPointError(f"Non-finite training loss at epoch={epoch+1}, step={step+1}")
+            scaler.scale(loss).backward()
+            if (step + 1) % accum == 0 or (step + 1) == len(train_loader):
+                scaler.unscale_(optimizer)
+                torch.nn.utils.clip_grad_norm_(model.parameters(), tc.get("max_grad_norm", 1.0))
+                scaler.step(optimizer)
+                scaler.update()
+                optimizer.zero_grad(set_to_none=True)
+            train_loss += float(loss.item()) * accum
+            n_batches += 1
+
+        train_loss /= max(n_batches, 1)
+        scheduler.step(epoch + 1)
+        val_metrics = evaluate(model, val_loader, criterion, bin_weights_np, device, use_amp)
+        current = val_metrics[CHECKPOINT_METRIC]
+        history.append({"epoch": epoch + 1, "train_loss": train_loss, **val_metrics})
+        logger.info(
+            "[%s] epoch %d | train %.6g | val wMAE %.6g | R2 %.5f | EMD %.6g | %.1fs",
+            run_id, epoch + 1, train_loss, val_metrics["weighted_mae"],
+            val_metrics["weighted_r2"], val_metrics["emd_raw"], time.time() - t0,
+        )
+
+        if current < best:
+            best = current
+            patience = 0
+            torch.save({
+                "model_state_dict": model.state_dict(),
+                "optimizer_state_dict": optimizer.state_dict(),
+                "scheduler_state_dict": scheduler.state_dict(),
+                "epoch": epoch,
+                "val_metrics": val_metrics,
+                "config": cfg,
+                "n_params": n_params,
+            }, ckpt_path)
+        else:
+            patience += 1
+            if patience >= patience_limit:
+                logger.info("Early stopping at epoch %d", epoch + 1)
+                break
+
+    ckpt = torch.load(ckpt_path, map_location=device, weights_only=False)
+    model.load_state_dict(ckpt["model_state_dict"])
+    test_metrics = evaluate(model, test_loader, criterion, bin_weights_np, device, use_amp)
+    result = {
+        "run_id": run_id,
+        "model": name,
+        "loss": loss_name,
+        "seed": args.seed,
+        "features": features,
+        "n_params": n_params,
+        "best_epoch": ckpt["epoch"],
+        "val_metrics_at_best": ckpt["val_metrics"],
+        "test_metrics": test_metrics,
+        "history": history,
+    }
+    out = os.path.join(metrics_dir, run_id + ".json")
+    with open(out, "w") as f:
+        json.dump(result, f, indent=2)
+    logger.info("TEST: %s", test_metrics)
+    logger.info("Saved %s", out)
+
+
+if __name__ == "__main__":
+    main()
