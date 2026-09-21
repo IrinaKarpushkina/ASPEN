@@ -1,0 +1,36 @@
+defaults: base.yaml
+features: sasa
+training:
+  max_epochs: 200
+  patience: 45          # > длины цикла (40), иначе рестарт снова убьёт обучение
+  scheduler_T0: 40
+  scheduler_Tmult: 1    # циклы по 40 эпох: рестарты на 40, 80, 120, 160
+model:
+  name: sigma_dn_full
+  backbone: dimenet
+  input_dim: 25
+  hidden_channels: 118
+  out_emb_channels: 118
+  num_blocks: 3
+  int_emb_size: 32
+  basis_emb_size: 8
+  num_spherical: 7
+  num_radial: 6
+  num_before_skip: 1
+  num_after_skip: 2
+  num_output_layers: 2
+  dropout: 0.05
+  use_global: true
+  global_layers: 2
+  global_heads: 2       # 118 не делится на 4; hidden_channels должно делиться на global_heads
+  use_geom_area: true
+  neutral: false
+loss:            # MSE-доминантный: физические члены только как небольшая добавка
+  name: physics
+  w_profile: 1.0
+  w_area: 0.05
+  w_charge: 0.05
+  w_moments: 0.02
+  w_smooth: 0.01
+  w_wasserstein: 0.10
+  w_polar: 0.10

@@ -1,0 +1,23 @@
+defaults: base.yaml
+features: enhanced
+training:
+  max_epochs: 200
+  patience: 45          # > длины цикла (40), иначе рестарт снова убьёт обучение
+  scheduler_T0: 40
+  scheduler_Tmult: 1    # циклы по 40 эпох: рестарты на 40, 80, 120, 160
+model:
+  name: dimenet_pp_enhanced
+  input_dim: 22
+  hidden_channels: 118
+  out_emb_channels: 118
+  num_blocks: 3
+  int_emb_size: 32
+  basis_emb_size: 8
+  num_spherical: 7
+  num_radial: 6
+  num_before_skip: 1
+  num_after_skip: 2
+  num_output_layers: 2
+  dropout: 0.05
+loss:
+  name: mse
