@@ -31,7 +31,8 @@ from torch_geometric.utils import scatter, to_dense_batch
 from ..data.constants import DELTA_SIGMA
 from .backbones.painn_sigma import IsolatedPaiNNSigmaBackbone
 from .models import DimeNetPPExperimentBackbone
-from .physics import SIGMA_MAX, _moment_project
+from .physics import SIGMA_MAX
+from .physics_stable import moment_project_bisect
 
 logger = logging.getLogger(__name__)
 
@@ -117,7 +118,7 @@ class SigmaGeomHead(nn.Module):
                 Q = scatter(area * mean, batch, dim=0, dim_size=n_mol, reduce="sum")
                 A = scatter(area, batch, dim=0, dim_size=n_mol, reduce="sum")
                 mean = mean - (Q / A.clamp_min(1e-8))[batch]
-            p = _moment_project(logits, (mean / SIGMA_MAX).clamp(-0.98, 0.98))
+            p = moment_project_bisect(logits, (mean / SIGMA_MAX).clamp(-0.98, 0.98))
             return area.unsqueeze(-1) * p / DELTA_SIGMA
 
 

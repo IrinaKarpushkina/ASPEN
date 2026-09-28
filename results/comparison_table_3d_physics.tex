@@ -1,0 +1,13 @@
+\begin{table}[ht]
+\centering
+\caption{Controlled 2D-only comparison of GNN architectures (mean\,$\pm$\,std over seeds, MSE loss, matched parameter budget). \textbf{Bold} = best mean per metric.}
+\label{tab:benchmark_2d_mse}
+\small
+\begin{tabular}{l r c c c c c c c c c c }
+\toprule
+Model & $N_{\text{params}}$ & $R^2_w$ & wMAE & PolarMAE & Cosine & EMD & EMD$_\mathrm{norm}$ & Mol.MAE & Mol.EMD & Mol.Cos & Mol.PolMAE \\
+\midrule
+DIMENET_PP_ENHANCED & 718,872 & \textbf{0.9139$\pm$0.0001} & \textbf{0.1092$\pm$0.0001} & \textbf{0.0168$\pm$0.0000} & \textbf{0.9392$\pm$0.0000} & \textbf{0.0007$\pm$0.0000} & \textbf{0.0007$\pm$0.0000} & \textbf{0.4677$\pm$0.0006} & \textbf{0.0002$\pm$0.0000} & \textbf{0.9947$\pm$0.0000} & \textbf{0.2197$\pm$0.0001} \\
+\bottomrule
+\end{tabular}
+\end{table}

@@ -1,0 +1,51 @@
+# "Кухонная раковина": все идеи из литобзора, что реально нашли подтверждение
+# в реализации/диагностике этого чата, включены сразу. Порядок абляции см.
+# README_KITCHEN.md — сначала обучить это, потом гасить блоки по одному.
+defaults: base.yaml
+features: kitchen             # enhanced(22) + SASA(3) + RDKit-химия(7, НЕ из координат)
+training:
+  max_epochs: 220
+  patience: 50
+  scheduler_T0: 40
+  scheduler_Tmult: 1
+model:
+  name: sigma_kitchen_sink
+  backbone: dimenet
+  input_dim: 32                # 22 (enhanced) + 3 (sasa) + 7 (rdkit chem, см. dataset_3d_kitchen.py)
+  hidden_channels: 118
+  out_emb_channels: 118
+  num_blocks: 4                 # 3 -> 4: чуть глубже локальный энкодер (осторожно, doc предупреждает
+                                 # про oversmoothing на бОльших глубинах; DimeNet++ output-блоки уже
+                                 # суммируются со всех блоков, это частично защищает)
+  int_emb_size: 32
+  basis_emb_size: 8
+  num_spherical: 7
+  num_radial: 6
+  num_before_skip: 1
+  num_after_skip: 2
+  num_output_layers: 2
+  dropout: 0.05
+  use_bond_graph: true          # RDKit bond-граф; ПРОВЕРЬТЕ check_bond_graph_coverage.py сначала
+  bond_layers: 2
+  use_global: true              # dense-attention по всей молекуле, без cutoff 5A
+  global_layers: 2
+  global_heads: 2                # 118 не делится на 4, делится на 2
+  use_element_prior: false       # выключено по умолчанию: не хотим множить неопределённость сразу
+                                  # с bond-графом; включайте отдельным прогоном (--set model.use_element_prior=true)
+  use_geom_area: true            # площадь = SASA * exp(learned correction)
+  neutral: false                 # ceiling_analysis (часть B) на ваших данных: нейтральность НЕ
+                                  # выполняется (actual > shuffled) - не включать без пересчёта на train
+loss:
+  name: physics_v2
+  profile_loss: l1                 # согласовано с чекпоинт-метрикой wMAE
+  moments_mode: relative
+  w_profile: 1.0
+  w_area: 0.15
+  w_charge: 0.10
+  w_moments: 0.15
+  w_smooth: 0.05
+  w_wasserstein: 0.20
+  w_polar: 0.30
+  w_cos: 0.10
+  w_mol: 0.30
+  w_mol_cdf: 0.15

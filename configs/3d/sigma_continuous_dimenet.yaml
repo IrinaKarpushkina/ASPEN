@@ -1,0 +1,25 @@
+# Neural ODE (непрерывный DimeNet++, один переиспользуемый блок вместо N) +
+# функциональный декодер (Fourier-признаки sigma + MLP) поверх физической
+# головы (SASA-площадь + bisection-проекция момента, без изменений).
+# Сознательно БЕЗ bond-графа/global-attention/element-prior из kitchen_sink —
+# чтобы абляция отделила эффект ODE+decoder от них. См. README_CONTINUOUS.md.
+defaults: base.yaml
+features: sasa                  # только SASA (25 dim), не kitchen — для чистоты абляции
+training:
+  max_epochs: 220
+  patience: 50
+  scheduler_T0: 40
+  scheduler_Tmult: 1
+model:
+  name: sigma_continuous_dimenet
+  input_dim: 25
+  hidden_channels: 118
+  dropout: 0.05
+  use_geom_area: true
+  T: 1.0                        # горизонт интегрирования; если метрики хуже baseline — пробуйте
+                                 # увеличить T раньше, чем добавлять num_blocks/глубину
+  n_steps: 6                    # шагов RK4 (fallback); примерно как num_blocks=3-4 baseline'а
+  use_torchdiffeq: true         # true, если pip install torchdiffeq доступен на кластере —
+                                 # тогда используется адаптивный dopri5 вместо фиксированного RK4
+  solver: dopri5
+  n_fourier: 8                  # частот Fourier-кодирования sigma в декодере

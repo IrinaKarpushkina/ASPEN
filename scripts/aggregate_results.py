@@ -1,22 +1,22 @@
 """
-aggregate_results.py — собирает results/metrics/*.json в итоговую таблицу
+aggregate_results.py — собирает results/**/metrics/*.json в итоговую таблицу
 (mean +/- std по seed-ам) для статьи / Supplementary.
 
 Запуск:
     python -m scripts.aggregate_results --metrics-dir results/metrics --csv results/comparison_table_2d.csv
     python -m scripts.aggregate_results --metrics-dir results/metrics --sort emd_raw
 
-ВАЖНО (см. PROVENANCE.md, "Как был найден баг #1"): в предыдущей версии
-этого репозитория --metrics-dir имел значение по умолчанию, из-за чего
-однажды была случайно сгенерирована "2D"-таблица, фактически содержащая
-3D-данные — ошибка осталась незамеченной несколько недель, потому что
-ничто не сверяло, откуда реально взяты json-файлы.
+ОГРАНИЧЕНИЯ ПО LOSS УБРАНО НАМЕРЕННО:
+    Берутся ВСЕ *.json в --metrics-dir. Loss-метка читается из суффикса имени
+    файла (часть после последнего '_', напр. dimenet_pp_physics_seed0_physics.json
+    -> loss='physics'). Ключ группировки — (model, loss), поэтому прогоны с
+    разными loss живут в разных строках и не смешиваются. Если хочется
+    отфильтровать, используйте --loss physics (необязательный фильтр).
 
-Чтобы это не могло повториться:
-  1. --metrics-dir теперь ОБЯЗАТЕЛЬНЫЙ аргумент (нет дефолта).
-  2. Перед агрегацией скрипт проверяет поле "mode" во всех json (train.py
-     теперь всегда его записывает) и падает с ошибкой, если в одной папке
-     смешаны результаты разных режимов.
+Про provenance (см. PROVENANCE.md, "Как был найден баг #1"):
+    --metrics-dir обязателен (нет дефолта). Перед агрегацией скрипт проверяет
+    поле "mode" во всех json; при смешении режимов падает, если не передан
+    --allow-mixed-mode.
 """
 from __future__ import annotations
 import argparse
@@ -55,17 +55,31 @@ HIGHER_IS_BETTER = {
 }
 
 
+def loss_from_filename(path: str) -> str:
+    """Метка loss из имени файла: часть после последнего '_' в stem.
+
+    dimenet_pp_physics_seed0_physics.json -> 'physics'
+    dimenet_pp_enhanced_seed0_mse.json    -> 'mse'
+    """
+    stem = os.path.splitext(os.path.basename(path))[0]
+    return stem.rsplit("_", 1)[-1] if "_" in stem else "unknown"
+
+
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument(
         "--metrics-dir", required=True,
-        help="Папка с *_<loss>.json файлами. НЕТ значения по умолчанию "
+        help="Папка с json-файлами результатов. НЕТ значения по умолчанию "
              "намеренно — см. docstring этого файла.",
     )
-    parser.add_argument("--loss", default="mse")
+    parser.add_argument(
+        "--loss", default=None,
+        help="Опциональный фильтр по loss-метке из имени файла. "
+             "Если не задан — агрегируются ВСЕ файлы в папке.",
+    )
     parser.add_argument("--csv", default=None)
     parser.add_argument("--sort", default=None,
-                         help="Метрика для сортировки строк (напр. emd_raw, weighted_mae)")
+                        help="Метрика для сортировки строк (напр. emd_raw, weighted_mae)")
     parser.add_argument(
         "--allow-mixed-mode", action="store_true",
         help="Разрешить агрегацию, даже если json-файлы содержат разные "
@@ -74,16 +88,25 @@ def main():
     )
     args = parser.parse_args()
 
-    by_model = defaultdict(list)
+    # Ключ группировки: (model, loss_tag) — прогоны с разными loss-метками
+    # не смешиваются даже если model совпадает.
+    by_key = defaultdict(list)
     modes_seen = set()
-    for path in sorted(glob.glob(os.path.join(args.metrics_dir, f"*_{args.loss}.json"))):
+    losses_seen = set()
+
+    for path in sorted(glob.glob(os.path.join(args.metrics_dir, "*.json"))):
+        loss_tag = loss_from_filename(path)
+        if args.loss and loss_tag != args.loss:
+            continue
         with open(path) as f:
             r = json.load(f)
-        by_model[r["model"]].append(r)
+        by_key[(r["model"], loss_tag)].append(r)
         modes_seen.add(r.get("mode", "<missing>"))
+        losses_seen.add(loss_tag)
 
-    if not by_model:
-        print(f"No results found for loss='{args.loss}' in {args.metrics_dir}")
+    if not by_key:
+        print(f"No results found in {args.metrics_dir}"
+              + (f" for loss='{args.loss}'" if args.loss else ""))
         return
 
     if len(modes_seen) > 1 and not args.allow_mixed_mode:
@@ -98,10 +121,11 @@ def main():
               "an older train.py?). Cannot verify provenance for those files.")
 
     rows = []
-    for model, runs in sorted(by_model.items()):
+    for (model, loss_tag), runs in sorted(by_key.items()):
         seeds = sorted(r["seed"] for r in runs)
         row = {
             "model": model,
+            "loss": loss_tag,
             "mode": next(iter(modes_seen)) if len(modes_seen) == 1 else "mixed",
             "n_seeds": len(runs),
             "seeds": str(seeds),
@@ -123,21 +147,23 @@ def main():
         all_means = [r[f"{metric}_mean"] for r in rows]
         best_per_metric[metric] = max(all_means) if HIGHER_IS_BETTER[metric] else min(all_means)
 
-    sep = "-" * 130
+    sep = "-" * 136
     print(sep)
-    print(f"  Benchmark results (2D)  |  loss={args.loss}  |  dir: {args.metrics_dir}  |  mode(s): {modes_seen}")
+    print(f"  Benchmark results  |  dir: {args.metrics_dir}  |  loss filter: {args.loss or 'ALL'}  |  "
+          f"loss tag(s): {sorted(losses_seen)}  |  mode(s): {modes_seen}")
     print(f"  * = best mean for this metric")
     print(sep)
 
     col_w = 22
-    header = f"{'model':14s} {'n_params':>9s} {'seeds':>8s}"
+    header = f"{'model':14s} {'loss':>10s} {'n_params':>9s} {'seeds':>8s}"
     for m in ALL_METRICS:
         header += f"  {m:>{col_w}s}"
     print(header)
     print(sep)
 
     for row in rows:
-        line = f"{row['model']:14s} {row['n_params']:>9,} {str(row['seeds']):>8s}"
+        line = (f"{row['model']:14s} {row['loss']:>10s} "
+                f"{row['n_params']:>9,} {str(row['seeds']):>8s}")
         for metric in ALL_METRICS:
             mean = row[f"{metric}_mean"]
             std = row[f"{metric}_std"]
@@ -153,34 +179,32 @@ def main():
     for metric in ALL_METRICS:
         for row in rows:
             if abs(row[f"{metric}_mean"] - best_per_metric[metric]) < 1e-9:
-                counts[row["model"]] += 1
-    for model, cnt in sorted(counts.items(), key=lambda x: -x[1]):
+                counts[(row["model"], row["loss"])] += 1
+    for (model, loss_tag), cnt in sorted(counts.items(), key=lambda x: -x[1]):
         bar = "#" * cnt
-        print(f"  {model:14s}: {cnt:2d}/{len(ALL_METRICS)}  {bar}")
+        print(f"  {model}@{loss_tag:14s}: {cnt:2d}/{len(ALL_METRICS)}  {bar}")
 
     print()
 
     if args.csv:
         os.makedirs(os.path.dirname(os.path.abspath(args.csv)), exist_ok=True)
         fieldnames = (
-            ["model", "mode", "loss", "n_params", "n_seeds", "seeds", "best_epoch_mean"]
+            ["model", "loss", "mode", "n_params", "n_seeds", "seeds", "best_epoch_mean"]
             + [f"{m}_mean" for m in ALL_METRICS]
             + [f"{m}_std" for m in ALL_METRICS]
         )
         with open(args.csv, "w", newline="") as f:
             writer = csv.DictWriter(f, fieldnames=fieldnames, extrasaction="ignore")
             writer.writeheader()
-            for row in rows:
-                row["loss"] = args.loss
-                writer.writerow(row)
+            writer.writerows(rows)
         print(f"CSV saved:   {args.csv}")
 
         tex_path = args.csv.replace(".csv", ".tex")
-        _write_latex(rows, ALL_METRICS, best_per_metric, args.loss, tex_path)
+        _write_latex(rows, ALL_METRICS, best_per_metric, tex_path)
         print(f"LaTeX saved: {tex_path}")
 
 
-def _write_latex(rows, metrics, best_per_metric, loss, path):
+def _write_latex(rows, metrics, best_per_metric, path):
     """Генерирует booktabs LaTeX-таблицу для вставки в статью."""
     short = {
         "weighted_r2": r"$R^2_w$",
@@ -198,19 +222,20 @@ def _write_latex(rows, metrics, best_per_metric, loss, path):
     lines = [
         r"\begin{table}[ht]",
         r"\centering",
-        (r"\caption{Controlled 2D-only comparison of GNN architectures "
-         r"(mean\,$\pm$\,std over seeds, MSE loss, matched parameter budget). "
+        (r"\caption{Controlled comparison of GNN architectures "
+         r"(mean\,$\pm$\,std over seeds, matched parameter budget). "
+         r"Loss tag is parsed from the filename suffix. "
          r"\textbf{Bold} = best mean per metric.}"),
-        r"\label{tab:benchmark_2d_" + loss + r"}",
+        r"\label{tab:benchmark}",
         r"\small",
-        r"\begin{tabular}{l r " + "c " * len(metrics) + r"}",
+        r"\begin{tabular}{l l r " + "c " * len(metrics) + r"}",
         r"\toprule",
-        "Model & $N_{\\text{params}}$ & " + " & ".join(short[m] for m in metrics) + r" \\",
+        "Model & Loss & $N_{\\text{params}}$ & " + " & ".join(short[m] for m in metrics) + r" \\",
         r"\midrule",
     ]
 
     for row in rows:
-        cells = [row["model"].upper(), f"{row['n_params']:,}"]
+        cells = [row["model"].upper(), row["loss"], f"{row['n_params']:,}"]
         for metric in metrics:
             mean = row[f"{metric}_mean"]
             std = row[f"{metric}_std"]

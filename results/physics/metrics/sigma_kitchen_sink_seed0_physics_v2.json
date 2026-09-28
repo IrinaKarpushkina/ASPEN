@@ -1,0 +1,52 @@
+{
+  "run_id": "sigma_kitchen_sink_seed0_physics_v2",
+  "model": "sigma_kitchen_sink",
+  "loss": "physics_v2",
+  "seed": 0,
+  "features": "kitchen",
+  "n_params": 1252660,
+  "best_epoch": 0,
+  "val_metrics_at_best": {
+    "loss": 0.7077095989374236,
+    "weighted_r2": 0.7857460379600525,
+    "weighted_mae": 0.15707291662693024,
+    "polar_mae": 0.016806138679385185,
+    "cosine_similarity": 0.9080668699269927,
+    "emd_raw": 0.0008960837008737645,
+    "emd_normalized": 0.000896083700873766,
+    "molecular_mae": 0.8265010291721521,
+    "molecular_emd": 0.0004353966902042878,
+    "molecular_cosine": 0.9812732202072105,
+    "molecular_polar_mae": 0.2913003813197651
+  },
+  "test_metrics": {
+    "loss": 0.6947315190388607,
+    "weighted_r2": 0.7988364696502686,
+    "weighted_mae": 0.15553972125053406,
+    "polar_mae": 0.01880660280585289,
+    "cosine_similarity": 0.9046103805268967,
+    "emd_raw": 0.0009415813169264669,
+    "emd_normalized": 0.0009415813169264684,
+    "molecular_mae": 0.8029469725374992,
+    "molecular_emd": 0.00042507580099853515,
+    "molecular_cosine": 0.9835681755649738,
+    "molecular_polar_mae": 0.30175035218803736
+  },
+  "history": [
+    {
+      "epoch": 1,
+      "train_loss": 1.207918126423741,
+      "loss": 0.7077095989374236,
+      "weighted_r2": 0.7857460379600525,
+      "weighted_mae": 0.15707291662693024,
+      "polar_mae": 0.016806138679385185,
+      "cosine_similarity": 0.9080668699269927,
+      "emd_raw": 0.0008960837008737645,
+      "emd_normalized": 0.000896083700873766,
+      "molecular_mae": 0.8265010291721521,
+      "molecular_emd": 0.0004353966902042878,
+      "molecular_cosine": 0.9812732202072105,
+      "molecular_polar_mae": 0.2913003813197651
+    }
+  ]
+}

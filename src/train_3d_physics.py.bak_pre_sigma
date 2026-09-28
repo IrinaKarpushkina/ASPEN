@@ -31,12 +31,6 @@ from .physics_extension import (
     PaiNNPhysics,
 )
 from .physics_extension.physics import PhysicsSigmaLoss
-from .physics_extension.loss_v2 import PhysicsSigmaLossV2
-from .physics_extension.sigma_global import DimeNetPPSigmaGlobal
-from .physics_extension.sigma_continuous import SigmaContinuousDimeNet
-from .physics_extension.sigma_kitchen_sink import SigmaKitchenSink
-from .data.dataset_3d_sasa import SasaChaosParquet3DDataset
-from .data.dataset_3d_kitchen import KitchenChaosParquet3DDataset
 
 logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s")
 logger = logging.getLogger(__name__)
@@ -64,12 +58,6 @@ def build_model(cfg: dict):
         "dimenet_pp_delta": DimeNetPPDeltaPhysics,
         "painn_physics": PaiNNPhysics,
     }
-    if name == "sigma_kitchen_sink":
-        return SigmaKitchenSink(**mc), name
-    if name == "sigma_continuous_dimenet":
-        return SigmaContinuousDimeNet(**mc), name
-    if name.startswith("sigma_"):
-        return DimeNetPPSigmaGlobal(**mc), name
     if name not in registry:
         raise ValueError(f"Unknown physics experiment model: {name}")
     return registry[name](**mc), name
@@ -104,17 +92,14 @@ def main():
     tc = dict(cfg["training"])
     name = cfg["model"]["name"]
     features = cfg.get("features", "base")
-    if features not in {"base", "enhanced", "sasa", "kitchen"}:
-        raise ValueError(f"features must be 'base', 'enhanced', 'sasa' or 'kitchen', got {features}")
+    if features not in {"base", "enhanced"}:
+        raise ValueError(f"features must be 'base' or 'enhanced', got {features}")
 
-    ds_cls = {"base": ChaosParquet3DDataset, "enhanced": EnhancedChaosParquet3DDataset,
-              "sasa": SasaChaosParquet3DDataset, "kitchen": KitchenChaosParquet3DDataset}[features]
+    ds_cls = EnhancedChaosParquet3DDataset if features == "enhanced" else ChaosParquet3DDataset
     ds_kwargs = dict(
         cache_dir=dc.get("cache_dir"),
         force_recompute=args.force_recompute_cache,
-        compute_triplets=(name in _MODELS_NEEDING_TRIPLETS or name.startswith("sigma_dn")
-                          or (name == "sigma_kitchen_sink" and cfg["model"].get("backbone", "dimenet") == "dimenet")
-                          or name == "sigma_continuous_dimenet"),
+        compute_triplets=name in _MODELS_NEEDING_TRIPLETS,
         require_provided_coords=True,
     )
     train_ds = ds_cls(dc["train_path"], **ds_kwargs)
@@ -128,12 +113,7 @@ def main():
     test_loader = DataLoader(test_ds, batch_size=bs, shuffle=False, num_workers=nw, pin_memory=True)
 
     model, model_name = build_model(cfg)
-    if hasattr(model, "calibrate"):
-        model.calibrate(train_ds)
     model = model.to(device)
-    for _m in model.modules():
-        if hasattr(_m, "calibrate_area"):
-            _m.calibrate_area(train_ds)
     n_params = sum(p.numel() for p in model.parameters() if p.requires_grad)
     target = cfg["model"].get("n_params_target", cfg.get("target_params"))
     if target:
@@ -161,12 +141,6 @@ def main():
             w_wasserstein=loss_cfg.get("w_wasserstein", 0.25),
             w_polar=loss_cfg.get("w_polar", 0.50),
         ).to(device)
-    elif loss_name == "physics_v2":
-        profile_scale = train_profile_scale(train_ds)
-        logger.info("TRAIN-only profile MSE scale: %.8g", profile_scale)
-        criterion = PhysicsSigmaLossV2(
-            bin_weights=bin_weights, profile_scale=profile_scale,
-            **{k: v for k, v in loss_cfg.items() if k != "name"}).to(device)
     else:
         raise ValueError(f"Unknown loss: {loss_name}")
 
@@ -210,7 +184,6 @@ def main():
     best = float("inf")
     patience = 0
     history = []
-    n_skipped = 0
 
     for epoch in range(max_epochs):
         model.train()
@@ -222,17 +195,9 @@ def main():
         for step, data in enumerate(train_loader):
             data = data.to(device, non_blocking=True)
             with torch.autocast(device_type="cuda", enabled=use_amp):
-                _out = model(data)
-                loss = (criterion(_out, data.y, data.batch) if getattr(criterion, "needs_batch", False)
-                        else criterion(_out, data.y)) / accum
+                loss = criterion(model(data), data.y) / accum
             if not torch.isfinite(loss):
-                n_skipped += 1
-                logger.warning("Non-finite loss (epoch=%d step=%d, skipped #%d); y.max=%.4g",
-                               epoch + 1, step + 1, n_skipped, float(data.y.max()))
-                optimizer.zero_grad(set_to_none=True)
-                if n_skipped > 50:
-                    raise FloatingPointError("More than 50 non-finite batches; aborting")
-                continue
+                raise FloatingPointError(f"Non-finite training loss at epoch={epoch+1}, step={step+1}")
             scaler.scale(loss).backward()
             if (step + 1) % accum == 0 or (step + 1) == len(train_loader):
                 scaler.unscale_(optimizer)

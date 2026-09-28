@@ -1,0 +1,35 @@
+# dimenet_pp_delta с исправлениями. Требует: python scripts/patch_delta_and_loss_v2.py
+defaults: base.yaml
+features: enhanced
+training:
+  max_epochs: 200
+  patience: 45
+  scheduler_T0: 40
+  scheduler_Tmult: 1
+model:
+  name: dimenet_pp_delta          # имя должно совпадать с реестром в train_3d_physics.py
+  input_dim: 22
+  hidden_channels: 118
+  out_emb_channels: 118
+  num_blocks: 3
+  int_emb_size: 32
+  basis_emb_size: 8
+  num_spherical: 7
+  num_radial: 6
+  num_before_skip: 1
+  num_after_skip: 2
+  num_output_layers: 2
+  dropout: 0.05
+  prior_path: /mnt/tank/scratch/ikarpushkina/sigma/ASPEN/data/train_test_val_df/element_sigma_prior.npz
+  prior_strength: 1.0
+  prior_floor: 1.0e-3             # было 1e-12 -> log = -27.6 в пустых бинах
+  stable: true                    # bisection-проекция + калибровка площади по train
+loss:
+  name: physics
+  w_profile: 1.0
+  w_area: 0.25
+  w_charge: 0.25
+  w_moments: 0.10
+  w_smooth: 0.05
+  w_wasserstein: 0.25
+  w_polar: 0.50

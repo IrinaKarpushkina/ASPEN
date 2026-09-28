@@ -18,7 +18,6 @@ def scatter_mean(src, index, dim=0, dim_size=None):
 from .backbones.dimenet_sigma import IsolatedDimeNetSigmaBackbone
 from .backbones.painn_sigma import IsolatedPaiNNSigmaBackbone
 from .physics import PhysicsSigmaHead
-from .physics_stable import StablePhysicsSigmaHead
 from src.models.layers import ResidualMLP
 
 
@@ -116,8 +115,7 @@ class DimeNetPPGlobalPhysics(nn.Module):
 class DimeNetPPDeltaPhysics(nn.Module):
     """F: train-only element prior in shape-logit space + physics head."""
 
-    def __init__(self, input_dim=22, hidden_channels=118, dropout=0.05, prior_path=None, prior_strength=1.0,
-                 prior_floor=0.0, stable=False, **kwargs):
+    def __init__(self, input_dim=22, hidden_channels=118, dropout=0.05, prior_path=None, prior_strength=1.0, **kwargs):
         super().__init__()
         if not prior_path:
             raise ValueError("Experiment F requires model.prior_path")
@@ -125,14 +123,9 @@ class DimeNetPPDeltaPhysics(nn.Module):
         prior_arr = prior["prior_logp"]
         if prior_arr.shape != (87, 51):
             raise ValueError(f"Expected prior shape (87, 51), got {prior_arr.shape}")
-        if prior_floor > 0:
-            pr = np.exp(prior_arr.astype(np.float64))
-            pr = (pr + prior_floor) / (1.0 + prior_arr.shape[1] * prior_floor)
-            prior_arr = np.log(pr).astype(np.float32)
         self.register_buffer("prior_logp", torch.as_tensor(prior_arr, dtype=torch.float32))
         self.encoder = DimeNetPPExperimentBackbone(input_dim, hidden_channels, dropout, **kwargs)
-        head_cls = StablePhysicsSigmaHead if stable else PhysicsSigmaHead
-        self.head = head_cls(hidden_channels, 51, prior_strength=prior_strength)
+        self.head = PhysicsSigmaHead(hidden_channels, 51, prior_strength=prior_strength)
 
     def forward(self, data):
         h = self.encoder(data)
