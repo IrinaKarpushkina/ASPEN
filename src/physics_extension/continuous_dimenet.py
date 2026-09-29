@@ -98,25 +98,33 @@ class ContinuousDimeNetPPBackbone(nn.Module):
                 num_radial: int = 6, num_before_skip: int = 1, num_after_skip: int = 2,
                 num_output_layers: int = 2, dropout: float = 0.05, cutoff: float = CUTOFF,
                 envelope_exponent: int = 5, T: float = 1.0, n_steps: int = 6,
-                use_torchdiffeq: bool = False, solver: str = "dopri5", **kwargs):
+                use_torchdiffeq: bool = False, solver: str = "rk4",
+                rtol: float = 1e-3, atol: float = 1e-4, **kwargs):
         super().__init__()
         self.T, self.n_steps = float(T), int(n_steps)
         self.use_torchdiffeq = bool(use_torchdiffeq) and _HAVE_TORCHDIFFEQ
-        self.solver = solver
+        self.solver, self.rtol, self.atol = solver, rtol, atol
+        # NOTE ON SOLVER CHOICE: an adaptive solver ("dopri5") with torchdiffeq's tight
+        # DEFAULT tolerances (rtol=1e-7, atol=1e-9) can shrink its step size to zero
+        # ("underflow in dt 0.0") on a vector field with sharp features - which
+        # InteractionPPBlock's spherical-harmonic basis can produce. Default here is the
+        # FIXED-STEP "rk4" method (n_steps steps, no adaptive step-size control, so no
+        # underflow is possible), with much looser rtol/atol as a second line of defense
+        # if you do switch to an adaptive method ("dopri5") deliberately.
         act = activation_resolver("swish")
 
         self.z_embed = nn.Embedding(MAX_Z + 1, hidden_channels // 4)
         self.input_proj = nn.Linear(input_dim + hidden_channels // 4, hidden_channels)
         self.rbf_layer = BesselBasisLayer(num_radial, cutoff, envelope_exponent)
         self.sbf_layer = SphericalBasisLayer(num_spherical, num_radial, cutoff, envelope_exponent)
-        self.edge_emb = nn.Sequential(nn.Linear(2 * (hidden_channels // 4) + num_radial, hidden_channels), nn.SiLU())
-        # NOTE: nn.SiLU() here, not `act` from activation_resolver("swish") - in this
-        # torch_geometric version activation_resolver returns a plain function, not an
-        # nn.Module, and nn.Sequential requires every element to be a module. swish == SiLU,
-        # so this is the same function, just wrapped correctly. `act` is still passed as-is
-        # into InteractionPPBlock/OutputPPBlock below, which resolve it internally themselves
-        # (that's how the original discrete backbone uses it too - only inside those blocks,
-        # never directly inside a bare nn.Sequential).
+        self.edge_emb = nn.Sequential(nn.Linear(2 * hidden_channels + num_radial, hidden_channels), nn.SiLU())
+        # NOTE: h_atom (built by input_proj below) has dim hidden_channels, NOT
+        # hidden_channels // 4 - that smaller size belongs only to z_embed, an
+        # intermediate tensor concatenated INTO input_proj's input, not h_atom's
+        # output. Earlier version of this file wrongly used hidden_channels // 4
+        # here (copy-paste from z_embed's own dimension) and crashed with a shape
+        # mismatch (concat of h_atom[i], h_atom[j], rbf has dim 2*hidden_channels
+        # + num_radial in practice).
 
         # ONE shared block pair, not num_blocks copies (weight tying across "depth")
         self.interaction = InteractionPPBlock(hidden_channels, int_emb_size, basis_emb_size,
@@ -153,7 +161,9 @@ class ContinuousDimeNetPPBackbone(nn.Module):
         func = _ODEFunc(self.interaction, self.output, rbf, sbf, idx_kj, idx_ji, i, pos.size(0))
         if self.use_torchdiffeq:
             t = torch.tensor([0.0, self.T], device=pos.device, dtype=x0.dtype)
-            xs, Ps = _torchdiffeq_odeint(func, (x0, P0), t, method=self.solver)
+            options = {"step_size": self.T / self.n_steps} if self.solver in ("rk4", "euler", "midpoint") else None
+            xs, Ps = _torchdiffeq_odeint(func, (x0, P0), t, method=self.solver,
+                                        rtol=self.rtol, atol=self.atol, options=options)
             xT, PT = xs[-1], Ps[-1]
         else:
             xT, PT = rk4_integrate(lambda t, s: func(t, s), (x0, P0), 0.0, self.T, self.n_steps)

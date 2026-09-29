@@ -1,0 +1,13 @@
+\begin{table}[ht]
+\centering
+\caption{Controlled comparison of GNN architectures (mean\,$\pm$\,std over seeds, matched parameter budget). Loss tag is parsed from the filename suffix. \textbf{Bold} = best mean per metric.}
+\label{tab:benchmark}
+\small
+\begin{tabular}{l l r c c c c c c c c c c }
+\toprule
+Model & Loss & $N_{\text{params}}$ & $R^2_w$ & wMAE & PolarMAE & Cosine & EMD & EMD$_\mathrm{norm}$ & Mol.MAE & Mol.EMD & Mol.Cos & Mol.PolMAE \\
+\midrule
+DIMENET_PP_ENHANCED & mse & 718,872 & \textbf{0.9170$\pm$0.0001} & \textbf{0.1063$\pm$0.0001} & \textbf{0.0163$\pm$0.0000} & \textbf{0.9414$\pm$0.0001} & \textbf{0.0006$\pm$0.0000} & \textbf{0.0006$\pm$0.0000} & \textbf{0.4542$\pm$0.0003} & \textbf{0.0002$\pm$0.0000} & \textbf{0.9949$\pm$0.0000} & \textbf{0.2131$\pm$0.0001} \\
+\bottomrule
+\end{tabular}
+\end{table}

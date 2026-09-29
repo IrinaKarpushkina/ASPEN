@@ -95,6 +95,10 @@ def main():
 
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     logger.info(f"Device: {device}")
+    gpu_name = torch.cuda.get_device_name(0) if device.type == "cuda" else None
+    if device.type == "cuda":
+        torch.cuda.reset_peak_memory_stats(device)
+    run_start = time.time()
 
     data_cfg = cfg["data"]
     train_cfg = cfg["training"]
@@ -168,6 +172,7 @@ def main():
     best_metric = np.inf
     patience_ctr = 0
     history = []
+    time_to_best = None
 
     # ── Training loop ────────────────────────────────────────────────────
     for epoch in range(max_epochs):
@@ -212,11 +217,15 @@ def main():
             f"LR={optimizer.param_groups[0]['lr']:.2e} | "
             f"{epoch_time:.1f}s"
         )
-        history.append({"epoch": epoch + 1, "train_loss": train_loss, **val_metrics})
+        history.append({
+            "epoch": epoch + 1, "train_loss": train_loss,
+            "epoch_time_s": epoch_time, **val_metrics,
+        })
 
         current_metric = val_metrics[CHECKPOINT_METRIC]
         if current_metric < best_metric:
             best_metric = current_metric
+            time_to_best = time.time() - run_start
             torch.save({
                 "model_state_dict": model.state_dict(),
                 "optimizer_state_dict": optimizer.state_dict(),
@@ -239,7 +248,13 @@ def main():
     ckpt = torch.load(ckpt_path, map_location=device, weights_only=False)
     model.load_state_dict(ckpt["model_state_dict"])
 
+    inference_t0 = time.time()
     test_metrics = evaluate(model, test_loader, criterion, bin_weights_np, device, use_amp)
+    inference_time_s = time.time() - inference_t0
+    n_test_molecules = len(test_dataset)
+    total_train_time_s = time.time() - run_start
+    peak_mem_bytes = (torch.cuda.max_memory_allocated(device)
+                       if device.type == "cuda" else None)
     logger.info(f"[{run_id}] TEST METRICS: {test_metrics}")
 
     result = {
@@ -249,11 +264,24 @@ def main():
         "n_params": n_params, "best_epoch": ckpt["epoch"],
         "val_metrics_at_best": ckpt["val_metrics"], "test_metrics": test_metrics,
         "history": history,
+        "resources": {
+            "device": str(device),
+            "gpu_name": gpu_name,
+            "n_epochs_run": len(history),
+            "total_train_time_s": total_train_time_s,
+            "time_to_best_epoch_s": time_to_best,
+            "inference_time_s_full_test_set": inference_time_s,
+            "inference_time_s_per_molecule": inference_time_s / max(n_test_molecules, 1),
+            "n_test_molecules": n_test_molecules,
+            "peak_gpu_memory_bytes": peak_mem_bytes,
+            "peak_gpu_memory_gb": (peak_mem_bytes / 1e9) if peak_mem_bytes else None,
+        },
     }
     out_path = os.path.join(metrics_dir, f"{run_id}.json")
     with open(out_path, "w") as f:
         json.dump(result, f, indent=2)
     logger.info(f"Saved results to {out_path}")
+    logger.info(f"Resources: {result['resources']}")
 
 
 if __name__ == "__main__":

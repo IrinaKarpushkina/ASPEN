@@ -1,0 +1,24 @@
+# Путь в репозитории: ASPEN-benchmark2/configs/3d/scaling/dimenet_pp_enhanced_2x.yaml
+#
+# ВНИМАНИЕ: hidden_channels/int_emb_size/basis_emb_size ниже — ПЛЕЙСХОЛДЕРЫ.
+# Замените на вывод: python find_scale_configs.py --model dimenet_pp_enhanced --targets 2
+#
+# Наследуем от dimenet_pp_enhanced_SCHED.yaml (T0=40/Tmult=1/max_epochs=200/
+# patience=45) — это расписание дало вторую таблицу результатов и совпадает
+# с расписанием эксперимента по параметрам для baseline/delta.
+defaults: ../dimenet_pp_enhanced_sched.yaml
+
+model:
+  name: dimenet_pp_enhanced
+  input_dim: 22
+  hidden_channels: 168
+  out_emb_channels: 168
+  num_blocks: 3
+  int_emb_size: 44
+  basis_emb_size: 12
+  num_spherical: 7
+  num_radial: 6
+  num_before_skip: 1
+  num_after_skip: 2
+  num_output_layers: 2
+  dropout: 0.05

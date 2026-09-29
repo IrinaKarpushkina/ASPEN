@@ -36,13 +36,28 @@ HIGHER_IS_BETTER = {
 }
 
 
-def load_seed_values(metrics_dir: str, loss: str, metric: str) -> dict:
-    """Returns {model_name: {seed: value}}."""
+def load_seed_values(metrics_dir: str, loss: str, metric: str, group_by_scale: bool = False) -> dict:
+    """Returns {group_name: {seed: value}}.
+
+    group_by_scale=True: разные точки шкалы параметров/эпох для одной и той
+    же архитектуры считаются РАЗНЫМИ группами (иначе, например, все прогоны
+    dimenet_pp_enhanced на 0.5x/1x/2x/4x параметров смешаются в одну кривую
+    "модели" и усреднятся между собой). Ключ группы:
+    "<model>__n<n_params>__ep<max эпох по факту, len(history)>".
+    Без --group-by-scale поведение прежнее (одно имя = одна группа), что
+    годится, только если metrics_dir содержит ровно одну точку на шкале.
+    """
     by_model = defaultdict(dict)
     for path in sorted(glob.glob(os.path.join(metrics_dir, f"*_{loss}.json"))):
         with open(path) as f:
             r = json.load(f)
-        by_model[r["model"]][r["seed"]] = r["test_metrics"][metric]
+        if group_by_scale:
+            n_params = r.get("n_params", "na")
+            n_epochs_run = r.get("resources", {}).get("n_epochs_run", len(r.get("history", [])))
+            key = f"{r['model']}__n{n_params}__ep{n_epochs_run}"
+        else:
+            key = r["model"]
+        by_model[key][r["seed"]] = r["test_metrics"][metric]
     return by_model
 
 
@@ -54,12 +69,21 @@ def main():
     parser.add_argument("--models", nargs="*", default=None,
                         help="Restrict to these models (default: all found)")
     parser.add_argument("--alpha", type=float, default=0.05)
+    parser.add_argument("--group-by-scale", action="store_true",
+                        help="Различать точки шкалы параметров/эпох одной и той же "
+                             "архитектуры как отдельные группы (см. load_seed_values). "
+                             "Обязательно для сравнения результатов экспериментов "
+                             "по масштабированию параметров и по числу эпох.")
     args = parser.parse_args()
 
     higher_better = HIGHER_IS_BETTER.get(args.metric, True)
-    by_model = load_seed_values(args.metrics_dir, args.loss, args.metric)
+    by_model = load_seed_values(args.metrics_dir, args.loss, args.metric,
+                                 group_by_scale=args.group_by_scale)
     if args.models:
-        by_model = {m: v for m, v in by_model.items() if m in args.models}
+        # при --group-by-scale ключи вида "model__nXXXX__epYYY" — фильтруем
+        # по префиксу до "__", чтобы --models принимал обычные имена моделей
+        by_model = {m: v for m, v in by_model.items()
+                    if m in args.models or m.split("__")[0] in args.models}
 
     # keep only seeds common to ALL selected models, so the test is properly paired
     common_seeds = set.intersection(*(set(v.keys()) for v in by_model.values()))
@@ -103,4 +127,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-

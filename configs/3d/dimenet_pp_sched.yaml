@@ -1,0 +1,31 @@
+# Путь в репозитории: ASPEN-benchmark2/configs/3d/dimenet_pp_sched.yaml
+#
+# НОВЫЙ файл — контрольная точка, которой раньше не было. Это "чистый"
+# dimenet_pp (без enhanced-признаков, без physics-головы) на ТОМ ЖЕ
+# расписании, что enhanced_sched/delta_fixed: T0=40, Tmult=1, max_epochs=200,
+# patience=45. Обязателен для интерпретации: без него нельзя понять,
+# помогают ли модификации или просто длинное расписание само по себе
+# поднимает любую модель на этом бюджете параметров.
+defaults: base.yaml
+
+training:
+  max_epochs: 200
+  patience: 45
+  scheduler_T0: 40
+  scheduler_Tmult: 1
+
+model:
+  name: dimenet_pp
+  hidden_channels: 118
+  out_emb_channels: 118
+  num_blocks: 3
+  int_emb_size: 32
+  basis_emb_size: 8
+  num_spherical: 7
+  num_radial: 6
+  num_before_skip: 1
+  num_after_skip: 2
+  num_output_layers: 2
+  dropout: 0.05
+  pp: true
+  n_params_target: 700000

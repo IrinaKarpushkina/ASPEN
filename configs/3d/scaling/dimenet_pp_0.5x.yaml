@@ -1,0 +1,27 @@
+# Путь в репозитории: ASPEN-benchmark2/configs/3d/scaling/dimenet_pp_0.5x.yaml
+#
+# ВНИМАНИЕ: hidden_channels/int_emb_size/basis_emb_size — ПЛЕЙСХОЛДЕРЫ.
+# find_scale_configs.py сейчас поддерживает только enhanced/delta (см. код).
+# Перед использованием добавьте dimenet_pp в MODEL_CLS того скрипта:
+#   from src.models.models_3d.dimenet import DimeNetPP  (или как называется
+#   класс чистого dimenet_pp в этом репо — проверьте src/train_3d.py build_model)
+# и посчитайте REPLACE_ME так же, как для enhanced/delta.
+#
+# Наследуем от НОВОГО dimenet_pp_sched.yaml (T0=40/Tmult=1), контрольная
+# точка на одном расписании со всеми остальными осями эксперимента.
+defaults: ../dimenet_pp_sched.yaml
+
+model:
+  name: dimenet_pp
+  hidden_channels: 84
+  out_emb_channels: 84
+  num_blocks: 3
+  int_emb_size: 24
+  basis_emb_size: 6
+  num_spherical: 7
+  num_radial: 6
+  num_before_skip: 1
+  num_after_skip: 2
+  num_output_layers: 2
+  dropout: 0.05
+  pp: true

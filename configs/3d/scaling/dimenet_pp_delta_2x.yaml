@@ -1,0 +1,31 @@
+# Путь в репозитории: ASPEN-benchmark2/configs/3d/scaling/dimenet_pp_delta_2x.yaml
+#
+# ВНИМАНИЕ: hidden_channels/int_emb_size/basis_emb_size ниже — ПЛЕЙСХОЛДЕРЫ.
+# Замените на вывод: python find_scale_configs.py --model dimenet_pp_delta --targets 2
+#
+# Наследуем от dimenet_pp_delta_FIXED.yaml (не от dimenet_pp_delta.yaml) —
+# только _fixed даёт prior_floor=1e-3/stable=true и расписание T0=40/Tmult=1,
+# без которых delta уходит в NaN. Требует предварительно:
+#     python scripts/patch_delta_and_loss_v2.py
+# loss/prior_path/training уже наследуются из _fixed — здесь переопределяем
+# только model-геометрию.
+defaults: ../dimenet_pp_delta_fixed.yaml
+
+model:
+  name: dimenet_pp_delta
+  input_dim: 22
+  hidden_channels: 168       # из find_scale_configs.py
+  out_emb_channels: 168      # = hidden_channels
+  num_blocks: 3                     # фиксировано — масштабируем только ширину
+  int_emb_size: 44
+  basis_emb_size: 12
+  num_spherical: 7
+  num_radial: 6
+  num_before_skip: 1
+  num_after_skip: 2
+  num_output_layers: 2
+  dropout: 0.05
+  prior_path: /mnt/tank/scratch/ikarpushkina/sigma/ASPEN/data/train_test_val_df/element_sigma_prior.npz
+  prior_strength: 1.0
+  prior_floor: 1.0e-3
+  stable: true

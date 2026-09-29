@@ -19,7 +19,7 @@ model:
   T: 1.0                        # горизонт интегрирования; если метрики хуже baseline — пробуйте
                                  # увеличить T раньше, чем добавлять num_blocks/глубину
   n_steps: 6                    # шагов RK4 (fallback); примерно как num_blocks=3-4 baseline'а
-  use_torchdiffeq: true         # true, если pip install torchdiffeq доступен на кластере —
+  use_torchdiffeq: false         # true, если pip install torchdiffeq доступен на кластере —
                                  # тогда используется адаптивный dopri5 вместо фиксированного RK4
-  solver: dopri5
+  solver: rk4
   n_fourier: 8                  # частот Fourier-кодирования sigma в декодере

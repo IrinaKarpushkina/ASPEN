@@ -99,6 +99,10 @@ def main():
     set_seed(args.seed)
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     logger.info("Device: %s", device)
+    gpu_name = torch.cuda.get_device_name(0) if device.type == "cuda" else None
+    if device.type == "cuda":
+        torch.cuda.reset_peak_memory_stats(device)
+    run_start = time.time()
 
     dc = cfg["data"]
     tc = dict(cfg["training"])
@@ -211,6 +215,7 @@ def main():
     patience = 0
     history = []
     n_skipped = 0
+    time_to_best = None
 
     for epoch in range(max_epochs):
         model.train()
@@ -247,16 +252,21 @@ def main():
         scheduler.step(epoch + 1)
         val_metrics = evaluate(model, val_loader, criterion, bin_weights_np, device, use_amp)
         current = val_metrics[CHECKPOINT_METRIC]
-        history.append({"epoch": epoch + 1, "train_loss": train_loss, **val_metrics})
+        epoch_time = time.time() - t0
+        history.append({
+            "epoch": epoch + 1, "train_loss": train_loss,
+            "epoch_time_s": epoch_time, **val_metrics,
+        })
         logger.info(
             "[%s] epoch %d | train %.6g | val wMAE %.6g | R2 %.5f | EMD %.6g | %.1fs",
             run_id, epoch + 1, train_loss, val_metrics["weighted_mae"],
-            val_metrics["weighted_r2"], val_metrics["emd_raw"], time.time() - t0,
+            val_metrics["weighted_r2"], val_metrics["emd_raw"], epoch_time,
         )
 
         if current < best:
             best = current
             patience = 0
+            time_to_best = time.time() - run_start
             torch.save({
                 "model_state_dict": model.state_dict(),
                 "optimizer_state_dict": optimizer.state_dict(),
@@ -274,7 +284,13 @@ def main():
 
     ckpt = torch.load(ckpt_path, map_location=device, weights_only=False)
     model.load_state_dict(ckpt["model_state_dict"])
+    inference_t0 = time.time()
     test_metrics = evaluate(model, test_loader, criterion, bin_weights_np, device, use_amp)
+    inference_time_s = time.time() - inference_t0
+    n_test_molecules = len(test_ds)
+    total_train_time_s = time.time() - run_start
+    peak_mem_bytes = (torch.cuda.max_memory_allocated(device)
+                       if device.type == "cuda" else None)
     result = {
         "run_id": run_id,
         "model": name,
@@ -286,11 +302,24 @@ def main():
         "val_metrics_at_best": ckpt["val_metrics"],
         "test_metrics": test_metrics,
         "history": history,
+        "resources": {
+            "device": str(device),
+            "gpu_name": gpu_name,
+            "n_epochs_run": len(history),
+            "total_train_time_s": total_train_time_s,
+            "time_to_best_epoch_s": time_to_best,
+            "inference_time_s_full_test_set": inference_time_s,
+            "inference_time_s_per_molecule": inference_time_s / max(n_test_molecules, 1),
+            "n_test_molecules": n_test_molecules,
+            "peak_gpu_memory_bytes": peak_mem_bytes,
+            "peak_gpu_memory_gb": (peak_mem_bytes / 1e9) if peak_mem_bytes else None,
+        },
     }
     out = os.path.join(metrics_dir, run_id + ".json")
     with open(out, "w") as f:
         json.dump(result, f, indent=2)
     logger.info("TEST: %s", test_metrics)
+    logger.info("Resources: %s", result["resources"])
     logger.info("Saved %s", out)
 
 
