@@ -1,0 +1,35 @@
+# Surface-field + xTB, hidden=160, point_hidden=128: ~1.31M параметров (как sigma_kitchen_sink 1.25M).
+defaults: base.yaml
+features: xtb_sasa
+training:
+  max_epochs: 200
+  patience: 45
+  scheduler_T0: 40
+  scheduler_Tmult: 1
+model:
+  name: sigma_surface_xtb_big
+  input_dim: 32
+  hidden_channels: 160
+  out_emb_channels: 160
+  num_blocks: 3
+  int_emb_size: 32
+  basis_emb_size: 8
+  num_spherical: 7
+  num_radial: 6
+  num_before_skip: 1
+  num_after_skip: 2
+  num_output_layers: 2
+  dropout: 0.05
+  n_points: 48
+  point_hidden: 128
+  use_xtb_field: true
+  use_geom_area: true
+loss:
+  name: physics
+  w_profile: 1.0
+  w_area: 0.05
+  w_charge: 0.05
+  w_moments: 0.02
+  w_smooth: 0.01
+  w_wasserstein: 0.10
+  w_polar: 0.10

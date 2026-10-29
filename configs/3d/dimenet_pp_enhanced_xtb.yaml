@@ -1,0 +1,25 @@
+# MSE-модель: dimenet_pp_enhanced (sched) + 7 xTB-признаков атома. Контроль: dimenet_pp_enhanced_sched.yaml.
+# Требует: python -m scripts.xtb_features ... (см. README_XTB.md) и scripts/patch_xtb.py
+defaults: base.yaml
+features: xtb                     # enhanced(22) + xTB(7)
+training:
+  max_epochs: 200
+  patience: 45
+  scheduler_T0: 40
+  scheduler_Tmult: 1
+model:
+  name: dimenet_pp_enhanced_xtb
+  input_dim: 29
+  hidden_channels: 118
+  out_emb_channels: 118
+  num_blocks: 3
+  int_emb_size: 32
+  basis_emb_size: 8
+  num_spherical: 7
+  num_radial: 6
+  num_before_skip: 1
+  num_after_skip: 2
+  num_output_layers: 2
+  dropout: 0.05
+loss:
+  name: mse

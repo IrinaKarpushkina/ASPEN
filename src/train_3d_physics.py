@@ -37,11 +37,14 @@ from .physics_extension.sigma_continuous import SigmaContinuousDimeNet
 from .physics_extension.sigma_kitchen_sink import SigmaKitchenSink
 from .data.dataset_3d_sasa import SasaChaosParquet3DDataset
 from .data.dataset_3d_kitchen import KitchenChaosParquet3DDataset
+from .data.dataset_3d_xtb import XtbChaosParquet3DDataset, XtbSasaChaosParquet3DDataset
+from .physics_extension.surface_field import SigmaSurfaceField
 
 logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s")
 logger = logging.getLogger(__name__)
 
-_MODELS_NEEDING_TRIPLETS = {"dimenet_pp_enhanced", "dimenet_pp_physics", "dimenet_pp_enhanced_physics", "dimenet_pp_global", "dimenet_pp_delta"}
+_MODELS_NEEDING_TRIPLETS = {"dimenet_pp_enhanced", "dimenet_pp_physics", "dimenet_pp_enhanced_physics", "dimenet_pp_global", "dimenet_pp_delta",
+                             "dimenet_pp_enhanced_xtb", "dimenet_pp_delta_xtb", "dimenet_pp_delta_l1"}
 
 
 def set_seed(seed: int):
@@ -62,8 +65,13 @@ def build_model(cfg: dict):
         "dimenet_pp_enhanced_physics": DimeNetPPPhysics,
         "dimenet_pp_global": DimeNetPPGlobalPhysics,
         "dimenet_pp_delta": DimeNetPPDeltaPhysics,
+        "dimenet_pp_enhanced_xtb": DimeNetPPEnhanced,
+        "dimenet_pp_delta_xtb": DimeNetPPDeltaPhysics,
+        "dimenet_pp_delta_l1": DimeNetPPDeltaPhysics,
         "painn_physics": PaiNNPhysics,
     }
+    if name.startswith("sigma_surface"):
+        return SigmaSurfaceField(**mc), name
     if name == "sigma_kitchen_sink":
         return SigmaKitchenSink(**mc), name
     if name == "sigma_continuous_dimenet":
@@ -108,17 +116,18 @@ def main():
     tc = dict(cfg["training"])
     name = cfg["model"]["name"]
     features = cfg.get("features", "base")
-    if features not in {"base", "enhanced", "sasa", "kitchen"}:
+    if features not in {"base", "enhanced", "sasa", "kitchen", "xtb", "xtb_sasa"}:
         raise ValueError(f"features must be 'base', 'enhanced', 'sasa' or 'kitchen', got {features}")
 
     ds_cls = {"base": ChaosParquet3DDataset, "enhanced": EnhancedChaosParquet3DDataset,
-              "sasa": SasaChaosParquet3DDataset, "kitchen": KitchenChaosParquet3DDataset}[features]
+              "sasa": SasaChaosParquet3DDataset, "kitchen": KitchenChaosParquet3DDataset,
+              "xtb": XtbChaosParquet3DDataset, "xtb_sasa": XtbSasaChaosParquet3DDataset}[features]
     ds_kwargs = dict(
         cache_dir=dc.get("cache_dir"),
         force_recompute=args.force_recompute_cache,
         compute_triplets=(name in _MODELS_NEEDING_TRIPLETS or name.startswith("sigma_dn")
                           or (name == "sigma_kitchen_sink" and cfg["model"].get("backbone", "dimenet") == "dimenet")
-                          or name == "sigma_continuous_dimenet"),
+                          or name == "sigma_continuous_dimenet" or name.startswith("sigma_surface")),
         require_provided_coords=True,
     )
     train_ds = ds_cls(dc["train_path"], **ds_kwargs)

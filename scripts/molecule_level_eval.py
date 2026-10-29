@@ -1,152 +1,121 @@
-"""
-molecule_level_eval.py — computes PER-MOLECULE test-set metrics for one
-trained checkpoint, saved to a .npz keyed by mol_id.
+"""molecule_level_eval.py - по-молекулярные метрики на test для одного чекпоинта (вход для парных тестов по молекулам).
 
-Why: results/metrics/*.json only stores one aggregated number per seed,
-so any significance test built on it has n=3 (very low power).
-compute_all_metrics/molecular_metrics (src/metrics.py) already compute a
-per-molecule value internally for every "molecular_*" metric — they just
-average it away before returning. This script reruns that same per-
-molecule computation (re-using the exact same functions from
-src/metrics.py, NOT reimplementing the math) but keeps the per-molecule
-array, keyed by mol_id so results from different models/architectures
-(2D or 3D, different atom counts, different loader shuffling) can be
-aligned correctly for a PAIRED test — see pairwise_significance_molecule.py.
+Изменения относительно прежней версии:
+  * работает для ВСЕХ моделей: 2D, базовые 3D и physics/xtb/surface (scripts/_model_factory.py);
+  * помимо молекулярных mae/polar_mae/cosine/emd сохраняет СУММЫ ПО АТОМАМ каждой молекулы (n_atoms, s_wabs, s_wsq, s_sstot,
+    s_polar, s_emd, s_cos): из них точно восстанавливаются weighted_r2, weighted_mae, polar_mae, emd_raw, cosine_similarity
+    (stats_compare.py --mol-dir делает по ним парный бутстрап по молекулам);
+  * как в src/evaluate.py: autocast по use_amp конфига, preds/targets обрезаются снизу нулём, веса бинов из train-датасета;
+  * --check-json сверяет восстановленные метрики с test_metrics из json обучения.
 
-This does NOT modify src/metrics.py or src/evaluate.py — it only imports
-already-existing, already-tested functions from them.
-
-Usage:
-    # 2D model:
-    python -m scripts.molecule_level_eval \
-        --config configs/2d/gps.yaml --checkpoint results/checkpoints/gps_seed0_mse.pt \
-        --mode 2d --split test --out results/per_mol/gps_seed0.npz
-
-    # 3D model:
-    python -m scripts.molecule_level_eval \
-        --config configs/3d/dimenet_pp.yaml --checkpoint results/checkpoints/dimenet_pp_seed0_mse.pt \
-        --mode 3d --split test --out results/per_mol/dimenet_pp_seed0.npz
+Пример:
+  python -m scripts.molecule_level_eval --config configs/3d/dimenet_pp_enhanced_xtb.yaml \
+     --checkpoint results/xtb/checkpoints/dimenet_pp_enhanced_xtb_seed0_mse.pt --mode 3d \
+     --out results/per_mol_all/dimenet_pp_enhanced_xtb_seed0.npz --check-json results/xtb/metrics/dimenet_pp_enhanced_xtb_seed0_mse.json
+Имя выхода: <prefix>_seed<k>.npz, prefix = имя metrics-json до "_seed" (так их находит stats_compare). Пакетно: scripts/molecule_eval_batch.py.
 """
 import argparse
+import json
 import logging
 import os
 
 import numpy as np
-import torch
-from torch_geometric.loader import DataLoader
-
-from src.config import load_config
-from src.metrics import _cosine, POLAR_MASK, SIGMA_BINS, EPS
-from src.models import MODEL_REGISTRY
 from scipy.stats import wasserstein_distance
+
+from src.metrics import EPS, POLAR_MASK, SIGMA_BINS, _cosine
 
 logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s")
 logger = logging.getLogger(__name__)
 
 
-def per_molecule_metrics(targets: np.ndarray, preds: np.ndarray, mol_sizes: list,
-                         mol_ids: list) -> dict:
-    """Same math as src/metrics.py::molecular_metrics, but returns the raw
-    per-molecule arrays (keyed by mol_id) instead of averaging them away."""
-    out = {"mol_id": [], "mae": [], "polar_mae": [], "cosine": [], "emd": []}
-    idx = 0
-    for size, mid in zip(mol_sizes, mol_ids):
-        t_mol = targets[idx: idx + size].sum(axis=0)
-        p_mol = preds[idx: idx + size].sum(axis=0)
+def _emd(t, p):
+    try:
+        return wasserstein_distance(SIGMA_BINS, SIGMA_BINS, np.maximum(t, 0.0) + EPS, np.maximum(p, 0.0) + EPS)
+    except Exception:
+        return float("nan")
 
-        out["mol_id"].append(mid)
-        out["mae"].append(float(np.mean(np.abs(t_mol - p_mol))))
-        out["polar_mae"].append(float(np.mean(np.abs(t_mol[POLAR_MASK] - p_mol[POLAR_MASK]))))
-        out["cosine"].append(_cosine(
-            t_mol / (np.linalg.norm(t_mol) + EPS),
-            p_mol / (np.linalg.norm(p_mol) + EPS),
-        ))
-        try:
-            out["emd"].append(wasserstein_distance(
-                SIGMA_BINS, SIGMA_BINS,
-                np.maximum(t_mol, 0.0) + EPS, np.maximum(p_mol, 0.0) + EPS,
-            ))
-        except Exception:
-            out["emd"].append(float("nan"))
-        idx += size
-    return out
+
+def per_molecule_stats(t, p, sizes, mol_ids, w):
+    """t, p: (N_atoms, 51), уже обрезанные снизу нулём. w: веса бинов (сумма 1). Возвращает dict массивов по молекулам."""
+    w = w / (w.sum() + EPS)
+    abs_a = (np.abs(t - p) * w[None]).sum(1)
+    sq_a = (((t - p) ** 2) * w[None]).sum(1)
+    mt = (t * w[None]).sum(1, keepdims=True)
+    tot_a = (((t - mt) ** 2) * w[None]).sum(1)
+    pol_a = np.abs(t[:, POLAR_MASK] - p[:, POLAR_MASK]).mean(1)
+    emd_a = np.array([_emd(a, b) for a, b in zip(t, p)])
+    cos_a = np.array([_cosine(a, b) for a, b in zip(t, p)])
+    off = np.concatenate([[0], np.cumsum(sizes)])
+    out = {k: [] for k in ("n_atoms", "s_wabs", "s_wsq", "s_sstot", "s_polar", "s_emd", "s_cos",
+                          "mae", "polar_mae", "cosine", "emd")}
+    for i in range(len(sizes)):
+        a, b = off[i], off[i + 1]
+        out["n_atoms"].append(b - a)
+        out["s_wabs"].append(abs_a[a:b].sum()); out["s_wsq"].append(sq_a[a:b].sum()); out["s_sstot"].append(tot_a[a:b].sum())
+        out["s_polar"].append(pol_a[a:b].sum()); out["s_emd"].append(np.nansum(emd_a[a:b])); out["s_cos"].append(cos_a[a:b].sum())
+        tm, pm = t[a:b].sum(0), p[a:b].sum(0)
+        out["mae"].append(float(np.mean(np.abs(tm - pm))))
+        out["polar_mae"].append(float(np.mean(np.abs(tm[POLAR_MASK] - pm[POLAR_MASK]))))
+        out["cosine"].append(_cosine(tm / (np.linalg.norm(tm) + EPS), pm / (np.linalg.norm(pm) + EPS)))
+        out["emd"].append(_emd(tm, pm))
+    return {k: np.array(v) for k, v in out.items()}
+
+
+def run(config, checkpoint, mode, split, out, batch_size=32, check_json=None):
+    import torch
+    from torch_geometric.loader import DataLoader
+    from src.config import load_config
+    from scripts._model_factory import build_for_eval
+    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+    cfg = load_config(config)
+    use_amp = bool(cfg.get("training", {}).get("use_amp", True)) and device.type == "cuda"
+    model, DatasetCls, kw = build_for_eval(cfg, mode)
+    dataset = DatasetCls(cfg["data"][f"{split}_path"], **kw)
+    train_ds = DatasetCls(cfg["data"]["train_path"], **kw)
+    w = train_ds.bin_weights_numpy().astype(np.float64)
+    del train_ds
+    ck = torch.load(checkpoint, map_location=device, weights_only=False)
+    model.load_state_dict(ck["model_state_dict"])
+    model.to(device).eval()
+    preds, targets, sizes, ids, mi = [], [], [], [], 0
+    with torch.no_grad():
+        for data in DataLoader(dataset, batch_size=batch_size, shuffle=False):
+            nm = int(data.batch.max().item()) + 1
+            ids.extend(dataset.mol_ids[mi: mi + nm]); mi += nm
+            data = data.to(device)
+            with torch.autocast(device_type="cuda", enabled=use_amp):
+                pr = model(data)
+            preds.append(pr.float().cpu().numpy()); targets.append(data.y.float().cpu().numpy())
+            sizes.extend(torch.bincount(data.batch.cpu()).numpy().tolist())
+    assert len(sizes) == len(ids) == len(dataset), "рассогласование mol_id (нужен shuffle=False)"
+    p = np.maximum(np.concatenate(preds), 0.0)
+    t = np.maximum(np.concatenate(targets), 0.0)
+    res = per_molecule_stats(t, p, sizes, ids, w)
+    N = res["n_atoms"].sum()
+    rec = {"weighted_r2": 1 - res["s_wsq"].sum() / res["s_sstot"].sum(), "weighted_mae": res["s_wabs"].sum() / N,
+           "polar_mae": res["s_polar"].sum() / N, "emd_raw": res["s_emd"].sum() / N, "cosine_similarity": res["s_cos"].sum() / N}
+    logger.info("восстановлено из сумм: " + ", ".join(f"{k}={v:.5f}" for k, v in rec.items()))
+    if check_json:
+        ref = json.load(open(check_json))["test_metrics"]
+        for k, v in rec.items():
+            logger.info(f"  сверка {k}: json={ref[k]:.5f} здесь={v:.5f} Δ={v - ref[k]:+.2e}")
+    os.makedirs(os.path.dirname(out) or ".", exist_ok=True)
+    np.savez(out, mol_id=np.array(ids, dtype=object), **res)
+    logger.info(f"сохранено {len(ids)} молекул -> {out}")
+    return rec
 
 
 def main():
-    parser = argparse.ArgumentParser()
-    parser.add_argument("--config", required=True)
-    parser.add_argument("--checkpoint", required=True)
-    parser.add_argument("--mode", choices=["2d", "3d"], required=True)
-    parser.add_argument("--split", choices=["val", "test"], default="test")
-    parser.add_argument("--out", required=True)
-    parser.add_argument("--batch-size", type=int, default=32)
-    args = parser.parse_args()
-
-    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-    cfg = load_config(args.config)
-    data_cfg = cfg["data"]
-
-    if args.mode == "2d":
-        from src.data.dataset import ChaosParquetDataset as DatasetCls
-        ds_kwargs = dict(cache_dir=data_cfg.get("cache_dir"))
-    else:
-        from src.data.dataset_3d import ChaosParquet3DDataset as DatasetCls
-        model_name = cfg["model"]["name"]
-        needs_triplets = model_name in {"dimenet", "dimenet_pp", "spherenet"}
-        ds_kwargs = dict(cache_dir=data_cfg.get("cache_dir"), compute_triplets=needs_triplets)
-
-    path_key = f"{args.split}_path"
-    dataset = DatasetCls(data_cfg[path_key], **ds_kwargs)
-    loader = DataLoader(dataset, batch_size=args.batch_size, shuffle=False)
-
-    model_cfg = dict(cfg["model"])
-    model_name = model_cfg.pop("name")
-    model_cfg.pop("n_params_target", None)
-    model = MODEL_REGISTRY[model_name](**model_cfg).to(device)
-
-    ckpt = torch.load(args.checkpoint, map_location=device, weights_only=False)
-    model.load_state_dict(ckpt["model_state_dict"])
-    model.eval()
-    logger.info(f"Loaded checkpoint from epoch {ckpt.get('epoch')}")
-
-    all_preds, all_targets, mol_sizes, mol_ids = [], [], [], []
-    mol_idx = 0
-    with torch.no_grad():
-        for data in loader:
-            n_mols_in_batch = int(data.batch.max().item()) + 1
-            batch_mol_ids = dataset.mol_ids[mol_idx: mol_idx + n_mols_in_batch]
-            mol_idx += n_mols_in_batch
-
-            data = data.to(device)
-            preds = model(data)
-
-            all_preds.append(preds.float().cpu().numpy())
-            all_targets.append(data.y.float().cpu().numpy())
-            mol_sizes.extend(torch.bincount(data.batch.cpu()).numpy().tolist())
-            mol_ids.extend(batch_mol_ids)
-
-    preds_np = np.concatenate(all_preds, axis=0)
-    targets_np = np.concatenate(all_targets, axis=0)
-
-    assert len(mol_sizes) == len(mol_ids) == len(dataset), (
-        f"mol_id alignment sanity check failed: {len(mol_sizes)} molecules seen, "
-        f"{len(mol_ids)} ids collected, {len(dataset)} in dataset. "
-        f"DataLoader(shuffle=False) is required for this alignment to hold — "
-        f"do not pass shuffle=True."
-    )
-
-    result = per_molecule_metrics(targets_np, preds_np, mol_sizes, mol_ids)
-
-    os.makedirs(os.path.dirname(args.out) or ".", exist_ok=True)
-    np.savez(
-        args.out,
-        mol_id=np.array(result["mol_id"], dtype=object),
-        mae=np.array(result["mae"]),
-        polar_mae=np.array(result["polar_mae"]),
-        cosine=np.array(result["cosine"]),
-        emd=np.array(result["emd"]),
-    )
-    logger.info(f"Saved per-molecule metrics for {len(result['mol_id'])} molecules -> {args.out}")
+    ap = argparse.ArgumentParser()
+    ap.add_argument("--config", required=True)
+    ap.add_argument("--checkpoint", required=True)
+    ap.add_argument("--mode", choices=["2d", "3d"], default="3d")
+    ap.add_argument("--split", choices=["val", "test"], default="test")
+    ap.add_argument("--out", required=True)
+    ap.add_argument("--batch-size", type=int, default=32)
+    ap.add_argument("--check-json", default=None)
+    a = ap.parse_args()
+    run(a.config, a.checkpoint, a.mode, a.split, a.out, a.batch_size, a.check_json)
 
 
 if __name__ == "__main__":

@@ -1,35 +1,16 @@
 #!/bin/bash
-#SBATCH --job-name=sigma_v2
+#SBATCH --job-name=sigma_nn_ode
 #SBATCH --partition=aichem
 #SBATCH --nodelist=aichem
 #SBATCH --nodes=1
 #SBATCH --ntasks-per-node=4
 #SBATCH --gres=gpu:1
 #SBATCH --mem=64G
-#SBATCH --time=172:00:00
-#SBATCH --output=logs/sigma_v2_%j.out
-#SBATCH --error=logs/sigma_v2_%j.err
+#SBATCH --time=100:00:00
+#SBATCH --output=logs/sigma_nn_ode_kitchen_sink_%j.out
+#SBATCH --error=logs/sigma_nn_ode_kitchen_sink_%j.err
 
 # ─────────────────────────────────────────────────────────────────────────────
-# Прогон новых архитектур/расписания (sigma_global.py, physics_stable.py, loss_v2.py)
-# поверх старого physics-бенчмарка. Требует, чтобы ОБА патча уже были применены:
-#   python scripts/patch_train_3d_physics.py
-#   python scripts/patch_delta_and_loss_v2.py
-#
-# sigma_dn_neutral НЕ включён: ceiling_analysis (часть B) показал, что молекулярная
-# нейтральность заряда в этих данных не выполняется (actual |Q|/sum|q| БОЛЬШЕ shuffled,
-# только 0.9% молекул близки к нейтральности) — этот constraint для ваших данных неверен.
-#
-# dimenet_pp_enhanced_sched использует то же имя модели "dimenet_pp_enhanced", что и
-# старый baseline (loss mse) — поэтому output-dir здесь ОБЯЗАТЕЛЬНО отдельный
-# (results/physics_v2), иначе файлы результатов перезапишут/перепутаются со старыми.
-#
-# EDIT before running:
-#   - conda env / cd путь ниже, если отличаются от прошлого запуска
-#   - #SBATCH --partition/--nodelist под ваш кластер
-#   - при первом запуске каждой модели рекомендуется сначала smoke-прогон вручную:
-#       python -m src.train_3d_physics --config configs/3d/sigma_dn_geom.yaml --seed 0 --smoke
-#     и только потом ставить в этот sbatch-скрипт
 # ─────────────────────────────────────────────────────────────────────────────
 
 mkdir -p logs results/physics_v2/checkpoints results/physics_v2/metrics
@@ -45,7 +26,7 @@ nvidia-smi || true
 
 # По умолчанию — без sigma_dn_neutral (см. пояснение выше) и без delta (запускается
 # отдельно, ниже, т.к. может упасть и не должна блокировать остальные модели в очереди).
-MODELS="${MODELS:-dimenet_pp_enhanced_sched sigma_dn_geom sigma_dn_global sigma_dn_full sigma_pn_full}"
+MODELS="${MODELS:-sigma_continuous_dimenet sigma_kitchen_sink}"
 SEEDS="${SEEDS:-0 1 2}"
 OUTPUT_DIR="${OUTPUT_DIR:-results/physics_v2}"
 

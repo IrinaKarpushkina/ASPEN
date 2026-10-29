@@ -1,0 +1,36 @@
+# Surface-field БЕЗ xTB (только геометрия): отделяет эффект "поверхностной головы" от эффекта xTB.
+# Прямое сравнение: sigma_dn_geom.yaml (R2 0.9159 в вашей таблице).
+defaults: base.yaml
+features: sasa
+training:
+  max_epochs: 200
+  patience: 45
+  scheduler_T0: 40
+  scheduler_Tmult: 1
+model:
+  name: sigma_surface_geom
+  input_dim: 25
+  hidden_channels: 118
+  out_emb_channels: 118
+  num_blocks: 3
+  int_emb_size: 32
+  basis_emb_size: 8
+  num_spherical: 7
+  num_radial: 6
+  num_before_skip: 1
+  num_after_skip: 2
+  num_output_layers: 2
+  dropout: 0.05
+  n_points: 48
+  point_hidden: 96
+  use_xtb_field: false
+  use_geom_area: true
+loss:
+  name: physics
+  w_profile: 1.0
+  w_area: 0.05
+  w_charge: 0.05
+  w_moments: 0.02
+  w_smooth: 0.01
+  w_wasserstein: 0.10
+  w_polar: 0.10

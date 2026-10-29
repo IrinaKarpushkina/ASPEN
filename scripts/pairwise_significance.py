@@ -54,7 +54,7 @@ def load_seed_values(metrics_dir: str, loss: str, metric: str, group_by_scale: b
         if group_by_scale:
             n_params = r.get("n_params", "na")
             n_epochs_run = r.get("resources", {}).get("n_epochs_run", len(r.get("history", [])))
-            key = f"{r['model']}__n{n_params}__ep{n_epochs_run}"
+            key = f"{r['model']}__n{n_params}"
         else:
             key = r["model"]
         by_model[key][r["seed"]] = r["test_metrics"][metric]

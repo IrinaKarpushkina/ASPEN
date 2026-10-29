@@ -1,0 +1,41 @@
+# "MAE"-модель: dimenet_pp_delta_fixed + xTB-признаки + L1-профильный loss (physics_v2).
+# Контроли: dimenet_pp_delta_fixed.yaml (старый, physics/MSE) и dimenet_pp_delta_l1.yaml (L1 без xTB).
+defaults: base.yaml
+features: xtb
+training:
+  max_epochs: 200
+  patience: 45
+  scheduler_T0: 40
+  scheduler_Tmult: 1
+model:
+  name: dimenet_pp_delta_xtb
+  input_dim: 29
+  hidden_channels: 118
+  out_emb_channels: 118
+  num_blocks: 3
+  int_emb_size: 32
+  basis_emb_size: 8
+  num_spherical: 7
+  num_radial: 6
+  num_before_skip: 1
+  num_after_skip: 2
+  num_output_layers: 2
+  dropout: 0.05
+  prior_path: /mnt/tank/scratch/ikarpushkina/sigma/ASPEN/data/train_test_val_df/element_sigma_prior.npz
+  prior_strength: 1.0
+  prior_floor: 1.0e-3
+  stable: true
+loss:
+  name: physics_v2
+  profile_loss: l1
+  moments_mode: relative
+  w_profile: 1.0
+  w_area: 0.15
+  w_charge: 0.10
+  w_moments: 0.15
+  w_smooth: 0.05
+  w_wasserstein: 0.20
+  w_polar: 0.30
+  w_cos: 0.10
+  w_mol: 0.30
+  w_mol_cdf: 0.15

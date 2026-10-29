@@ -18,8 +18,8 @@ mkdir -p logs results/physics_loss_scaling/checkpoints results/physics_loss_scal
 source /mnt/tank/scratch/ikarpushkina/miniconda3/etc/profile.d/conda.sh
 conda activate sigma
 
-#cd /mnt/tank/scratch/ikarpushkina/sigma/ASPEN2D/ASPEN
-cd /mnt/tank/scratch/mkokorina/ASPEN
+cd /mnt/tank/scratch/ikarpushkina/sigma/ASPEN2D/ASPEN
+#cd /mnt/tank/scratch/mkokorina/ASPEN
 
 echo "Job started: $(date)"
 echo "Node: $(hostname)"

@@ -66,7 +66,7 @@ def load_all_metrics(metrics_dir: str) -> pd.DataFrame:
     """
     rows = []
     all_keys_seen = set()
-    for path in sorted(glob.glob(os.path.join(metrics_dir, "*_seed*_mse.json"))):
+    for path in sorted(glob.glob(os.path.join(metrics_dir, "*_seed*.json"))):
         fname = os.path.basename(path)
         model_part, seed_part = fname.rsplit("_seed", 1)
         seed = int(seed_part.split("_")[0])
@@ -78,7 +78,7 @@ def load_all_metrics(metrics_dir: str) -> pd.DataFrame:
         row.update({k: v for k, v in data.items() if k in METRIC_SPEC})
         rows.append(row)
     if not rows:
-        raise FileNotFoundError(f"No *_seed*_mse.json files found under {metrics_dir}")
+        raise FileNotFoundError(f"No *_seed*.json files found under {metrics_dir}")
 
     missing = set(METRIC_SPEC.keys()) - all_keys_seen
     if missing:
