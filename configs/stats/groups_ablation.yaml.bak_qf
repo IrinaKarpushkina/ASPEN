@@ -1,0 +1,62 @@
+# Группы = научные вопросы. Внутри группы каждая модель сравнивается с эталоном (ref); поправка Холма внутри (группа, метрика, уровень).
+# Метки смотрите:  python -m scripts.stats_compare --dirs <metrics...> --list     (шаблоны fnmatch, '*' - любые символы)
+groups:
+  - name: "Q1. Дают ли xTB-признаки прирост? (DimeNet++ enhanced, MSE, ~720k)"
+    ref: dimenet_pp_enhanced
+    vs: [dimenet_pp_enhanced_xtb]
+    note: "нужно >= 2 сидов у xtb-модели; с одним сидом теста нет"
+
+  - name: "Q2a. Дают ли enhanced-признаки прирост при равном размере? 2x"
+    ref: dimenet_pp@2x
+    vs: [dimenet_pp_enhanced@2x]
+  - name: "Q2b. То же, 0.5x"
+    ref: dimenet_pp@0.5x
+    vs: [dimenet_pp_enhanced@0.5x]
+
+  - name: "Q3a. Ёмкость, enhanced (MSE): 0.5x/2x/4x vs 1x"
+    ref: dimenet_pp_enhanced
+    vs: ["dimenet_pp_enhanced@*"]
+    note: "2x/4x остановились раньше по early stopping (120-163 эпох): размер смешан с длиной обучения"
+  - name: "Q3b. Ёмкость, delta: 0.5x/2x/4x vs 1x"
+    ref: dimenet_pp_delta
+    vs: ["dimenet_pp_delta@*"]
+  - name: "Q3c. Ёмкость, dimenet_pp без enhanced: 0.5x/4x vs 2x"
+    ref: dimenet_pp@2x
+    vs: ["dimenet_pp@0.5x", "dimenet_pp@4x"]
+    note: "в этой папке нет 1x-прогона dimenet_pp"
+
+  - name: "Q4. Голова/loss при том же backbone (эталон enhanced + MSE)"
+    ref: dimenet_pp_enhanced
+    vs: [dimenet_pp_delta, sigma_dn_geom, sigma_dn_global, sigma_dn_full, dimenet_pp_enhanced_physics, dimenet_pp_physics, dimenet_pp_global]
+    note: "enhanced_physics / physics / global остановились на 76-80 эпохах (другое расписание?) - сравнение смешано с расписанием"
+
+  - name: "Q5. Варианты sigma-головы (эталон sigma_dn_geom)"
+    ref: sigma_dn_geom
+    vs: [sigma_dn_global, sigma_dn_full, sigma_kitchen_sink, sigma_continuous_dimenet, sigma_surface_xtb]
+
+  - name: "Q6a. Backbone: DimeNet++ vs PaiNN (sigma-голова)"
+    ref: sigma_dn_full
+    vs: [sigma_pn_full]
+  - name: "Q6b. Backbone: DimeNet++ vs PaiNN (старая physics-голова)"
+    ref: dimenet_pp_physics
+    vs: [painn_physics]
+
+  - name: "Q7. Все модели против лучшей по R² (dimenet_pp_enhanced)"
+    ref: dimenet_pp_enhanced
+    vs: ["*"]
+  - name: "Q8a. Влияние loss, sigma_dn_geom: weak и strong против MSE"
+    ref: sigma_dn_geom_mse
+    vs: [sigma_dn_geom, sigma_dn_geom_strong]
+    note: "weak = sigma_dn_geom (physics, w_polar 0.10); strong = w_polar 0.50 как у delta"
+  - name: "Q8b. Влияние loss, sigma_dn_global"
+    ref: sigma_dn_global_mse
+    vs: [sigma_dn_global, sigma_dn_global_strong]
+  - name: "Q8c. Влияние loss, sigma_dn_full"
+    ref: sigma_dn_full_mse
+    vs: [sigma_dn_full, sigma_dn_full_strong]
+  - name: "Q9a. Архитектура при loss MSE (эталон geom)"
+    ref: sigma_dn_geom_mse
+    vs: [sigma_dn_global_mse, sigma_dn_full_mse]
+  - name: "Q9b. Архитектура при strong loss (эталон geom)"
+    ref: sigma_dn_geom_strong
+    vs: [sigma_dn_global_strong, sigma_dn_full_strong]

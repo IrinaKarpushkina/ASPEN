@@ -70,6 +70,9 @@ def build_model(cfg: dict):
         "dimenet_pp_delta_l1": DimeNetPPDeltaPhysics,
         "painn_physics": PaiNNPhysics,
     }
+    if mc.pop("head", "softmax") == "quantile":  # [qf-patch]
+        from .physics_extension.sigma_quantile import DimeNetPPSigmaQuantile
+        return DimeNetPPSigmaQuantile(**mc), name
     if name.startswith("sigma_surface"):
         return SigmaSurfaceField(**mc), name
     if name == "sigma_kitchen_sink":

@@ -1,0 +1,65 @@
+{
+  "run_id": "sigma_dn_geom_qf_seed0_physics",
+  "model": "sigma_dn_geom_qf",
+  "loss": "physics",
+  "seed": 0,
+  "features": "sasa",
+  "n_params": 721904,
+  "best_epoch": 0,
+  "val_metrics_at_best": {
+    "loss": 0.6209637825222534,
+    "weighted_r2": 0.7415870428085327,
+    "weighted_mae": 0.1952749490737915,
+    "polar_mae": 0.028561946004629135,
+    "cosine_similarity": 0.8606321596259624,
+    "emd_raw": 0.0017848399096779914,
+    "emd_normalized": 0.0017848399096779943,
+    "molecular_mae": 1.1726133673613806,
+    "molecular_emd": 0.0008900620126501513,
+    "molecular_cosine": 0.9681194266591711,
+    "molecular_polar_mae": 0.47225431324049744
+  },
+  "test_metrics": {
+    "loss": 0.5493316930990952,
+    "weighted_r2": 0.7558187246322632,
+    "weighted_mae": 0.19348527491092682,
+    "polar_mae": 0.03121221996843815,
+    "cosine_similarity": 0.853662221754442,
+    "emd_raw": 0.0018795526721157453,
+    "emd_normalized": 0.0018795526721157479,
+    "molecular_mae": 1.1316933472874837,
+    "molecular_emd": 0.0009606007342371965,
+    "molecular_cosine": 0.971011696576308,
+    "molecular_polar_mae": 0.504404817917026
+  },
+  "history": [
+    {
+      "epoch": 1,
+      "train_loss": 0.7581190578083494,
+      "epoch_time_s": 143.64903330802917,
+      "loss": 0.6209637825222534,
+      "weighted_r2": 0.7415870428085327,
+      "weighted_mae": 0.1952749490737915,
+      "polar_mae": 0.028561946004629135,
+      "cosine_similarity": 0.8606321596259624,
+      "emd_raw": 0.0017848399096779914,
+      "emd_normalized": 0.0017848399096779943,
+      "molecular_mae": 1.1726133673613806,
+      "molecular_emd": 0.0008900620126501513,
+      "molecular_cosine": 0.9681194266591711,
+      "molecular_polar_mae": 0.47225431324049744
+    }
+  ],
+  "resources": {
+    "device": "cuda",
+    "gpu_name": "NVIDIA RTX A6000",
+    "n_epochs_run": 1,
+    "total_train_time_s": 632.1462759971619,
+    "time_to_best_epoch_s": 576.5353450775146,
+    "inference_time_s_full_test_set": 55.392255783081055,
+    "inference_time_s_per_molecule": 0.007101571254241161,
+    "n_test_molecules": 7800,
+    "peak_gpu_memory_bytes": 1054346240,
+    "peak_gpu_memory_gb": 1.05434624
+  }
+}

@@ -1,0 +1,7 @@
+  - name: "Q10. Представление распределения: квантильная функция против softmax по бинам (sigma_dn_geom)"
+    ref: sigma_dn_geom
+    vs: [sigma_dn_geom_qf]
+    note: "чистая абляция: отличие только в голове (backbone, признаки, SASA-площадь, loss, обучение те же)"
+  - name: "Q10b. Квантильная модель против эталона MSE"
+    ref: dimenet_pp_enhanced
+    vs: [sigma_dn_geom_qf, sigma_dn_geom]
